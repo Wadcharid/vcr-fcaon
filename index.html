@@ -56,6 +56,7 @@
     <p id="vcr"></p>
     <p id="vcrPace"></p>
     <p id="arr"></p>
+    <p id="lsd"></p>
     <p id="scr"></p>
     <p id="mcr"></p>
     <p id="fcr"></p>
@@ -116,7 +117,7 @@
             var pace7 = calculatePaceFromVCR(110);
 
             // แสดงผลลัพธ์
-            document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceSecondsPerKm.toFixed(2) + " วินาที/กิโลเมตร";
+            document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceSecondsPerKm.toFixed(2) + " วินาที/กม.";
             document.getElementById('vcrDistance').innerHTML = "VCR Distance (60 mins): " + vcrDistanceMeters + " เมตร";
             document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed + " m/s";
             document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
