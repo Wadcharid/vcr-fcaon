@@ -31,6 +31,29 @@
             padding: 5px 10px;
             margin-top: 10px;
         }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table td {
+            padding: 5px 10px;
+            font-family: monospace; /* ใช้ฟอนต์ที่เป็น fixed-width เพื่อให้ตำแหน่งตัวอักษรอยู่แนวเดียวกัน */
+        }
+        table tr td:first-child {
+            text-align: right;
+            width: 40%; /* ปรับความกว้างคอลัมน์แรกให้เหมาะสม */
+        }
+        table tr td:last-child {
+            width: 60%;
+        }
+        /* ปรับขนาดตัวอักษรของ h1 ให้เล็กลง */
+        h1 {
+            font-size: 1.2em; /* ปรับตามความต้องการ, ค่า 1em คือขนาดมาตรฐาน */
+        }
+    
+        
     </style>
 </head>
 <body>
@@ -145,12 +168,12 @@
             document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
 
             // แสดงผล Pace สำหรับแต่ละช่วงการวิ่ง
-            document.getElementById('arr').innerHTML = "Aerobic Regeneration Run (ARR): " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที";
-            document.getElementById('lsd').innerHTML = "Long Slow Distance (LSD)      : " + pace2 + " - " + pace1 + " นาที/กม. ระยะเวลา 90-180 นาที";
-            document.getElementById('scr').innerHTML = "Slow Continuous Run (SCR)     : " + pace3 + " - " + pace2 + " นาที/กม. ระยะเวลา 60-90 นาที";
-            document.getElementById('mcr').innerHTML = "Medium Continuous Run (MCR)   : " + pace4 + " - " + pace3 + " นาที/กม. ระยะเวลา 45-60 นาที";
-            document.getElementById('fcr').innerHTML = "Fast Continuous Run (FCR)     : " + pace5 + " - " + pace4 + " นาที/กม. ระยะเวลา 30-45 นาที";
-            document.getElementById('eir').innerHTML = "Extensive Interval Run (EIR)  : " + pace7 + " - " + pace6 + " วิ่ง 5 นาที พัก 1-3 นาที 4-6 รอบ";
+            document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที";
+            document.getElementById('lsd').innerHTML = ": " + pace2 + " - " + pace1 + " นาที/กม. ระยะเวลา 90-180 นาที";
+            document.getElementById('scr').innerHTML = ": " + pace3 + " - " + pace2 + " นาที/กม. ระยะเวลา 60-90 นาที";
+            document.getElementById('mcr').innerHTML = ": " + pace4 + " - " + pace3 + " นาที/กม. ระยะเวลา 45-60 นาที";
+            document.getElementById('fcr').innerHTML = ": " + pace5 + " - " + pace4 + " นาที/กม. ระยะเวลา 30-45 นาที";
+            document.getElementById('eir').innerHTML = ": " + pace7 + " - " + pace6 + " วิ่ง 5 นาที พัก 1-3 นาที 4-6 รอบ";
         }
     </script>
 
