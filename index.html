@@ -130,7 +130,22 @@
             }
 
             // คำนวณ Pace
+            //var paceSecondsPerKm = totalSeconds / distance;
             var paceSecondsPerKm = totalSeconds / distance;
+
+// แปลงวินาทีต่อกิโลเมตรให้เป็นนาทีและวินาที
+var paceMinutes = Math.floor(paceSecondsPerKm / 60); // นาที
+var paceSeconds = Math.floor(paceSecondsPerKm % 60); // วินาที
+
+// เพิ่มเลขศูนย์หากวินาทีมีค่าต่ำกว่า 10
+if (paceSeconds < 10) {
+  paceSeconds = '0' + paceSeconds;
+}
+
+// แสดงผล pace ในรูปแบบ xx:xx นาที/กม.
+var paceFormatted = paceMinutes + ":" + paceSeconds;
+//console.log("Pace: " + paceFormatted + " นาที/กม.");
+
 
             // คำนวณ VCR Distance ตามสูตร ((3600 / totalSeconds)^(1/1.06)) * distance
             var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.06) * distance;
@@ -164,7 +179,7 @@
             var pace7 = calculatePaceFromVCR(110);
 
             // แสดงผลลัพธ์
-            document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceSecondsPerKm.toFixed(2) + " วินาที/กม.";
+            document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceFormatted + " นาที/กม.";
             document.getElementById('vcrDistance').innerHTML = "VCR Distance (60 mins): " + vcrDistanceMeters + " เมตร";
             document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed + " m/s";
             document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
