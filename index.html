@@ -154,7 +154,7 @@ var paceFormatted = paceMinutes + ":" + paceSeconds;
             var vcrDistanceMeters = Math.round(vcrDistanceKm * 1000);
 
             // คำนวณ VCR (m/s)
-            var vcrSpeed = (vcrDistanceMeters / 3600).toFixed(1);
+            var vcrSpeed = Math.floor(vcrDistanceMeters / 3600 * 10) / 10;
 
             // คำนวณ VCR Pace (นาที/กิโลเมตร)
             var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
