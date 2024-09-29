@@ -25,7 +25,7 @@
             gap: 10px;
         }
         .time-inputs input {
-            width: 80px; /* ความกว้างเท่ากันสำหรับชั่วโมง, นาที และวินาที */
+            width: 80px;
         }
         button {
             padding: 5px 10px;
@@ -33,29 +33,29 @@
         }
     
         table {
-            width: auto; /* ให้ตารางมีความกว้างตามเนื้อหา */
+            width: auto;
             border-collapse: collapse;
             margin-top: 20px;
-            margin-left: 0; /* จัดชิดซ้าย */
-            text-align: left; /* จัดข้อความภายในตารางไปทางซ้าย */
+            margin-left: 0;
+            text-align: left;
         }
         table td {
             padding: 5px 10px;
-            font-family: monospace; /* ใช้ฟอนต์ที่เป็น fixed-width เพื่อให้ตำแหน่งตัวอักษรอยู่แนวเดียวกัน */
+            font-family: monospace;
         }
         table tr td:first-child {
             text-align: right;
-            width: 40%; /* ปรับความกว้างคอลัมน์แรกให้เหมาะสม */
+            width: 40%;
         }
         table tr td:last-child {
             width: 60%;
         }
-        /* ปรับขนาดตัวอักษรของ h1 ให้เล็กลง */
         h1 {
-            font-size: 1.2em; /* ปรับตามความต้องการ, ค่า 1em คือขนาดมาตรฐาน */
+            font-size: 1.2em;
         }
-    
-        
+        #results {
+            display: none; /* ซ่อนข้อความผลลัพธ์ไว้ก่อน */
+        }
     </style>
 </head>
 <body>
@@ -76,40 +76,63 @@
 
     <button onclick="calculatePace()">คำนวณ</button>
 
-    <p id="result"></p>
-    <p id="vcrDistance"></p>
-    <p id="vcr"></p>
-    <p id="vcrPace"></p>
-<h1>Running Pace Table</h1>
+    <div id="results">
+        <p id="result"></p>
+        <p id="vcrDistance"></p>
+        <p id="vcr"></p>
+        <p id="vcrPace"></p>
 
-    <table>
-        <tr>
-            <td>Aerobic Regeneration Run (ARR)</td>
-            <td id="arr"></td>
-        </tr>
-        <tr>
-            <td>Long Slow Distance (LSD)</td>
-            <td id="lsd"></td>
-        </tr>
-        <tr>
-            <td>Slow Continuous Run (SCR)</td>
-            <td id="scr"></td>
-        </tr>
-        <tr>
-            <td>Medium Continuous Run (MCR)</td>
-            <td id="mcr"></td>
-        </tr>
-        <tr>
-            <td>Fast Continuous Run (FCR)</td>
-            <td id="fcr"></td>
-        </tr>
-        <tr>
-            <td>Extensive Interval Run (EIR)</td>
-            <td id="eir"></td>
-        </tr>
-    </table>
+        <h1>Running Pace Table</h1>
+        <table>
+            <tr>
+                <td>Aerobic Regeneration Run (ARR)</td>
+                <td id="arr"></td>
+            </tr>
+            <tr>
+                <td>Long Slow Distance (LSD)</td>
+                <td id="lsd"></td>
+            </tr>
+            <tr>
+                <td>Slow Continuous Run (SCR)</td>
+                <td id="scr"></td>
+            </tr>
+            <tr>
+                <td>Medium Continuous Run (MCR)</td>
+                <td id="mcr"></td>
+            </tr>
+            <tr>
+                <td>Fast Continuous Run (FCR)</td>
+                <td id="fcr"></td>
+            </tr>
+            <tr>
+                <td>Extensive Interval Run (EIR)</td>
+                <td id="eir"></td>
+            </tr>
+        </table>
+
+        <h1>Race Predict</h1>
+        <table>
+            <tr>
+                <td>5K</td>
+                <td id="race5k"></td>
+            </tr>
+            <tr>
+                <td>10K</td>
+                <td id="race10k"></td>
+            </tr>
+            <tr>
+                <td>Half Marathon</td>
+                <td id="raceHalf"></td>
+            </tr>
+            <tr>
+                <td>Marathon</td>
+                <td id="raceFull"></td>
+            </tr>
+        </table>
+    </div>
 
     <script>
+        // ฟังก์ชันสำหรับคำนวณ
         function calculatePace() {
             var distance = parseFloat(document.getElementById('distance').value);
             var hours = parseInt(document.getElementById('hours').value) || 0;
@@ -117,57 +140,46 @@
             var seconds = parseInt(document.getElementById('seconds').value) || 0;
 
             if (isNaN(distance) || distance <= 0) {
-                document.getElementById('result').innerHTML = "กรุณากรอกระยะทางที่ถูกต้อง";
+                alert("กรุณากรอกระยะทางที่ถูกต้อง");
                 return;
             }
 
-            // คำนวณเวลาทั้งหมดเป็นวินาที
             var totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
 
             if (totalSeconds <= 0) {
-                document.getElementById('result').innerHTML = "กรุณากรอกเวลาที่ถูกต้อง";
+                alert("กรุณากรอกเวลาที่ถูกต้อง");
                 return;
             }
 
-            // คำนวณ Pace
-            //var paceSecondsPerKm = totalSeconds / distance;
+            document.getElementById('results').style.display = "block"; // แสดงผลลัพธ์เมื่อกดปุ่มคำนวณหรือ Enter
+
             var paceSecondsPerKm = totalSeconds / distance;
+            var paceMinutes = Math.floor(paceSecondsPerKm / 60);
+            var paceSeconds = Math.floor(paceSecondsPerKm % 60);
+            if (paceSeconds < 10) paceSeconds = '0' + paceSeconds;
+            var paceFormatted = paceMinutes + ":" + paceSeconds;
 
-// แปลงวินาทีต่อกิโลเมตรให้เป็นนาทีและวินาที
-var paceMinutes = Math.floor(paceSecondsPerKm / 60); // นาที
-var paceSeconds = Math.floor(paceSecondsPerKm % 60); // วินาที
-
-// เพิ่มเลขศูนย์หากวินาทีมีค่าต่ำกว่า 10
-if (paceSeconds < 10) {
-  paceSeconds = '0' + paceSeconds;
-}
-
-// แสดงผล pace ในรูปแบบ xx:xx นาที/กม.
-var paceFormatted = paceMinutes + ":" + paceSeconds;
-//console.log("Pace: " + paceFormatted + " นาที/กม.");
-
-
-            // คำนวณ VCR Distance ตามสูตร ((3600 / totalSeconds)^(1/1.06)) * distance
             var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.06) * distance;
-
-            // แปลง VCR Distance เป็นเมตร
             var vcrDistanceMeters = Math.round(vcrDistanceKm * 1000);
-
-            // คำนวณ VCR (m/s)
             var vcrSpeed = (vcrDistanceMeters / 3600).toFixed(1);
-
-            // คำนวณ VCR Pace (นาที/กิโลเมตร)
             var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
             var vcrPaceMinutes = Math.floor(vcrPaceSecondsPerKm / 60);
             var vcrPaceSeconds = Math.round(vcrPaceSecondsPerKm % 60);
 
-            // คำนวณ Pace ตามเปอร์เซ็นต์ของ VCR
             function calculatePaceFromVCR(percent) {
                 var pace = 1000 / (vcrSpeed * (percent / 100));
                 var minutes = Math.floor(pace / 60);
                 var seconds = Math.round(pace % 60);
-                // แสดงผลในรูปแบบ xx:xx
-                return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) +" ";
+                return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + " ";
+            }
+
+            function predictRaceTime(distanceKm, percent) {
+                var pace = 1000 / (vcrSpeed * (percent / 100));
+                var totalSeconds = pace * distanceKm;
+                var hours = Math.floor(totalSeconds / 3600);
+                var minutes = Math.floor((totalSeconds % 3600) / 60);
+                var seconds = Math.round(totalSeconds % 60);
+                return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
             }
 
             var pace1 = calculatePaceFromVCR(70);
@@ -178,20 +190,30 @@ var paceFormatted = paceMinutes + ":" + paceSeconds;
             var pace6 = calculatePaceFromVCR(105);
             var pace7 = calculatePaceFromVCR(110);
 
-            // แสดงผลลัพธ์
             document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceFormatted + " นาที/กม.";
             document.getElementById('vcrDistance').innerHTML = "VCR Distance (60 mins): " + vcrDistanceMeters + " เมตร";
             document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed + " m/s";
             document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
 
-            // แสดงผล Pace สำหรับแต่ละช่วงการวิ่ง
             document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที";
             document.getElementById('lsd').innerHTML = ": " + pace2 + " - " + pace1 + " นาที/กม. ระยะเวลา 90-180 นาที";
             document.getElementById('scr').innerHTML = ": " + pace3 + " - " + pace2 + " นาที/กม. ระยะเวลา 60-90 นาที";
             document.getElementById('mcr').innerHTML = ": " + pace4 + " - " + pace3 + " นาที/กม. ระยะเวลา 45-60 นาที";
             document.getElementById('fcr').innerHTML = ": " + pace5 + " - " + pace4 + " นาที/กม. ระยะเวลา 30-45 นาที";
             document.getElementById('eir').innerHTML = ": " + pace7 + " - " + pace6 + " วิ่ง (1 กม. หรือ 5 นาที) พัก 1-3 นาที 4-7 รอบ";
+
+            document.getElementById('race5k').innerHTML = predictRaceTime(5, 107) + " (ความเร็ว 107% VCR Pace)";
+            document.getElementById('race10k').innerHTML = predictRaceTime(10, 102) + " (ความเร็ว 102% VCR Pace)";
+            document.getElementById('raceHalf').innerHTML = predictRaceTime(21.0975, 97) + " (ความเร็ว 97% VCR Pace)";
+            document.getElementById('raceFull').innerHTML = predictRaceTime(42.195, 90) + " (ความเร็ว 90% VCR Pace)";
         }
+
+        // ฟังก์ชันสำหรับการกด Enter เพื่อคำนวณ
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                calculatePace();
+            }
+        });
     </script>
 
 </body>
