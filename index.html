@@ -161,7 +161,7 @@
 
             var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.06) * distance;
             var vcrDistanceMeters = Math.round(vcrDistanceKm * 1000);
-            var vcrSpeed = (vcrDistanceMeters / 3600).toFixed(2);
+            var vcrSpeed = (vcrDistanceMeters / 3600).toFixed(1);
             var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
             var vcrPaceMinutes = Math.floor(vcrPaceSecondsPerKm / 60);
             var vcrPaceSeconds = Math.round(vcrPaceSecondsPerKm % 60);
@@ -170,7 +170,7 @@
                 var pace = 1000 / (vcrSpeed * (percent / 100));
                 var minutes = Math.floor(pace / 60);
                 var seconds = Math.round(pace % 60);
-                return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + " ";
+                return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
             }
 
             function predictRaceTime(distanceKm, percent) {
@@ -192,7 +192,7 @@
 
             document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceFormatted + " นาที/กม.";
             document.getElementById('vcrDistance').innerHTML = "VCR Distance (60 mins): " + vcrDistanceMeters + " เมตร";
-            document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed.toFixed(1) + " m/s";
+            document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed + " m/s";
             document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
 
             document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที";
