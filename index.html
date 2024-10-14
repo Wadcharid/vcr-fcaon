@@ -164,12 +164,12 @@
             var vcrSpeed = (vcrDistanceMeters / 3600);
             var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
             var vcrPaceMinutes = Math.floor(vcrPaceSecondsPerKm / 60);
-            var vcrPaceSeconds = Math.round(vcrPaceSecondsPerKm % 60);
+            var vcrPaceSeconds = Math.floor(vcrPaceSecondsPerKm % 60);
 
             function calculatePaceFromVCR(percent) {
                 var pace = 1000 / (vcrSpeed * (percent / 100));
                 var minutes = Math.floor(pace / 60);
-                var seconds = Math.round(pace % 60);
+                var seconds = Math.floor(pace % 60);
                 return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
             }
 
@@ -178,7 +178,7 @@
                 var totalSeconds = pace * distanceKm;
                 var hours = Math.floor(totalSeconds / 3600);
                 var minutes = Math.floor((totalSeconds % 3600) / 60);
-                var seconds = Math.round(totalSeconds % 60);
+                var seconds = Math.floor(totalSeconds % 60);
                 return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
             }
 
