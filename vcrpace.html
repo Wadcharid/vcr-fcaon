@@ -23,25 +23,10 @@
             padding: 5px 10px;
             margin-top: 10px;
         }
-        table {
-            width: auto;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table td {
-            padding: 5px 15px;
-            text-align: left;
-            vertical-align: top;
+        .zone-result {
+            margin-top: 10px;
             font-family: monospace;
-        }
-        table tr td:first-child {
-            width: 50%;
-        }
-        h1 {
-            font-size: 1.2em;
-        }
-        #results {
-            display: none;
+            line-height: 1.8em;
         }
     </style>
 </head>
@@ -54,34 +39,14 @@
     
     <button onclick="calculateZones()">คำนวณ</button>
 
-    <div id="results">
+    <div id="results" style="display: none;">
         <h1>Training Zones</h1>
-        <table>
-            <tr>
-                <td>Zone 1 (≤70%)</td>
-                <td id="zone1"></td>
-            </tr>
-            <tr>
-                <td>Zone 2 (70%-85%)</td>
-                <td id="zone2"></td>
-            </tr>
-            <tr>
-                <td>Zone 3 (85%-90%)</td>
-                <td id="zone3"></td>
-            </tr>
-            <tr>
-                <td>Zone 4 (90%-102%)</td>
-                <td id="zone4"></td>
-            </tr>
-            <tr>
-                <td>Zone 5 (102%-110%)</td>
-                <td id="zone5"></td>
-            </tr>
-            <tr>
-                <td>Zone 6 (>110%)</td>
-                <td id="zone6"></td>
-            </tr>
-        </table>
+        <div class="zone-result" id="zone1"></div>
+        <div class="zone-result" id="zone2"></div>
+        <div class="zone-result" id="zone3"></div>
+        <div class="zone-result" id="zone4"></div>
+        <div class="zone-result" id="zone5"></div>
+        <div class="zone-result" id="zone6"></div>
     </div>
 
     <script>
@@ -102,12 +67,12 @@
                 return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + " นาที/กม.";
             }
 
-            document.getElementById('zone1').innerHTML = calculatePace(70) + " หรือช้ากว่า";
-            document.getElementById('zone2').innerHTML = calculatePace(70) + " - " + calculatePace(85);
-            document.getElementById('zone3').innerHTML = calculatePace(85) + " - " + calculatePace(90);
-            document.getElementById('zone4').innerHTML = calculatePace(90) + " - " + calculatePace(102);
-            document.getElementById('zone5').innerHTML = calculatePace(102) + " - " + calculatePace(110);
-            document.getElementById('zone6').innerHTML = calculatePace(110) + " หรือเร็วกว่า";
+            document.getElementById('zone1').textContent = "Zone 1 (≤70%): " + calculatePace(70) + " หรือช้ากว่า";
+            document.getElementById('zone2').textContent = "Zone 2 (70%-85%): " + calculatePace(70) + " - " + calculatePace(85);
+            document.getElementById('zone3').textContent = "Zone 3 (85%-90%): " + calculatePace(85) + " - " + calculatePace(90);
+            document.getElementById('zone4').textContent = "Zone 4 (90%-102%): " + calculatePace(90) + " - " + calculatePace(102);
+            document.getElementById('zone5').textContent = "Zone 5 (102%-110%): " + calculatePace(102) + " - " + calculatePace(110);
+            document.getElementById('zone6').textContent = "Zone 6 (>110%): " + calculatePace(110) + " หรือเร็วกว่า";
         }
 
         // ฟังก์ชันสำหรับการกด Enter เพื่อคำนวณ
