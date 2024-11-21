@@ -129,6 +129,13 @@ function calculateZones() {
     document.getElementById('raceFull').textContent = "Marathon: " + calculateRaceTime(42.195, 85, 92);
 }
 
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            calculateZones();
+        }
+    });
+
+    
 </script>
 
 
