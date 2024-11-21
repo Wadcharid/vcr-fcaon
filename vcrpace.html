@@ -93,6 +93,13 @@
                 " (" + calculatePace(maxPercent) + " - " + calculatePace(minPercent) + ")";
         }
 
+        document.getElementById('zone1').textContent = "Zone 1 (≤70%): " + calculatePace(70) + " นาที/กม." + " หรือช้ากว่า";
+        document.getElementById('zone2').textContent = "Zone 2 (70%-85%): " + calculatePace(85) + " - " + calculatePace(70) + " นาที/กม.";
+        document.getElementById('zone3').textContent = "Zone 3 (85%-90%): " + calculatePace(90) + " - " + calculatePace(85) + " นาที/กม.";
+        document.getElementById('zone4').textContent = "Zone 4 (90%-102%): " + calculatePace(102) + " - " + calculatePace(90) + " นาที/กม.";
+        document.getElementById('zone5').textContent = "Zone 5 (102%-110%): " + calculatePace(113) + " - " + calculatePace(102) + " นาที/กม.";
+        document.getElementById('zone6').textContent = "Zone 6 (>110%): " + calculatePace(113) + " หรือเร็วกว่า";
+        
         document.getElementById('race-predict').style.display = "block";
         document.getElementById('race5k').textContent = "5K: " + calculateRaceTime(5, 103, 108);
         document.getElementById('race10k').textContent = "10K: " + calculateRaceTime(10, 97, 103);
