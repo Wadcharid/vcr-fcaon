@@ -58,54 +58,56 @@
         <div class="zone-result" id="raceFull"></div>
     </div>
 
-    <script>
-        function calculateZones() {
-            var vcr = parseFloat(document.getElementById('vcr').value);
+<script>
+    function calculateZones() {
+        var vcr = parseFloat(document.getElementById('vcr').value);
 
-            if (isNaN(vcr) || vcr <= 0) {
-                alert("กรุณากรอกค่า VCR ที่ถูกต้อง");
-                return;
-            }
-
-            document.getElementById('results').style.display = "block";
-
-            function calculatePace(percent) {
-                var paceInSeconds = 1000 / (vcr * (percent / 100));
-                var minutes = Math.floor(paceInSeconds / 60);
-                var seconds = Math.floor(paceInSeconds % 60);
-                return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + " ";
-            }
-
-            function calculateRaceTime(distance, minPercent, maxPercent) {
-                var averagePace = (1000 / (vcr * ((minPercent + maxPercent) / 2 / 100)));
-                var totalSeconds = averagePace * distance;
-                var hours = Math.floor(totalSeconds / 3600);
-                var minutes = Math.floor((totalSeconds % 3600) / 60);
-                var seconds = Math.floor(totalSeconds % 60);
-                return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-            }
-
-            document.getElementById('zone1').textContent = "Zone 1 (≤70%): " + calculatePace(70) + " นาที/กม." + " หรือช้ากว่า";
-            document.getElementById('zone2').textContent = "Zone 2 (70%-85%): " + calculatePace(85) + " - " + calculatePace(70) + " นาที/กม.";
-            document.getElementById('zone3').textContent = "Zone 3 (85%-90%): " + calculatePace(90) + " - " + calculatePace(85) + " นาที/กม.";
-            document.getElementById('zone4').textContent = "Zone 4 (90%-102%): " + calculatePace(102) + " - " + calculatePace(90) + " นาที/กม.";
-            document.getElementById('zone5').textContent = "Zone 5 (102%-110%): " + calculatePace(113) + " - " + calculatePace(102) + " นาที/กม.";
-            document.getElementById('zone6').textContent = "Zone 6 (>110%): " + calculatePace(113) + " หรือเร็วกว่า";
-
-            document.getElementById('race-predict').style.display = "block";
-            document.getElementById('race5k').textContent = "5K: " + calculateRaceTime(5, 103, 108) + " (Pace 103%-108% VCR)";
-            document.getElementById('race10k').textContent = "10K: " + calculateRaceTime(10, 97, 103) + " (Pace 97%-103% VCR)";
-            document.getElementById('race16k').textContent = "16K: " + calculateRaceTime(16, 94, 100) + " (Pace 94%-100% VCR)";
-            document.getElementById('raceHalf').textContent = "Half Marathon: " + calculateRaceTime(21.0975, 92, 97) + " (Pace 92%-97% VCR)";
-            document.getElementById('raceFull').textContent = "Marathon: " + calculateRaceTime(42.195, 85, 92) + " (Pace 85%-92% VCR)";
+        if (isNaN(vcr) || vcr <= 0) {
+            alert("กรุณากรอกค่า VCR ที่ถูกต้อง");
+            return;
         }
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                calculateZones();
+        document.getElementById('results').style.display = "block";
+
+        function calculatePace(percent) {
+            var paceInSeconds = 1000 / (vcr * (percent / 100));
+            var minutes = Math.floor(paceInSeconds / 60);
+            var seconds = Math.floor(paceInSeconds % 60);
+            return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + " นาที/กม.";
+        }
+
+        function calculateRaceTime(distance, minPercent, maxPercent) {
+            var minPaceInSeconds = 1000 / (vcr * (maxPercent / 100));
+            var maxPaceInSeconds = 1000 / (vcr * (minPercent / 100));
+            var minTimeInSeconds = minPaceInSeconds * distance;
+            var maxTimeInSeconds = maxPaceInSeconds * distance;
+
+            function formatTime(seconds) {
+                var hours = Math.floor(seconds / 3600);
+                var minutes = Math.floor((seconds % 3600) / 60);
+                var secs = Math.floor(seconds % 60);
+                return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" : "") + minutes + ":" + (secs < 10 ? "0" : "") + secs;
             }
-        });
-    </script>
+
+            return formatTime(minTimeInSeconds) + " - " + formatTime(maxTimeInSeconds) +
+                " (" + calculatePace(maxPercent) + " - " + calculatePace(minPercent) + ")";
+        }
+
+        document.getElementById('race-predict').style.display = "block";
+        document.getElementById('race5k').textContent = "5K: " + calculateRaceTime(5, 103, 108);
+        document.getElementById('race10k').textContent = "10K: " + calculateRaceTime(10, 97, 103);
+        document.getElementById('race16k').textContent = "16K: " + calculateRaceTime(16, 94, 100);
+        document.getElementById('raceHalf').textContent = "Half Marathon: " + calculateRaceTime(21.0975, 92, 97);
+        document.getElementById('raceFull').textContent = "Marathon: " + calculateRaceTime(42.195, 85, 92);
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            calculateZones();
+        }
+    });
+</script>
+
 
 </body>
 </html>
