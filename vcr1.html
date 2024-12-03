@@ -163,7 +163,11 @@
             document.getElementById('results').style.display = "block";
 
             var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.06) * distance;
-            var vcrSpeed = (vcrDistanceKm * 1000) / 3600; // m/s
+            var vcrDistanceMeters = Math.round(vcrDistanceKm * 1000);
+            var vcrSpeed = (vcrDistanceMeters / 3600);
+            var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
+            var vcrPaceMinutes = Math.floor(vcrPaceSecondsPerKm / 60);
+            var vcrPaceSeconds = Math.floor(vcrPaceSecondsPerKm % 60);
 
             function calculatePaceFromVCR(percent) {
                 var pace = 1000 / (vcrSpeed * (percent / 100));
