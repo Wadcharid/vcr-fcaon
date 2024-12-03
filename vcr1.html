@@ -82,6 +82,34 @@
         <p id="vcr"></p>
         <p id="vcrPace"></p>
 
+        <h1>Running Pace Table for Training</h1>
+        <table>
+            <tr>
+                <td>Aerobic Regeneration Run (ARR)</td>
+                <td id="arr"></td>
+            </tr>
+            <tr>
+                <td>Long Slow Distance (LSD)</td>
+                <td id="lsd"></td>
+            </tr>
+            <tr>
+                <td>Slow Continuous Run (SCR)</td>
+                <td id="scr"></td>
+            </tr>
+            <tr>
+                <td>Medium Continuous Run (MCR)</td>
+                <td id="mcr"></td>
+            </tr>
+            <tr>
+                <td>Fast Continuous Run (FCR)</td>
+                <td id="fcr"></td>
+            </tr>
+            <tr>
+                <td>Extensive Interval Run (EIR)</td>
+                <td id="eir"></td>
+            </tr>
+        </table>
+
         <h1>Race Predict (Race Pace)</h1>
         <table>
             <tr>
@@ -93,15 +121,11 @@
                 <td id="race10k"></td>
             </tr>
             <tr>
-                <td>16K</td>
-                <td id="race16k"></td>
-            </tr>
-            <tr>
                 <td>Half Marathon</td>
                 <td id="raceHalf"></td>
             </tr>
             <tr>
-                <td>Full Marathon</td>
+                <td>Marathon</td>
                 <td id="raceFull"></td>
             </tr>
         </table>
@@ -129,17 +153,27 @@
 
             document.getElementById('results').style.display = "block"; // แสดงผลลัพธ์เมื่อกดปุ่มคำนวณหรือ Enter
 
+            var paceSecondsPerKm = totalSeconds / distance;
+            var paceMinutes = Math.floor(paceSecondsPerKm / 60);
+            var paceSeconds = Math.floor(paceSecondsPerKm % 60);
+            if (paceSeconds < 10) paceSeconds = '0' + paceSeconds;
+            var paceFormatted = paceMinutes + ":" + paceSeconds;
+
             var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.06) * distance;
             var vcrDistanceMeters = Math.round(vcrDistanceKm * 1000);
             var vcrSpeed = (vcrDistanceMeters / 3600);
+            var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
+            var vcrPaceMinutes = Math.floor(vcrPaceSecondsPerKm / 60);
+            var vcrPaceSeconds = Math.floor(vcrPaceSecondsPerKm % 60);
 
-            function predictRaceTime(distanceKm, minPercent, maxPercent) {
-                var minTime = calculateTime(distanceKm, minPercent);
-                var maxTime = calculateTime(distanceKm, maxPercent);
-                return minTime + " - " + maxTime;
+            function calculatePaceFromVCR(percent) {
+                var pace = 1000 / (vcrSpeed * (percent / 100));
+                var minutes = Math.floor(pace / 60);
+                var seconds = Math.floor(pace % 60);
+                return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
             }
 
-            function calculateTime(distanceKm, percent) {
+            function predictRaceTime(distanceKm, percent) {
                 var pace = 1000 / (vcrSpeed * (percent / 100));
                 var totalSeconds = pace * distanceKm;
                 var hours = Math.floor(totalSeconds / 3600);
@@ -148,15 +182,31 @@
                 return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
             }
 
-            document.getElementById('race5k').innerHTML = predictRaceTime(5, 103, 108);
-            document.getElementById('race10k').innerHTML = predictRaceTime(10, 97, 103);
-            document.getElementById('race16k').innerHTML = predictRaceTime(16, 95, 100);
-            document.getElementById('raceHalf').innerHTML = predictRaceTime(21.0975, 88, 97);
+            var pace1 = calculatePaceFromVCR(70);
+            var pace2 = calculatePaceFromVCR(80);
+            var pace3 = calculatePaceFromVCR(85);
+            var pace4 = calculatePaceFromVCR(90);
+            var pace5 = calculatePaceFromVCR(97);
+            var pace6 = calculatePaceFromVCR(105);
+            var pace7 = calculatePaceFromVCR(110);
 
-            var fullMarathonTime = totalSeconds > 14400
-                ? predictRaceTime(42.195, 80, 90)
-                : predictRaceTime(42.195, 85, 95);
-            document.getElementById('raceFull').innerHTML = fullMarathonTime;
+            document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceFormatted + " นาที/กม.";
+            document.getElementById('vcrDistance').innerHTML = "VCR Distance (60 mins): " + vcrDistanceMeters + " เมตร";
+            document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed.toFixed(1) + " m/s";
+            document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
+
+            document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที สำหรับฟื้นฟู หรือ มากกว่า 120 นาที สำหรับพัฒนาระบบแอโรบิค";
+            document.getElementById('lsd').innerHTML = ": " + pace2 + " - " + pace1 + " นาที/กม. ระยะเวลา 90-120 นาที สำหรับพัฒนาระบบแอโรบิค";
+            document.getElementById('scr').innerHTML = ": " + pace3 + " - " + pace2 + " นาที/กม. ระยะเวลา 60-90 นาที สำหรับพัฒนาระบบแอโรบิค";
+            document.getElementById('mcr').innerHTML = ": " + pace4 + " - " + pace3 + " นาที/กม. ระยะเวลา 45-60 นาที สำหรับพัฒนาความอดทน";
+            document.getElementById('fcr').innerHTML = ": " + pace5 + " - " + pace4 + " นาที/กม. ระยะเวลา 30-45 นาที สำหรับพัฒนาความอดทน";
+            document.getElementById('eir').innerHTML = ": " + pace7 + " - " + pace6 + " วิ่ง (1 กม. หรือ 4 นาที) พัก 1-3 นาที 4-7 รอบ";
+
+            document.getElementById('race5k').innerHTML = predictRaceTime(5, 106) + " (" + calculatePaceFromVCR(107) + " นาที/กม.)";
+            document.getElementById('race10k').innerHTML = predictRaceTime(10, 101) + " (" + calculatePaceFromVCR(102) + " นาที/กม.)";
+            document.getElementById('raceHalf').innerHTML = predictRaceTime(21.0975, 97) + " (" + calculatePaceFromVCR(96) + " นาที/กม.)";
+            document.getElementById('raceFull').innerHTML = predictRaceTime(42.195, 90) + " (" + calculatePaceFromVCR(90) + " นาที/กม.)";
+
         }
 
         // ฟังก์ชันสำหรับการกด Enter เพื่อคำนวณ
