@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +31,6 @@
             padding: 5px 10px;
             margin-top: 10px;
         }
-    
         table {
             width: auto;
             border-collapse: collapse;
@@ -54,7 +53,7 @@
             font-size: 1.2em;
         }
         #results {
-            display: none; /* ซ่อนข้อความผลลัพธ์ไว้ก่อน */
+            display: none;
         }
     </style>
 </head>
@@ -121,6 +120,10 @@
                 <td id="race10k"></td>
             </tr>
             <tr>
+                <td>16K</td>
+                <td id="race16k"></td>
+            </tr>
+            <tr>
                 <td>Half Marathon</td>
                 <td id="raceHalf"></td>
             </tr>
@@ -132,7 +135,6 @@
     </div>
 
     <script>
-        // ฟังก์ชันสำหรับคำนวณ
         function calculatePace() {
             var distance = parseFloat(document.getElementById('distance').value);
             var hours = parseInt(document.getElementById('hours').value) || 0;
@@ -151,20 +153,10 @@
                 return;
             }
 
-            document.getElementById('results').style.display = "block"; // แสดงผลลัพธ์เมื่อกดปุ่มคำนวณหรือ Enter
-
-            var paceSecondsPerKm = totalSeconds / distance;
-            var paceMinutes = Math.floor(paceSecondsPerKm / 60);
-            var paceSeconds = Math.floor(paceSecondsPerKm % 60);
-            if (paceSeconds < 10) paceSeconds = '0' + paceSeconds;
-            var paceFormatted = paceMinutes + ":" + paceSeconds;
+            document.getElementById('results').style.display = "block";
 
             var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.06) * distance;
-            var vcrDistanceMeters = Math.round(vcrDistanceKm * 1000);
-            var vcrSpeed = (vcrDistanceMeters / 3600);
-            var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
-            var vcrPaceMinutes = Math.floor(vcrPaceSecondsPerKm / 60);
-            var vcrPaceSeconds = Math.floor(vcrPaceSecondsPerKm % 60);
+            var vcrSpeed = (vcrDistanceKm * 1000) / 3600; // m/s
 
             function calculatePaceFromVCR(percent) {
                 var pace = 1000 / (vcrSpeed * (percent / 100));
@@ -173,43 +165,46 @@
                 return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
             }
 
-            function predictRaceTime(distanceKm, percent) {
-                var pace = 1000 / (vcrSpeed * (percent / 100));
-                var totalSeconds = pace * distanceKm;
-                var hours = Math.floor(totalSeconds / 3600);
-                var minutes = Math.floor((totalSeconds % 3600) / 60);
-                var seconds = Math.floor(totalSeconds % 60);
-                return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+            function predictRaceTime(distanceKm, minPercent, maxPercent) {
+                var minPace = 1000 / (vcrSpeed * (minPercent / 100));
+                var maxPace = 1000 / (vcrSpeed * (maxPercent / 100));
+
+                var minTime = minPace * distanceKm;
+                var maxTime = maxPace * distanceKm;
+
+                var minHours = Math.floor(minTime / 3600);
+                var minMinutes = Math.floor((minTime % 3600) / 60);
+                var minSeconds = Math.floor(minTime % 60);
+
+                var maxHours = Math.floor(maxTime / 3600);
+                var maxMinutes = Math.floor((maxTime % 3600) / 60);
+                var maxSeconds = Math.floor(maxTime % 60);
+
+                var formattedMinTime =
+                    (minHours > 0 ? minHours + ":" : "") +
+                    (minMinutes < 10 ? "0" + minMinutes : minMinutes) +
+                    ":" +
+                    (minSeconds < 10 ? "0" + minSeconds : minSeconds);
+
+                var formattedMaxTime =
+                    (maxHours > 0 ? maxHours + ":" : "") +
+                    (maxMinutes < 10 ? "0" + maxMinutes : maxMinutes) +
+                    ":" +
+                    (maxSeconds < 10 ? "0" + maxSeconds : maxSeconds);
+
+                var minPaceFormatted = calculatePaceFromVCR(minPercent);
+                var maxPaceFormatted = calculatePaceFromVCR(maxPercent);
+
+                return `${formattedMinTime} - ${formattedMaxTime} (${minPaceFormatted} นาที/กม. - ${maxPaceFormatted} นาที/กม.)`;
             }
 
-            var pace1 = calculatePaceFromVCR(70);
-            var pace2 = calculatePaceFromVCR(80);
-            var pace3 = calculatePaceFromVCR(85);
-            var pace4 = calculatePaceFromVCR(90);
-            var pace5 = calculatePaceFromVCR(97);
-            var pace6 = calculatePaceFromVCR(105);
-            var pace7 = calculatePaceFromVCR(110);
-
-            document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceFormatted + " นาที/กม.";
-            document.getElementById('vcrDistance').innerHTML = "VCR Distance (60 mins): " + vcrDistanceMeters + " เมตร";
-            document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed.toFixed(1) + " m/s";
-            document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
-
-            document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที สำหรับฟื้นฟู หรือ มากกว่า 120 นาที สำหรับพัฒนาระบบแอโรบิค";
-            document.getElementById('lsd').innerHTML = ": " + pace2 + " - " + pace1 + " นาที/กม. ระยะเวลา 90-120 นาที สำหรับพัฒนาระบบแอโรบิค";
-            document.getElementById('scr').innerHTML = ": " + pace3 + " - " + pace2 + " นาที/กม. ระยะเวลา 60-90 นาที สำหรับพัฒนาระบบแอโรบิค";
-            document.getElementById('mcr').innerHTML = ": " + pace4 + " - " + pace3 + " นาที/กม. ระยะเวลา 45-60 นาที สำหรับพัฒนาความอดทน";
-            document.getElementById('fcr').innerHTML = ": " + pace5 + " - " + pace4 + " นาที/กม. ระยะเวลา 30-45 นาที สำหรับพัฒนาความอดทน";
-            document.getElementById('eir').innerHTML = ": " + pace7 + " - " + pace6 + " วิ่ง (1 กม. หรือ 4 นาที) พัก 1-3 นาที 4-7 รอบ";
-
-            document.getElementById('race5k').innerHTML = predictRaceTime(5, 106) + " (" + calculatePaceFromVCR(107) + " นาที/กม.)";
-            document.getElementById('race10k').innerHTML = predictRaceTime(10, 101) + " (" + calculatePaceFromVCR(102) + " นาที/กม.)";
-            document.getElementById('raceHalf').innerHTML = predictRaceTime(21.0975, 97) + " (" + calculatePaceFromVCR(96) + " นาที/กม.)";
-            document.getElementById('raceFull').innerHTML = predictRaceTime(42.195, 90) + " (" + calculatePaceFromVCR(90) + " นาที/กม.)";
-
+            document.getElementById('race5k').innerHTML = predictRaceTime(5, 103, 108);
+            document.getElementById('race10k').innerHTML = predictRaceTime(10, 97, 103);
+            document.getElementById('race16k').innerHTML = predictRaceTime(16, 95, 100);
+            document.getElementById('raceHalf').innerHTML = predictRaceTime(21.0975, 88, 97);
+            document.getElementById('raceFull').innerHTML = predictRaceTime(42.195, 85, 95);
         }
 
-        // ฟังก์ชันสำหรับการกด Enter เพื่อคำนวณ
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 calculatePace();
