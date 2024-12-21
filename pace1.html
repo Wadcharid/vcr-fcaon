@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time, Pace, Distance Calculator</title>
+    <script>
+        function calculateTime() {
+            const paceMinutes = parseInt(document.getElementById('paceMinutes').value) || 0;
+            const paceSeconds = parseInt(document.getElementById('paceSeconds').value) || 0;
+            const distance = parseFloat(document.getElementById('distance').value) || 0;
+
+            const totalPaceInSeconds = (paceMinutes * 60) + paceSeconds;
+            const totalTimeInSeconds = totalPaceInSeconds * distance;
+
+            const hours = Math.floor(totalTimeInSeconds / 3600);
+            const minutes = Math.floor((totalTimeInSeconds % 3600) / 60);
+            const seconds = Math.round(totalTimeInSeconds % 60);
+
+            document.getElementById('timeHours').value = hours;
+            document.getElementById('timeMinutes').value = minutes;
+            document.getElementById('timeSeconds').value = seconds;
+        }
+
+        function calculatePace() {
+            const timeHours = parseInt(document.getElementById('timeHours').value) || 0;
+            const timeMinutes = parseInt(document.getElementById('timeMinutes').value) || 0;
+            const timeSeconds = parseInt(document.getElementById('timeSeconds').value) || 0;
+            const distance = parseFloat(document.getElementById('distance').value) || 0;
+
+            const totalTimeInSeconds = (timeHours * 3600) + (timeMinutes * 60) + timeSeconds;
+            const totalPaceInSeconds = totalTimeInSeconds / distance;
+
+            const paceMinutes = Math.floor(totalPaceInSeconds / 60);
+            const paceSeconds = Math.round(totalPaceInSeconds % 60);
+
+            document.getElementById('paceMinutes').value = paceMinutes;
+            document.getElementById('paceSeconds').value = paceSeconds;
+        }
+
+        function calculateDistance() {
+            const timeHours = parseInt(document.getElementById('timeHours').value) || 0;
+            const timeMinutes = parseInt(document.getElementById('timeMinutes').value) || 0;
+            const timeSeconds = parseInt(document.getElementById('timeSeconds').value) || 0;
+            const paceMinutes = parseInt(document.getElementById('paceMinutes').value) || 0;
+            const paceSeconds = parseInt(document.getElementById('paceSeconds').value) || 0;
+
+            const totalTimeInSeconds = (timeHours * 3600) + (timeMinutes * 60) + timeSeconds;
+            const totalPaceInSeconds = (paceMinutes * 60) + paceSeconds;
+
+            const distance = totalTimeInSeconds / totalPaceInSeconds;
+
+            document.getElementById('distance').value = distance.toFixed(2);
+        }
+    </script>
+</head>
+<body>
+    <h1>Time, Pace, and Distance Calculator</h1>
+
+    <div>
+        <label for="timeHours">Time (hh:mm:ss):</label>
+        <input type="number" id="timeHours" placeholder="hh" min="0"> :
+        <input type="number" id="timeMinutes" placeholder="mm" min="0" max="59"> :
+        <input type="number" id="timeSeconds" placeholder="ss" min="0" max="59">
+        <button onclick="calculateTime()">Calculate Time</button>
+    </div>
+
+    <div>
+        <label for="paceMinutes">Pace (mm:ss per km):</label>
+        <input type="number" id="paceMinutes" placeholder="mm" min="0"> :
+        <input type="number" id="paceSeconds" placeholder="ss" min="0" max="59">
+        <button onclick="calculatePace()">Calculate Pace</button>
+    </div>
+
+    <div>
+        <label for="distance">Distance (km):</label>
+        <input type="number" id="distance" placeholder="xx.xx" min="0" step="0.01">
+        <button onclick="calculateDistance()">Calculate Distance</button>
+    </div>
+
+</body>
+</html>
