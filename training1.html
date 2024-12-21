@@ -19,6 +19,13 @@
             width: 100%;
             max-width: 300px;
         }
+        .time-input {
+            display: flex;
+            gap: 5px;
+        }
+        .time-input input {
+            width: calc(100% / 3 - 10px);
+        }
         button {
             margin-top: 15px;
             padding: 10px 20px;
@@ -38,8 +45,12 @@
         <label for="distance">Distance (km):</label>
         <input type="number" id="distance" name="distance" step="0.1" required>
 
-        <label for="best-time">Best Time (hh:mm:ss):</label>
-        <input type="text" id="best-time" name="best-time" placeholder="e.g., 01:45:30" required>
+        <label for="best-time">Best Time:</label>
+        <div class="time-input">
+            <input type="number" id="best-time-hours" name="best-time-hours" placeholder="hh" min="0" required>
+            <input type="number" id="best-time-minutes" name="best-time-minutes" placeholder="mm" min="0" max="59" required>
+            <input type="number" id="best-time-seconds" name="best-time-seconds" placeholder="ss" min="0" max="59" required>
+        </div>
 
         <h2>Weekly Availability</h2>
         <label for="monday">Monday (minutes):</label>
@@ -71,7 +82,12 @@
     <script>
         function generatePlan() {
             const distance = parseFloat(document.getElementById('distance').value);
-            const bestTime = document.getElementById('best-time').value;
+
+            const bestTimeHours = parseInt(document.getElementById('best-time-hours').value) || 0;
+            const bestTimeMinutes = parseInt(document.getElementById('best-time-minutes').value) || 0;
+            const bestTimeSeconds = parseInt(document.getElementById('best-time-seconds').value) || 0;
+
+            const bestTime = `${bestTimeHours.toString().padStart(2, '0')}:${bestTimeMinutes.toString().padStart(2, '0')}:${bestTimeSeconds.toString().padStart(2, '0')}`;
 
             const weeklyAvailability = {
                 Monday: parseInt(document.getElementById('monday').value),
@@ -84,22 +100,36 @@
             };
 
             const plan = [];
+            let previousWorkout = null;
 
             for (const [day, minutes] of Object.entries(weeklyAvailability)) {
-                if (minutes >= 60) {
-                    plan.push(`${day}: Long run or tempo workout (${minutes} minutes).`);
+                if (minutes >= 90 && previousWorkout !== 'Long Run') {
+                    plan.push(`${day}: Long Run (Zone 1-2, ${minutes} minutes).`);
+                    previousWorkout = 'Long Run';
+                } else if (minutes >= 60 && previousWorkout !== 'Tempo/Interval') {
+                    const workoutType = Math.random() > 0.5 ? 'Tempo Run (Zone 4)' : 'Interval Run (Zone 5)';
+                    plan.push(`${day}: ${workoutType} (${minutes} minutes).`);
+                    previousWorkout = 'Tempo/Interval';
                 } else if (minutes >= 30) {
-                    plan.push(`${day}: Easy run (${minutes} minutes).`);
+                    plan.push(`${day}: Easy Run (Zone 1-2, ${minutes} minutes).`);
+                    previousWorkout = 'Easy';
                 } else {
                     plan.push(`${day}: Rest or recovery activities.`);
+                    previousWorkout = 'Rest';
                 }
             }
+
+            const totalMinutes = Object.values(weeklyAvailability).reduce((a, b) => a + b, 0);
+            const easyMinutes = Math.round(totalMinutes * 0.8);
+            const hardMinutes = totalMinutes - easyMinutes;
 
             const outputDiv = document.getElementById('output');
             outputDiv.style.display = 'block';
             outputDiv.innerHTML = `
                 <h2>Your 16-Week Training Plan:</h2>
                 <p><strong>Goal:</strong> Improve your best time for ${distance} km (Current PB: ${bestTime})</p>
+                <p><strong>Total Weekly Time:</strong> ${totalMinutes} minutes</p>
+                <p><strong>Recommended Breakdown:</strong> ${easyMinutes} minutes Easy/Long Runs (80%), ${hardMinutes} minutes Tempo/Interval Runs (20%)</p>
                 <ul>${plan.map(dayPlan => `<li>${dayPlan}</li>`).join('')}</ul>
             `;
         }
