@@ -35,19 +35,13 @@
 
         .form-group {
             margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        label {
-            font-weight: bold;
-            color: #555;
         }
 
         .input-container {
             display: flex;
-            gap: 5px;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         input {
@@ -62,6 +56,7 @@
         button {
             width: 100%;
             padding: 10px;
+            max-width: 150px;
             background-color: #007BFF;
             border: none;
             border-radius: 4px;
@@ -73,11 +68,6 @@
 
         button:hover {
             background-color: #0056b3;
-        }
-
-        .icon {
-            margin-left: 10px;
-            color: #007BFF;
         }
 
         .memory {
@@ -142,7 +132,6 @@
         <h1>Enter 2 values, calculate the 3rd.</h1>
 
         <div class="form-group">
-            <label for="timeHours">h : m : s</label>
             <div class="input-container">
                 <input type="number" id="timeHours" placeholder="h" min="0">
                 <input type="number" id="timeMinutes" placeholder="m" min="0" max="59">
@@ -152,7 +141,6 @@
         </div>
 
         <div class="form-group">
-            <label for="paceMinutes">S/P</label>
             <div class="input-container">
                 <input type="number" id="paceMinutes" placeholder="m" min="0">
                 <input type="number" id="paceSeconds" placeholder="s" min="0" max="59">
@@ -161,8 +149,9 @@
         </div>
 
         <div class="form-group">
-            <label for="distance">km</label>
-            <input type="number" id="distance" placeholder="km" min="0" step="0.01">
+            <div class="input-container">
+                <input type="number" id="distance" placeholder="km" min="0" step="0.01">
+            </div>
             <button onclick="calculateDistance()">DISTANCE</button>
         </div>
 
