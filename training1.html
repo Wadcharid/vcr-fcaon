@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Training Plan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select {
+            margin-bottom: 15px;
+            padding: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Running Training Plan Generator</h1>
+    <form id="training-form">
+        <h2>Personal Best Details</h2>
+        <label for="distance">Distance (km):</label>
+        <input type="number" id="distance" name="distance" step="0.1" required>
+
+        <label for="best-time">Best Time (hh:mm:ss):</label>
+        <input type="text" id="best-time" name="best-time" placeholder="e.g., 01:45:30" required>
+
+        <h2>Weekly Availability</h2>
+        <label for="monday">Monday (minutes):</label>
+        <input type="number" id="monday" name="monday" min="0" step="1" required>
+
+        <label for="tuesday">Tuesday (minutes):</label>
+        <input type="number" id="tuesday" name="tuesday" min="0" step="1" required>
+
+        <label for="wednesday">Wednesday (minutes):</label>
+        <input type="number" id="wednesday" name="wednesday" min="0" step="1" required>
+
+        <label for="thursday">Thursday (minutes):</label>
+        <input type="number" id="thursday" name="thursday" min="0" step="1" required>
+
+        <label for="friday">Friday (minutes):</label>
+        <input type="number" id="friday" name="friday" min="0" step="1" required>
+
+        <label for="saturday">Saturday (minutes):</label>
+        <input type="number" id="saturday" name="saturday" min="0" step="1" required>
+
+        <label for="sunday">Sunday (minutes):</label>
+        <input type="number" id="sunday" name="sunday" min="0" step="1" required>
+
+        <button type="button" onclick="generatePlan()">Generate Plan</button>
+    </form>
+
+    <div id="output" class="output" style="display:none;"></div>
+
+    <script>
+        function generatePlan() {
+            const distance = parseFloat(document.getElementById('distance').value);
+            const bestTime = document.getElementById('best-time').value;
+
+            const weeklyAvailability = {
+                Monday: parseInt(document.getElementById('monday').value),
+                Tuesday: parseInt(document.getElementById('tuesday').value),
+                Wednesday: parseInt(document.getElementById('wednesday').value),
+                Thursday: parseInt(document.getElementById('thursday').value),
+                Friday: parseInt(document.getElementById('friday').value),
+                Saturday: parseInt(document.getElementById('saturday').value),
+                Sunday: parseInt(document.getElementById('sunday').value),
+            };
+
+            const plan = [];
+
+            for (const [day, minutes] of Object.entries(weeklyAvailability)) {
+                if (minutes >= 60) {
+                    plan.push(`${day}: Long run or tempo workout (${minutes} minutes).`);
+                } else if (minutes >= 30) {
+                    plan.push(`${day}: Easy run (${minutes} minutes).`);
+                } else {
+                    plan.push(`${day}: Rest or recovery activities.`);
+                }
+            }
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = `
+                <h2>Your 16-Week Training Plan:</h2>
+                <p><strong>Goal:</strong> Improve your best time for ${distance} km (Current PB: ${bestTime})</p>
+                <ul>${plan.map(dayPlan => `<li>${dayPlan}</li>`).join('')}</ul>
+            `;
+        }
+    </script>
+</body>
+</html>
