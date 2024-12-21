@@ -23,10 +23,11 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 400px;
             width: 100%;
+            text-align: center;
         }
 
         .calculator h1 {
-            font-size: 1.5em;
+            font-size: 1.2em;
             margin-bottom: 20px;
             text-align: center;
             color: #333;
@@ -34,32 +35,31 @@
 
         .form-group {
             margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         label {
-            display: block;
             font-weight: bold;
-            margin-bottom: 5px;
             color: #555;
         }
 
+        .input-container {
+            display: flex;
+            gap: 5px;
+        }
+
         input {
-            width: calc(100% - 20px);
+            width: 50px;
             padding: 8px;
-            margin-right: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 1em;
-        }
-
-        input[type="number"] {
-            width: calc(33% - 10px);
-            display: inline-block;
             text-align: center;
         }
 
         button {
-            display: block;
             width: 100%;
             padding: 10px;
             background-color: #007BFF;
@@ -75,16 +75,15 @@
             background-color: #0056b3;
         }
 
-        .form-inline input {
-            width: calc(50% - 15px);
-        }
-
-        .form-inline input:last-child {
+        .icon {
             margin-left: 10px;
+            color: #007BFF;
         }
 
-        .form-group button {
-            margin-top: 10px;
+        .memory {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
         }
 
     </style>
@@ -140,30 +139,34 @@
 </head>
 <body>
     <div class="calculator">
-        <h1>Time, Pace, and Distance Calculator</h1>
+        <h1>Enter 2 values, calculate the 3rd.</h1>
 
         <div class="form-group">
-            <label for="timeHours">Time (hh:mm:ss):</label>
-            <input type="number" id="timeHours" placeholder="hh" min="0"> :
-            <input type="number" id="timeMinutes" placeholder="mm" min="0" max="59"> :
-            <input type="number" id="timeSeconds" placeholder="ss" min="0" max="59">
-            <button onclick="calculateTime()">Calculate Time</button>
-        </div>
-
-        <div class="form-group">
-            <label for="paceMinutes">Pace (mm:ss per km):</label>
-            <div class="form-inline">
-                <input type="number" id="paceMinutes" placeholder="mm" min="0">
-                <input type="number" id="paceSeconds" placeholder="ss" min="0" max="59">
+            <label for="timeHours">h : m : s</label>
+            <div class="input-container">
+                <input type="number" id="timeHours" placeholder="h" min="0">
+                <input type="number" id="timeMinutes" placeholder="m" min="0" max="59">
+                <input type="number" id="timeSeconds" placeholder="s" min="0" max="59">
             </div>
-            <button onclick="calculatePace()">Calculate Pace</button>
+            <button onclick="calculateTime()">TIME</button>
         </div>
 
         <div class="form-group">
-            <label for="distance">Distance (km):</label>
-            <input type="number" id="distance" placeholder="xx.xx" min="0" step="0.01">
-            <button onclick="calculateDistance()">Calculate Distance</button>
+            <label for="paceMinutes">S/P</label>
+            <div class="input-container">
+                <input type="number" id="paceMinutes" placeholder="m" min="0">
+                <input type="number" id="paceSeconds" placeholder="s" min="0" max="59">
+            </div>
+            <button onclick="calculatePace()">PACE</button>
         </div>
+
+        <div class="form-group">
+            <label for="distance">km</label>
+            <input type="number" id="distance" placeholder="km" min="0" step="0.01">
+            <button onclick="calculateDistance()">DISTANCE</button>
+        </div>
+
+        <div class="memory">Memory: Store – Recall Time, Speed & Distance</div>
     </div>
 </body>
 </html>
