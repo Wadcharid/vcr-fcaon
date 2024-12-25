@@ -130,6 +130,23 @@ function calculateZones() {
 }
 
 
+function calculatePace() {
+    var vcrPaceInSeconds = 1000 / vcr;
+    resultsDiv.innerHTML = "";
+
+    const percentagesToCalculate = [70, 80, 85, 90, 95, 97, 100, 105, 110];
+
+    percentagesToCalculate.forEach(percent => {
+        const calculatedPaceSeconds = (vcrPaceInSeconds / (percent / 100));
+        const calculatedPaceMinutes = Math.floor(calculatedPaceSeconds / 60);
+        const calculatedPaceRemainingSeconds = Math.round(calculatedPaceSeconds % 60);
+
+        resultsDiv.innerHTML += `<div class="result-item"><p>${percent}% = ${calculatedPaceMinutes}:${calculatedPaceRemainingSeconds.toString().padStart(2, '0')} นาที/กม.</p></div>`;
+    });
+}
+
+    
+
     
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
