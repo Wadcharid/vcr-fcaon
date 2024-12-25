@@ -71,10 +71,10 @@ function calculatePace() {
         speedDescription = "เท่ากับ Input";
     }
 
-    resultsDiv.innerHTML += `<p>${percentage}% ของ Pace Input คือ ${targetPaceMinutes}:${targetPaceRemainingSeconds.toString().padStart(2, '0')} (${speedDescription})</p>`;
+    resultsDiv.innerHTML += `<p>${percentage}% = ${targetPaceMinutes}:${targetPaceRemainingSeconds.toString().padStart(2, '0')} นาที/กม.</p>`;
 
 
-  const percentagesToCalculate = [75, 80, 85, 90, 95, 97, 100, 105, 110];
+  const percentagesToCalculate = [70, 80, 85, 90, 95, 97, 100, 105, 110];
 
   percentagesToCalculate.forEach(percent => {
     const calculatedPaceSeconds = (totalSeconds / (percent / 100));
