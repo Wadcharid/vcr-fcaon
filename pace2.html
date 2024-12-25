@@ -4,57 +4,101 @@
 <title>Pace Calculator</title>
 <style>
 body {
-  font-family: sans-serif;
+    font-family: sans-serif;
+    margin: 20px; /* เพิ่มระยะห่างขอบ */
+    background-color: #f4f4f4; /* เพิ่มสีพื้นหลังอ่อนๆ */
+}
+.container {
+    max-width: 500px; /* กำหนดความกว้างสูงสุด */
+    margin: 0 auto; /* จัดกึ่งกลาง */
+    background-color: white; /* สีพื้นหลังของกล่องคำนวณ */
+    padding: 20px; /* ระยะห่างภายในกล่อง */
+    border-radius: 8px; /* ขอบมน */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงา */
+}
+h1 {
+    text-align: center; /* จัดกึ่งกลางหัวข้อ */
+    margin-bottom: 20px;
+    color: #333;
 }
 label {
-  display: block;
-  margin-bottom: 5px;
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
 }
 input[type="number"] {
-  width: 80px;
-  padding: 5px;
-  margin-right: 10px;
-  box-sizing: border-box;
+    width: calc(50% - 15px); /* ปรับความกว้าง input */
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+button {
+    background-color: #4CAF50; /* สีปุ่ม */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* ปุ่มเต็มความกว้าง */
+    margin-top: 10px;
+}
+button:hover {
+    background-color: #45a049; /* สีปุ่มเมื่อเมาส์อยู่เหนือ */
 }
 #results {
-  margin-top: 20px;
+    margin-top: 20px;
+    border-top: 1px solid #ddd; /* เส้นแบ่ง */
+    padding-top: 20px;
+}
+#results p {
+    margin-bottom: 5px;
+    color: #333;
+}
+.input-group {
+    display: flex;
+    gap: 10px;
 }
 </style>
 </head>
 <body>
+<div class="container">
+    <h1>Pace Calculator (นาที/กม.)</h1>
+    <label for="minutes">Pace:</label>
+    <div class="input-group">
+        <input type="number" id="minutes" placeholder="นาที" min="0">
+        <input type="number" id="seconds" placeholder="วินาที" min="0" max="59">
+    </div>
 
-<h1>Pace Calculator</h1>
+    <label for="percentage">เปอร์เซ็นต์ (%):</label>
+    <input type="number" id="percentage" placeholder="เช่น 90" min="0">
 
-<label for="minutes">Pace (นาที/กม.):</label>
-<input type="number" id="minutes" placeholder="นาที" min="0">
-<input type="number" id="seconds" placeholder="วินาที" min="0" max="59">
+    <button onclick="calculatePace()">คำนวณ</button>
 
-<label for="percentage">เปอร์เซ็นต์ (%):</label>
-<input type="number" id="percentage" placeholder="เช่น 90" min="0">
-
-<button onclick="calculatePace()">คำนวณ</button>
-
-<div id="results"></div>
+    <div id="results"></div>
+</div>
 
 <script>
+// โค้ด JavaScript เหมือนเดิม
 function calculatePace() {
-  const minutes = parseInt(document.getElementById("minutes").value) || 0;
-  const seconds = parseInt(document.getElementById("seconds").value) || 0;
-  let percentage = parseInt(document.getElementById("percentage").value) || 0;
+    const minutes = parseInt(document.getElementById("minutes").value) || 0;
+    const seconds = parseInt(document.getElementById("seconds").value) || 0;
+    let percentage = parseInt(document.getElementById("percentage").value) || 0;
 
-  const totalSeconds = (minutes * 60) + seconds;
+    const totalSeconds = (minutes * 60) + seconds;
 
-  if (isNaN(totalSeconds) || totalSeconds < 0) {
-    alert("กรุณาป้อน Pace ให้ถูกต้อง");
-    return;
-  }
-  if (isNaN(percentage) || percentage < 0) {
-    alert("กรุณาป้อนเปอร์เซ็นต์ให้ถูกต้อง");
-    return;
-  }
+    if (isNaN(totalSeconds) || totalSeconds < 0) {
+        alert("กรุณาป้อน Pace ให้ถูกต้อง");
+        return;
+    }
+    if (isNaN(percentage) || percentage < 0) {
+        alert("กรุณาป้อนเปอร์เซ็นต์ให้ถูกต้อง");
+        return;
+    }
 
-  const resultsDiv = document.getElementById("results");
-  resultsDiv.innerHTML = ""; // Clear previous results
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = ""; // Clear previous results
 
     percentage = Math.round(percentage); // ทำให้เป็นจำนวนเต็ม
 
@@ -66,25 +110,32 @@ function calculatePace() {
     if (percentage > 100) {
         speedDescription = "เร็วขึ้นจาก Input";
     } else if (percentage < 100) {
-        speedDescription = `เร็ว ${percentage}% ของ Input (ช้าลง)`;
+        speedDescription = `เร็ว ${100-percentage}% ของ Input (ช้าลง)`;
     } else {
         speedDescription = "เท่ากับ Input";
     }
 
-    resultsDiv.innerHTML += `<p>${percentage}% = ${targetPaceMinutes}:${targetPaceRemainingSeconds.toString().padStart(2, '0')} นาที/กม.</p>`;
+    resultsDiv.innerHTML += `<p>${percentage}% = ${targetPaceMinutes}:${targetPaceRemainingSeconds.toString().padStart(2, '0')} นาที/กม. (${speedDescription})</p>`;
 
 
-  const percentagesToCalculate = [70, 80, 85, 90, 95, 97, 100, 105, 110];
+    const percentagesToCalculate = [70, 80, 85, 90, 95, 97, 100, 105, 110];
 
-  percentagesToCalculate.forEach(percent => {
-    const calculatedPaceSeconds = (totalSeconds / (percent / 100));
-    const calculatedPaceMinutes = Math.floor(calculatedPaceSeconds / 60);
-    const calculatedPaceRemainingSeconds = Math.round(calculatedPaceSeconds % 60);
+    percentagesToCalculate.forEach(percent => {
+        const calculatedPaceSeconds = (totalSeconds / (percent / 100));
+        const calculatedPaceMinutes = Math.floor(calculatedPaceSeconds / 60);
+        const calculatedPaceRemainingSeconds = Math.round(calculatedPaceSeconds % 60);
 
+        let speedDescriptionLoop = "";
+    if (percent > 100) {
+        speedDescriptionLoop = "เร็วขึ้นจาก Input";
+    } else if (percent < 100) {
+        speedDescriptionLoop = `เร็ว ${100-percent}% ของ Input (ช้าลง)`;
+    } else {
+        speedDescriptionLoop = "เท่ากับ Input";
+    }
 
-
-    resultsDiv.innerHTML += `<p>${percent}% = ${calculatedPaceMinutes}:${calculatedPaceRemainingSeconds.toString().padStart(2, '0')} นาที/กม.</p>`;
-  });
+        resultsDiv.innerHTML += `<p>${percent}% = ${calculatedPaceMinutes}:${calculatedPaceRemainingSeconds.toString().padStart(2, '0')} นาที/กม. (${speedDescriptionLoop})</p>`;
+    });
 }
 </script>
 
