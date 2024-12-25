@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pace Calculator</title>
+<style>
+body {
+  font-family: sans-serif;
+}
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+input[type="number"] {
+  width: 80px;
+  padding: 5px;
+  margin-right: 10px;
+  box-sizing: border-box;
+}
+#results {
+  margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>Pace Calculator</h1>
+
+<label for="minutes">Pace:</label>
+<input type="number" id="minutes" placeholder="นาที" min="0">
+<input type="number" id="seconds" placeholder="วินาที" min="0" max="59">
+
+<label for="percentage">เปอร์เซ็นต์ (%):</label>
+<input type="number" id="percentage" placeholder="เช่น 90" min="0" max="100">
+
+<button onclick="calculatePace()">คำนวณ</button>
+
+<div id="results"></div>
+
+<script>
+function calculatePace() {
+  const minutes = parseInt(document.getElementById("minutes").value) || 0;
+  const seconds = parseInt(document.getElementById("seconds").value) || 0;
+  const percentage = parseInt(document.getElementById("percentage").value) || 0;
+
+  const totalSeconds = (minutes * 60) + seconds;
+
+  if (isNaN(totalSeconds) || totalSeconds < 0) {
+    alert("กรุณาป้อน Pace ให้ถูกต้อง");
+    return;
+  }
+    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+    alert("กรุณาป้อนเปอร์เซ็นต์ให้ถูกต้อง (0-100)");
+    return;
+  }
+
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = ""; // Clear previous results
+
+    const targetPaceSeconds = (totalSeconds * (percentage / 100));
+    const targetPaceMinutes = Math.floor(targetPaceSeconds / 60);
+    const targetPaceRemainingSeconds = Math.round(targetPaceSeconds % 60);
+    resultsDiv.innerHTML += `<p>${percentage}% ของ Pace คือ ${targetPaceMinutes}:${targetPaceRemainingSeconds.toString().padStart(2, '0')}</p>`;
+
+  const percentagesToCalculate = [70, 80, 85, 90, 95, 97, 100, 105, 110, 115];
+
+  percentagesToCalculate.forEach(percent => {
+    const calculatedPaceSeconds = (totalSeconds * (percent / 100));
+    const calculatedPaceMinutes = Math.floor(calculatedPaceSeconds / 60);
+    const calculatedPaceRemainingSeconds = Math.round(calculatedPaceSeconds % 60);
+    resultsDiv.innerHTML += `<p>${percent}% ของ Pace คือ ${calculatedPaceMinutes}:${calculatedPaceRemainingSeconds.toString().padStart(2, '0')}</p>`;
+  });
+}
+</script>
+
+</body>
+</html>
