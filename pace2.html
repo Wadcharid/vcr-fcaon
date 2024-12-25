@@ -65,12 +65,12 @@ button:hover {
 
     <label for="minutes">Pace (นาที/กม.):</label>
     <div class="input-group">
-        <input type="number" id="minutes" placeholder="นาที" min="0" value="0">
-        <input type="number" id="seconds" placeholder="วินาที" min="0" max="59" value="0">
+        <input type="number" id="minutes" placeholder="นาที (เช่น 5)" min="0" value="0">
+        <input type="number" id="seconds" placeholder="วินาที (เช่น 30)" min="0" max="59" value="0">
     </div>
 
     <label for="percentage">เปอร์เซ็นต์ (%):</label>
-    <input type="number" id="percentage" placeholder="ตัวเลขจำนวนเต็ม" min="0" value="100">
+    <input type="number" id="percentage" placeholder="เช่น 90" min="0" value="100">
 
     <button onclick="calculatePace()">คำนวณ</button>
 
