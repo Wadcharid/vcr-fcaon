@@ -64,6 +64,13 @@
         <div class="zone-result" id="raceFull"></div>
     </div>
 
+    <div id="pace-table" style="display: none;">
+    <h1>Pace Table</h1>
+    <div class="zone-result" id="paceResults"></div>
+    </div>
+
+
+    
 <script>
 function calculateZones() {
     var vcr = parseFloat(document.getElementById('vcr').value);
@@ -129,7 +136,24 @@ function calculateZones() {
     document.getElementById('raceFull').textContent = "Marathon: " + calculateRaceTime(42.195, 87, 93);
 }
 
-   
+
+    function displayPaceTable(vcr) {
+    const percentages = [70, 80, 85, 90, 95, 97, 100, 105, 110];
+    let paceResults = "";
+
+    percentages.forEach(percent => {
+        const paceInSeconds = 1000 / (vcr * (percent / 100));
+        const minutes = Math.floor(paceInSeconds / 60);
+        const seconds = Math.round(paceInSeconds % 60);
+        paceResults += `<p>${percent}% = ${minutes}:${seconds < 10 ? "0" + seconds : seconds} นาที/กม.</p>`;
+    });
+
+    document.getElementById('paceResults').innerHTML = paceResults;
+    document.getElementById('pace-table').style.display = "block";
+}
+
+    displayPaceTable(vcr);
+
 
     
     document.addEventListener('keydown', function(event) {
