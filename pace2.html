@@ -23,14 +23,14 @@ input[type="number"] {
 </head>
 <body>
 
-<h1>Pace Calculator</h1>
+<h1>Pace Calculator (นาที/กม.)</h1>
 
 <label for="minutes">Pace:</label>
 <input type="number" id="minutes" placeholder="นาที" min="0">
 <input type="number" id="seconds" placeholder="วินาที" min="0" max="59">
 
 <label for="percentage">เปอร์เซ็นต์ (%):</label>
-<input type="number" id="percentage" placeholder="เช่น 90" min="0" max="100">
+<input type="number" id="percentage" placeholder="เช่น 90" min="0">
 
 <button onclick="calculatePace()">คำนวณ</button>
 
@@ -40,7 +40,7 @@ input[type="number"] {
 function calculatePace() {
   const minutes = parseInt(document.getElementById("minutes").value) || 0;
   const seconds = parseInt(document.getElementById("seconds").value) || 0;
-  const percentage = parseInt(document.getElementById("percentage").value) || 0;
+  let percentage = parseInt(document.getElementById("percentage").value) || 0;
 
   const totalSeconds = (minutes * 60) + seconds;
 
@@ -48,26 +48,49 @@ function calculatePace() {
     alert("กรุณาป้อน Pace ให้ถูกต้อง");
     return;
   }
-    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-    alert("กรุณาป้อนเปอร์เซ็นต์ให้ถูกต้อง (0-100)");
+  if (isNaN(percentage) || percentage < 0) {
+    alert("กรุณาป้อนเปอร์เซ็นต์ให้ถูกต้อง");
     return;
   }
 
   const resultsDiv = document.getElementById("results");
   resultsDiv.innerHTML = ""; // Clear previous results
 
+    percentage = Math.round(percentage); // ทำให้เป็นจำนวนเต็ม
+
     const targetPaceSeconds = (totalSeconds * (percentage / 100));
     const targetPaceMinutes = Math.floor(targetPaceSeconds / 60);
     const targetPaceRemainingSeconds = Math.round(targetPaceSeconds % 60);
-    resultsDiv.innerHTML += `<p>${percentage}% ของ Pace คือ ${targetPaceMinutes}:${targetPaceRemainingSeconds.toString().padStart(2, '0')}</p>`;
 
-  const percentagesToCalculate = [70, 80, 85, 90, 95, 97, 100, 105, 110, 115];
+    let speedDescription = "";
+    if (percentage > 100) {
+        speedDescription = "เร็วขึ้นจาก Input";
+    } else if (percentage < 100) {
+        speedDescription = `เร็ว ${percentage}% ของ Input (ช้าลง)`;
+    } else {
+        speedDescription = "เท่ากับ Input";
+    }
+
+    resultsDiv.innerHTML += `<p>${percentage}% ของ Pace Input คือ ${targetPaceMinutes}:${targetPaceRemainingSeconds.toString().padStart(2, '0')} (${speedDescription})</p>`;
+
+
+  const percentagesToCalculate = [75, 80, 85, 90, 95, 97, 100, 105, 110];
 
   percentagesToCalculate.forEach(percent => {
     const calculatedPaceSeconds = (totalSeconds * (percent / 100));
     const calculatedPaceMinutes = Math.floor(calculatedPaceSeconds / 60);
     const calculatedPaceRemainingSeconds = Math.round(calculatedPaceSeconds % 60);
-    resultsDiv.innerHTML += `<p>${percent}% ของ Pace คือ ${calculatedPaceMinutes}:${calculatedPaceRemainingSeconds.toString().padStart(2, '0')}</p>`;
+
+    let speedDescriptionLoop = "";
+    if (percent > 100) {
+        speedDescriptionLoop = "เร็วขึ้นจาก Input";
+    } else if (percent < 100) {
+        speedDescriptionLoop = `เร็ว ${percent}% ของ Input (ช้าลง)`;
+    } else {
+        speedDescriptionLoop = "เท่ากับ Input";
+    }
+
+    resultsDiv.innerHTML += `<p>${percent}% ของ Pace Input คือ ${calculatedPaceMinutes}:${calculatedPaceRemainingSeconds.toString().padStart(2, '0')} (${speedDescriptionLoop})</p>`;
   });
 }
 </script>
