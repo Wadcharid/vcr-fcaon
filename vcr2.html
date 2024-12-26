@@ -21,10 +21,11 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
-            font-size: 1.8em;
+        h1, h2 {
+            font-size: 1.5em;
             color: #333;
             text-align: center;
+            margin-bottom: 15px;
         }
 
         label {
@@ -68,16 +69,34 @@
             background-color: #f9f9f9;
         }
 
+        .result-section h2 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
         .zone-result p {
             margin: 5px 0;
+            line-height: 1.5em;
+            font-size: 0.95em;
+            color: #444;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #000;
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.5em;
+            h1, h2 {
+                font-size: 1.2em;
             }
 
             button {
+                font-size: 0.9em;
+            }
+
+            .zone-result p {
                 font-size: 0.9em;
             }
         }
@@ -94,8 +113,10 @@
 
         <div id="vcr-result" class="result-section" style="display: none;">
             <h2>ผลลัพธ์จาก VCR</h2>
-            <div class="zone-result" id="vcr-pace"></div>
-            <div class="zone-result" id="distance-prediction"></div>
+            <div class="zone-result">
+                <p><span class="highlight">Pace ของ VCR:</span> <span id="vcr-pace"></span></p>
+                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 60 นาที:</span> <span id="distance-prediction"></span></p>
+            </div>
         </div>
 
         <div id="results" class="result-section" style="display: none;">
