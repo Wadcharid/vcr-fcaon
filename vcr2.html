@@ -3,70 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คำนวณ VCR Training Zones</title>
+    <title>VCR Training Zones</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
         }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.8em;
+            color: #333;
+            text-align: center;
+        }
+
         label {
-            margin-top: 10px;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
         }
+
         input {
-            padding: 5px;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
         }
-        .inline-label {
-            display: inline-block;
-            margin-right: 10px;
-        }
+
         button {
-            padding: 5px 10px;
-            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .zone-result {
-            margin-top: 10px;
-            font-family: monospace;
-            line-height: 1.8em;
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .zone-result p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            button {
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>คำนวณ Training Zones จาก VCR</h1>
 
-    <h1>คำนวณ Training Zones จาก VCR</h1>
+        <label for="vcr">VCR (เมตร/วินาที):</label>
+        <input type="number" id="vcr" name="vcr" min="0" step="0.01" placeholder="ใส่ VCR">
 
-    <label class="inline-label" for="vcr">VCR (เมตร/วินาที):</label>
-    <input type="number" id="vcr" name="vcr" min="0" step="0.01" placeholder="ใส่ VCR">
-    
-    <button onclick="calculateZones()">คำนวณ</button>
+        <button onclick="calculateZones()">คำนวณ</button>
 
-    <div id="vcr-result" style="display: none;">
-    <h1>ผลลัพธ์จาก VCR</h1>
-    <div class="zone-result" id="vcr-pace"></div>
-    <div class="zone-result" id="distance-prediction"></div>
-    </div>
+        <div id="vcr-result" class="result-section" style="display: none;">
+            <h2>ผลลัพธ์จาก VCR</h2>
+            <div class="zone-result" id="vcr-pace"></div>
+            <div class="zone-result" id="distance-prediction"></div>
+        </div>
 
-    <div id="results" style="display: none;">
-        <h1>Training Zones</h1>
-        <div class="zone-result" id="zone1"></div>
-        <div class="zone-result" id="zone2"></div>
-        <div class="zone-result" id="zone3"></div>
-        <div class="zone-result" id="zone4"></div>
-        <div class="zone-result" id="zone5"></div>
-        <div class="zone-result" id="zone6"></div>
-    </div>
+        <div id="results" class="result-section" style="display: none;">
+            <h2>Training Zones</h2>
+            <div class="zone-result" id="zone1"></div>
+            <div class="zone-result" id="zone2"></div>
+            <div class="zone-result" id="zone3"></div>
+            <div class="zone-result" id="zone4"></div>
+            <div class="zone-result" id="zone5"></div>
+            <div class="zone-result" id="zone6"></div>
+        </div>
 
-    <div id="race-predict" style="display: none;">
-        <h1>Race Predict</h1>
-        <div class="zone-result" id="race5k"></div>
-        <div class="zone-result" id="race10k"></div>
-        <div class="zone-result" id="race16k"></div>
-        <div class="zone-result" id="raceHalf"></div>
-        <div class="zone-result" id="raceFull"></div>
-    </div>
+        <div id="race-predict" class="result-section" style="display: none;">
+            <h2>Race Prediction</h2>
+            <div class="zone-result" id="race5k"></div>
+            <div class="zone-result" id="race10k"></div>
+            <div class="zone-result" id="race16k"></div>
+            <div class="zone-result" id="raceHalf"></div>
+            <div class="zone-result" id="raceFull"></div>
+        </div>
 
-    <div id="pace-table" style="display: none;">
-    <h1>Pace Table</h1>
-    <div class="zone-result" id="paceResults"></div>
+        <div id="pace-table" class="result-section" style="display: none;">
+            <h2>Pace Table</h2>
+            <div class="zone-result" id="paceResults"></div>
+        </div>
     </div>
 
 
