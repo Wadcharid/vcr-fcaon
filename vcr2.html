@@ -121,12 +121,12 @@
 
         <div id="results" class="result-section" style="display: none;">
             <h2>Training Zones</h2>
-            <div class="zone-result" id="zone1"></div>
-            <div class="zone-result" id="zone2"></div>
-            <div class="zone-result" id="zone3"></div>
-            <div class="zone-result" id="zone4"></div>
-            <div class="zone-result" id="zone5"></div>
-            <div class="zone-result" id="zone6"></div>
+    <div class="zone-result"><strong>Zone 1:</strong> <span id="zone1"></span></div>
+    <div class="zone-result"><strong>Zone 2:</strong> <span id="zone2"></span></div>
+    <div class="zone-result"><strong>Zone 3:</strong> <span id="zone3"></span></div>
+    <div class="zone-result"><strong>Zone 4:</strong> <span id="zone4"></span></div>
+    <div class="zone-result"><strong>Zone 5:</strong> <span id="zone5"></span></div>
+    <div class="zone-result"><strong>Zone 6:</strong> <span id="zone6"></span></div>
         </div>
 
         <div id="race-predict" class="result-section" style="display: none;">
@@ -163,11 +163,11 @@ function calculateZones() {
     var vcrMinutes = Math.floor(vcrPaceInSeconds / 60);
     var vcrSeconds = Math.floor(vcrPaceInSeconds % 60);
     var vcrPace = vcrMinutes + ":" + (vcrSeconds < 10 ? "0" + vcrSeconds : vcrSeconds) + " นาที/กม.";
-    document.getElementById('vcr-pace').textContent = "Pace ของ VCR: " + vcrPace;
+    document.getElementById('vcr-pace').textContent = " " + vcrPace;
 
     // คำนวณระยะทางใน 60 นาที
     var distanceIn60Minutes = vcr * 3600 / 1000; // แปลงเมตรเป็นกิโลเมตร
-    document.getElementById('distance-prediction').textContent = "ระยะทางคาดการณ์ในเวลา 60 นาที: " + distanceIn60Minutes.toFixed(2) + " กม.";
+    document.getElementById('distance-prediction').textContent = " " + distanceIn60Minutes.toFixed(2) + " กม.";
 
     // แสดงผล Training Zones
     document.getElementById('results').style.display = "block";
