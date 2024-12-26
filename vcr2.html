@@ -176,7 +176,7 @@ function calculateZones() {
         var paceInSeconds = 1000 / (vcr * (percent / 100));
         var minutes = Math.floor(paceInSeconds / 60);
         var seconds = Math.floor(paceInSeconds % 60);
-        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + " นาที/กม.";
+        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds) + "";
     }
 
     function calculateRaceTime(distance, minPercent, maxPercent) {
@@ -199,9 +199,9 @@ function calculateZones() {
     document.getElementById('zone1').innerHTML = "(≤70%): <br> " + calculatePace(70) + " นาที/กม." + " หรือช้ากว่า";
     document.getElementById('zone2').innerHTML = "(70%-85%): <br>" + calculatePace(85) + " - " + calculatePace(70) + " นาที/กม.";
     document.getElementById('zone3').innerHTML = "(85%-93%): <br>" + calculatePace(93) + " - " + calculatePace(85) + " นาที/กม.";
-    document.getElementById('zone4').innerHTML = "<color=red>(93%-102%): <br>" + calculatePace(102) + " - " + calculatePace(93) + " นาที/กม.</color>";
+    document.getElementById('zone4').innerHTML = "<span style='color: red;'>(93%-102%): <br>" + calculatePace(102) + " - " + calculatePace(93) + " นาที/กม.</span>";
     document.getElementById('zone5').innerHTML = "(102%-110%): <br>" + calculatePace(113) + " - " + calculatePace(102) + " นาที/กม.";
-    document.getElementById('zone6').innerHTML = "(>110%): <br>" + calculatePace(113) + " หรือเร็วกว่า";
+    document.getElementById('zone6').innerHTML = "(>110%): <br>" + calculatePace(113) + " นาที/กม." + " หรือเร็วกว่า";
     
     document.getElementById('race-predict').style.display = "block";
     document.getElementById('race5k').innerHTML = "<strong>5K: </strong>" + calculateRaceTime(5, 102, 108);
