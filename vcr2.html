@@ -196,19 +196,19 @@ function calculateZones() {
             " <br>(" + calculatePace(maxPercent) + " - " + calculatePace(minPercent) + ")";
     }
 
-    document.getElementById('zone1').textContent = "(≤70%): <br> " + calculatePace(70) + " นาที/กม." + " หรือช้ากว่า";
-    document.getElementById('zone2').textContent = "(70%-85%): <br>" + calculatePace(85) + " - " + calculatePace(70) + " นาที/กม.";
-    document.getElementById('zone3').textContent = "(85%-93%): <br>" + calculatePace(93) + " - " + calculatePace(85) + " นาที/กม.";
-    document.getElementById('zone4').textContent = "(93%-102%): <br>" + calculatePace(102) + " - " + calculatePace(93) + " นาที/กม.";
-    document.getElementById('zone5').textContent = "(102%-110%): <br>" + calculatePace(113) + " - " + calculatePace(102) + " นาที/กม.";
-    document.getElementById('zone6').textContent = "(>110%): <br>" + calculatePace(113) + " หรือเร็วกว่า";
+    document.getElementById('zone1').innerHTML = "(≤70%): <br> " + calculatePace(70) + " นาที/กม." + " หรือช้ากว่า";
+    document.getElementById('zone2').innerHTML = "(70%-85%): <br>" + calculatePace(85) + " - " + calculatePace(70) + " นาที/กม.";
+    document.getElementById('zone3').innerHTML = "(85%-93%): <br>" + calculatePace(93) + " - " + calculatePace(85) + " นาที/กม.";
+    document.getElementById('zone4').innerHTML = "<color=red>(93%-102%): <br>" + calculatePace(102) + " - " + calculatePace(93) + " นาที/กม.</color>";
+    document.getElementById('zone5').innerHTML = "(102%-110%): <br>" + calculatePace(113) + " - " + calculatePace(102) + " นาที/กม.";
+    document.getElementById('zone6').innerHTML = "(>110%): <br>" + calculatePace(113) + " หรือเร็วกว่า";
     
     document.getElementById('race-predict').style.display = "block";
-    document.getElementById('race5k').textContent = "<strong>5K: </strong>" + calculateRaceTime(5, 102, 108);
-    document.getElementById('race10k').textContent = "<strong>10K: </strong>" + calculateRaceTime(10, 99, 105);
-    document.getElementById('race16k').textContent = "<strong>16K: </strong>" + calculateRaceTime(16, 96, 103);
-    document.getElementById('raceHalf').textContent = "<strong>Half Marathon: </strong>" + calculateRaceTime(21.0975, 94, 100);
-    document.getElementById('raceFull').textContent = "<strong>Marathon: </strong>" + calculateRaceTime(42.195, 87, 93);
+    document.getElementById('race5k').innerHTML = "<strong>5K: </strong>" + calculateRaceTime(5, 102, 108);
+    document.getElementById('race10k').innerHTML = "<strong>10K: </strong>" + calculateRaceTime(10, 99, 105);
+    document.getElementById('race16k').innerHTML = "<strong>16K: </strong>" + calculateRaceTime(16, 96, 103);
+    document.getElementById('raceHalf').innerHTML = "<strong>Half Marathon: </strong>" + calculateRaceTime(21.0975, 94, 100);
+    document.getElementById('raceFull').innerHTML = "<strong>Marathon: </strong>" + calculateRaceTime(42.195, 87, 93);
 
 
  
