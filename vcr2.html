@@ -125,7 +125,7 @@
     <div class="zone-result"><strong>Zone 2:</strong> <span id="zone2"></span></div>
     <div class="zone-result"><strong>Zone 3:</strong> <span id="zone3"></span></div>
     <div class="zone-result"><strong>Zone 4:</strong> <span id="zone4"></span></div>
-    <div class="zone-result"><strong>Zone 5:</strong> <span id="zone5"></span></div>
+    <div class="zone-result"><span style='color: red;'><strong>Zone 5:</strong></span> <span id="zone5"></span></div>
     <div class="zone-result"><strong>Zone 6:</strong> <span id="zone6"></span></div>
         </div>
 
@@ -193,13 +193,13 @@ function calculateZones() {
         }
 
         return formatTime(minTimeInSeconds) + " - " + formatTime(maxTimeInSeconds) +
-            " <br>(" + calculatePace(maxPercent) + " - " + calculatePace(minPercent) + ")";
+            " <br>(" + calculatePace(maxPercent) + " - " + calculatePace(minPercent) + "นาที/กม.)";
     }
 
     document.getElementById('zone1').innerHTML = "(≤70%): <br> " + calculatePace(70) + " นาที/กม." + " หรือช้ากว่า";
     document.getElementById('zone2').innerHTML = "(70%-85%): <br>" + calculatePace(85) + " - " + calculatePace(70) + " นาที/กม.";
     document.getElementById('zone3').innerHTML = "(85%-93%): <br>" + calculatePace(93) + " - " + calculatePace(85) + " นาที/กม.";
-    document.getElementById('zone4').innerHTML = "<span style='color: red;'>(93%-102%): <br>" + calculatePace(102) + " - " + calculatePace(93) + " นาที/กม.</span>";
+    document.getElementById('zone4').innerHTML = "(93%-102%): <br>" + calculatePace(102) + " - " + calculatePace(93) + " นาที/กม.";
     document.getElementById('zone5').innerHTML = "(102%-110%): <br>" + calculatePace(113) + " - " + calculatePace(102) + " นาที/กม.";
     document.getElementById('zone6').innerHTML = "(>110%): <br>" + calculatePace(113) + " นาที/กม." + " หรือเร็วกว่า";
     
