@@ -63,6 +63,10 @@
             return `${minutes}:${seconds.toString().padStart(2, '0')} min/km`;
         }
 
+        function formatDistanceRange(minDistance, maxDistance) {
+            return minDistance === maxDistance ? `${minDistance} km` : `${minDistance} km - ${maxDistance} km`;
+        }
+
         function calculatePlan() {
             const weeklyDistance = parseFloat(document.getElementById('weeklyDistance').value);
             const vcr = parseFloat(document.getElementById('vcr').value);
@@ -72,10 +76,14 @@
                 return;
             }
 
-            const longRunDistance = weeklyDistance * 0.25;
-            const tempoDistance = weeklyDistance * 0.1;
-            const easyDistance = weeklyDistance * 0.45;
-            const intervalDistance = weeklyDistance * 0.1;
+            const longRunMin = Math.round(weeklyDistance * 0.25);
+            const longRunMax = Math.round(weeklyDistance * 0.3);
+            const tempoMin = Math.round(weeklyDistance * 0.1);
+            const tempoMax = Math.round(weeklyDistance * 0.15);
+            const easyMin = Math.round(weeklyDistance * 0.45);
+            const easyMax = Math.round(weeklyDistance * 0.5);
+            const intervalMin = Math.round(weeklyDistance * 0);
+            const intervalMax = Math.round(weeklyDistance * 0.1);
 
             const longRunPace = `${paceFromVCR(70, vcr)} - ${paceFromVCR(85, vcr)}`;
             const tempoPace = `${paceFromVCR(95, vcr)} - ${paceFromVCR(102, vcr)}`;
@@ -87,11 +95,11 @@
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <h2>Training Plan</h2>
-                <p><strong>Long Run (25-30%):</strong> ${longRunDistance.toFixed(2)} km at ${longRunPace}</p>
-                <p><strong>Tempo Run (10-15%):</strong> ${tempoDistance.toFixed(2)} km at ${tempoPace}</p>
-                <p><strong>Easy Run (45-50%):</strong> ${easyDistance.toFixed(2)} km at ${easyPace}</p>
-                <p><strong>Interval Run (0-10%):</strong> ${intervalDistance.toFixed(2)} km at ${intervalPace}</p>
-                <p><strong>Easy Recovery Run (10-30%):</strong> Any distance at ${easyRecoveryPace}</p>
+                <p><strong>Long Run (25-30%):</strong> ${formatDistanceRange(longRunMin, longRunMax)} (1 day) at ${longRunPace}</p>
+                <p><strong>Tempo Run (10-15%):</strong> ${formatDistanceRange(tempoMin, tempoMax)} (1-2 days) at ${tempoPace}</p>
+                <p><strong>Easy Run (45-50%):</strong> ${formatDistanceRange(easyMin, easyMax)} (2-3 days) at ${easyPace}</p>
+                <p><strong>Interval Run (0-10%):</strong> ${formatDistanceRange(intervalMin, intervalMax)} (0-1 day) at ${intervalPace}</p>
+                <p><strong>Easy Recovery Run (10-30%):</strong> Any distance (any number of days) at ${easyRecoveryPace}</p>
             `;
         }
     </script>
