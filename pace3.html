@@ -39,6 +39,17 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        .link {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .link a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -53,6 +64,10 @@
         <button onclick="calculatePlan()">Calculate</button>
 
         <div id="result" class="result" style="display: none;"></div>
+
+        <div class="link">
+            <a href="https://wadcharid.github.io/vcr-fcaon/vcr1.html" target="_blank">More about VCR</a>
+        </div>
     </div>
 
     <script>
@@ -93,7 +108,7 @@
 
             const longRunPace = `${paceFromVCR(70, vcr)} - ${paceFromVCR(85, vcr)}`;
             const tempoPace = `${paceFromVCR(93, vcr)} - ${paceFromVCR(102, vcr)}`;
-            const easyPace = `${paceFromVCR(80, vcr)} - ${paceFromVCR(90, vcr)}`;
+            const easyPace = `${paceFromVCR(80, vcr)} - ${paceFromVCR(85, vcr)}`;
             const intervalPace = `${paceFromVCR(105, vcr)} - ${paceFromVCR(110, vcr)}`;
             const easyRecoveryPace = `${paceFromVCR(60, vcr)} - ${paceFromVCR(70, vcr)}`;
 
@@ -103,7 +118,7 @@
                 <h2>Training Plan</h2>
                 <p><strong>Long Run (25-30%):</strong> ${formatDistanceRange(longRunMin, longRunMax)} (1 day) at ${longRunPace}</p>
                 <p><strong>Tempo Run (10-15%):</strong> ${formatDistanceRange(tempoMin, tempoMax)} (1-2 days) at ${tempoPace}</p>
-                <p><strong>Easy Run (45-55%):</strong> ${formatDistanceRange(easyMin, easyMax)} (2-3 days) at ${easyPace}</p>
+                <p><strong>Easy Run (45-50%):</strong> ${formatDistanceRange(easyMin, easyMax)} (2-3 days) at ${easyPace}</p>
                 <p><strong>Interval Run (0-10%):</strong> ${formatDistanceRange(intervalMin, intervalMax)} (0-1 day) at ${intervalPace}</p>
                 <p><strong>Easy Recovery Run (10-30%):</strong> Any distance (any number of days) at ${easyRecoveryPace}</p>
             `;
