@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Running Plan Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weekly Running Plan Calculator</h1>
+        <label for="weeklyDistance">Weekly Distance (km):</label>
+        <input type="number" id="weeklyDistance" placeholder="Enter weekly distance in km">
+
+        <label for="vcr">VCR (m/s):</label>
+        <input type="number" id="vcr" step="0.01" placeholder="Enter VCR in m/s">
+
+        <button onclick="calculatePlan()">Calculate</button>
+
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function paceFromVCR(vcrPercentage, vcr) {
+            const paceSecondsPerKm = 1000 / (vcr * (vcrPercentage / 100));
+            const minutes = Math.floor(paceSecondsPerKm / 60);
+            const seconds = Math.round(paceSecondsPerKm % 60);
+            return `${minutes}:${seconds.toString().padStart(2, '0')} min/km`;
+        }
+
+        function calculatePlan() {
+            const weeklyDistance = parseFloat(document.getElementById('weeklyDistance').value);
+            const vcr = parseFloat(document.getElementById('vcr').value);
+
+            if (isNaN(weeklyDistance) || isNaN(vcr) || weeklyDistance <= 0 || vcr <= 0) {
+                alert('Please enter valid values for weekly distance and VCR.');
+                return;
+            }
+
+            const longRunDistance = weeklyDistance * 0.25;
+            const tempoDistance = weeklyDistance * 0.1;
+            const easyDistance = weeklyDistance * 0.45;
+            const intervalDistance = weeklyDistance * 0.1;
+
+            const longRunPace = `${paceFromVCR(70, vcr)} - ${paceFromVCR(85, vcr)}`;
+            const tempoPace = `${paceFromVCR(95, vcr)} - ${paceFromVCR(102, vcr)}`;
+            const easyPace = `${paceFromVCR(80, vcr)} - ${paceFromVCR(90, vcr)}`;
+            const intervalPace = `${paceFromVCR(105, vcr)} - ${paceFromVCR(110, vcr)}`;
+            const easyRecoveryPace = `${paceFromVCR(60, vcr)} - ${paceFromVCR(70, vcr)}`;
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h2>Training Plan</h2>
+                <p><strong>Long Run (25-30%):</strong> ${longRunDistance.toFixed(2)} km at ${longRunPace}</p>
+                <p><strong>Tempo Run (10-15%):</strong> ${tempoDistance.toFixed(2)} km at ${tempoPace}</p>
+                <p><strong>Easy Run (45-50%):</strong> ${easyDistance.toFixed(2)} km at ${easyPace}</p>
+                <p><strong>Interval Run (0-10%):</strong> ${intervalDistance.toFixed(2)} km at ${intervalPace}</p>
+                <p><strong>Easy Recovery Run (10-30%):</strong> Any distance at ${easyRecoveryPace}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
