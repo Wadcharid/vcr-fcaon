@@ -74,6 +74,12 @@
     </table>
 
     <script>
+        function formatPace(secondsPerKm) {
+            const minutes = Math.floor(secondsPerKm / 60);
+            const seconds = Math.round(secondsPerKm % 60);
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
         function calculateResults() {
             const vcr = parseFloat(document.getElementById('vcr').value);
             if (isNaN(vcr) || vcr <= 0) {
@@ -101,7 +107,8 @@
 
                 if (type !== 'REST') {
                     const adjustedVCR = vcr * paceFactors[type];
-                    pace = (1000 / adjustedVCR / 60).toFixed(2); // min/km
+                    const secondsPerKm = 1000 / adjustedVCR;
+                    pace = formatPace(secondsPerKm);
                     distance = Math.ceil((vcr * (duration * 60) / 1000));
                     totalDistance += distance;
                 } else {
