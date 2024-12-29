@@ -103,6 +103,7 @@
             resultsBody.innerHTML = '';
 
             let totalDistance = 0;
+            let additionalDistance = 0;
 
             Array.from(tableBody.querySelectorAll('tr')).forEach((row, index) => {
                 const day = row.cells[0].textContent;
@@ -111,6 +112,7 @@
 
                 let distance = 0;
                 let pace = '';
+                let extraNote = '';
 
                 if (type !== 'REST') {
                     const adjustedVCR = vcr * paceFactors[type];
@@ -118,6 +120,11 @@
                     pace = formatPace(secondsPerKm);
                     distance = Math.floor((adjustedVCR * (duration * 60)) / 1000);
                     totalDistance += distance;
+
+                    if (type !== 'Recovery') {
+                        extraNote = ' (WP+CD 2k)';
+                        additionalDistance += 2;
+                    }
                 } else {
                     pace = '-';
                 }
@@ -125,14 +132,14 @@
                 resultsBody.innerHTML += `
                     <tr>
                         <td>${day}</td>
-                        <td>${type}</td>
+                        <td>${type}${extraNote}</td>
                         <td>${distance}</td>
                         <td>${pace}</td>
                     </tr>
                 `;
             });
 
-            document.getElementById('totalDistance').textContent = totalDistance;
+            document.getElementById('totalDistance').textContent = totalDistance + additionalDistance;
         }
     </script>
 </body>
