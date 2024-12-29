@@ -115,7 +115,9 @@
             <h2>ผลลัพธ์จาก VCR</h2>
             <div class="zone-result">
                 <p><span class="highlight">Pace ของ VCR:</span> <span id="vcr-pace"></span></p>
-                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 60 นาที:</span> <span id="distance-prediction"></span></p>
+                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 60 นาที:</span> <span id="distance-prediction60"></span></p>
+                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 45 นาที:</span> <span id="distance-prediction45"></span></p>
+                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 30 นาที:</span> <span id="distance-prediction30"></span></p>
             </div>
         </div>
 
@@ -167,8 +169,17 @@ function calculateZones() {
 
     // คำนวณระยะทางใน 60 นาที
     var distanceIn60Minutes = vcr * 3600 / 1000; // แปลงเมตรเป็นกิโลเมตร
-    document.getElementById('distance-prediction').textContent = " " + distanceIn60Minutes.toFixed(2) + " กม.";
+    document.getElementById('distance-prediction60').textContent = " " + distanceIn60Minutes.toFixed(2) + " กม.";
 
+    // คำนวณระยะทางใน 45 นาที
+    var distanceIn45Minutes = (vcr-0.1) * 2700 / 1000; // แปลงเมตรเป็นกิโลเมตร
+    document.getElementById('distance-prediction45').textContent = " " + distanceIn45Minutes.toFixed(2) + " กม.";
+
+    // คำนวณระยะทางใน 30 นาที
+    var distanceIn30Minutes = (vcr-0.2) * 1800 / 1000; // แปลงเมตรเป็นกิโลเมตร
+    document.getElementById('distance-prediction30').textContent = " " + distanceIn30Minutes.toFixed(2) + " กม.";
+
+    
     // แสดงผล Training Zones
     document.getElementById('results').style.display = "block";
 
