@@ -3,135 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Running Training Plan</title>
+    <title>Running Training Program</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        input, select {
-            margin-bottom: 15px;
-            padding: 5px;
+        table {
             width: 100%;
-            max-width: 300px;
-        }
-        .time-input {
-            display: flex;
-            gap: 5px;
-        }
-        .time-input input {
-            width: calc(100% / 3 - 10px);
-        }
-        button {
-            margin-top: 15px;
-            padding: 10px 20px;
-        }
-        .output {
+            border-collapse: collapse;
             margin-top: 20px;
-            padding: 15px;
+        }
+        th, td {
             border: 1px solid #ccc;
-            background: #f9f9f9;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        input, select, button {
+            padding: 5px;
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>Running Training Plan Generator</h1>
-    <form id="training-form">
-        <h2>Personal Best Details</h2>
-        <label for="distance">Distance (km):</label>
-        <input type="number" id="distance" name="distance" step="0.1" required>
+    <h1>Running Training Program</h1>
+    <label for="vcr">Enter VCR (m/s):</label>
+    <input type="number" id="vcr" step="0.01" placeholder="e.g., 3.5">
 
-        <label for="best-time">Best Time:</label>
-        <div class="time-input">
-            <input type="number" id="best-time-hours" name="best-time-hours" placeholder="hh" min="0" required>
-            <input type="number" id="best-time-minutes" name="best-time-minutes" placeholder="mm" min="0" max="59" required>
-            <input type="number" id="best-time-seconds" name="best-time-seconds" placeholder="ss" min="0" max="59" required>
-        </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Type</th>
+                <th>Duration (minutes)</th>
+            </tr>
+        </thead>
+        <tbody id="trainingTable">
+            <tr><td>Monday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
+            <tr><td>Tuesday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
+            <tr><td>Wednesday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
+            <tr><td>Thursday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
+            <tr><td>Friday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
+            <tr><td>Saturday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
+            <tr><td>Sunday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
+        </tbody>
+    </table>
+    <button onclick="calculateResults()">Calculate</button>
 
-        <h2>Weekly Availability</h2>
-        <label for="monday">Monday (minutes):</label>
-        <input type="number" id="monday" name="monday" min="0" step="1" required>
-
-        <label for="tuesday">Tuesday (minutes):</label>
-        <input type="number" id="tuesday" name="tuesday" min="0" step="1" required>
-
-        <label for="wednesday">Wednesday (minutes):</label>
-        <input type="number" id="wednesday" name="wednesday" min="0" step="1" required>
-
-        <label for="thursday">Thursday (minutes):</label>
-        <input type="number" id="thursday" name="thursday" min="0" step="1" required>
-
-        <label for="friday">Friday (minutes):</label>
-        <input type="number" id="friday" name="friday" min="0" step="1" required>
-
-        <label for="saturday">Saturday (minutes):</label>
-        <input type="number" id="saturday" name="saturday" min="0" step="1" required>
-
-        <label for="sunday">Sunday (minutes):</label>
-        <input type="number" id="sunday" name="sunday" min="0" step="1" required>
-
-        <button type="button" onclick="generatePlan()">Generate Plan</button>
-    </form>
-
-    <div id="output" class="output" style="display:none;"></div>
+    <h2>Results</h2>
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Type</th>
+                <th>Distance (km)</th>
+                <th>Pace (min/km)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">Weekly Total</td>
+                <td id="totalDistance">0</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
 
     <script>
-        function generatePlan() {
-            const distance = parseFloat(document.getElementById('distance').value);
-
-            const bestTimeHours = parseInt(document.getElementById('best-time-hours').value) || 0;
-            const bestTimeMinutes = parseInt(document.getElementById('best-time-minutes').value) || 0;
-            const bestTimeSeconds = parseInt(document.getElementById('best-time-seconds').value) || 0;
-
-            const bestTime = `${bestTimeHours.toString().padStart(2, '0')}:${bestTimeMinutes.toString().padStart(2, '0')}:${bestTimeSeconds.toString().padStart(2, '0')}`;
-
-            const weeklyAvailability = {
-                Monday: parseInt(document.getElementById('monday').value),
-                Tuesday: parseInt(document.getElementById('tuesday').value),
-                Wednesday: parseInt(document.getElementById('wednesday').value),
-                Thursday: parseInt(document.getElementById('thursday').value),
-                Friday: parseInt(document.getElementById('friday').value),
-                Saturday: parseInt(document.getElementById('saturday').value),
-                Sunday: parseInt(document.getElementById('sunday').value),
-            };
-
-            const plan = [];
-            let previousWorkout = null;
-
-            for (const [day, minutes] of Object.entries(weeklyAvailability)) {
-                if (minutes >= 90 && previousWorkout !== 'Long Run') {
-                    plan.push(`${day}: Long Run (Zone 1-2, ${minutes} minutes).`);
-                    previousWorkout = 'Long Run';
-                } else if (minutes >= 60 && previousWorkout !== 'Tempo/Interval') {
-                    const workoutType = Math.random() > 0.5 ? 'Tempo Run (Zone 4)' : 'Interval Run (Zone 5)';
-                    plan.push(`${day}: ${workoutType} (${minutes} minutes).`);
-                    previousWorkout = 'Tempo/Interval';
-                } else if (minutes >= 30) {
-                    plan.push(`${day}: Easy Run (Zone 1-2, ${minutes} minutes).`);
-                    previousWorkout = 'Easy';
-                } else {
-                    plan.push(`${day}: Rest or recovery activities.`);
-                    previousWorkout = 'Rest';
-                }
+        function calculateResults() {
+            const vcr = parseFloat(document.getElementById('vcr').value);
+            if (isNaN(vcr) || vcr <= 0) {
+                alert('Please enter a valid VCR value.');
+                return;
             }
 
-            const totalMinutes = Object.values(weeklyAvailability).reduce((a, b) => a + b, 0);
-            const easyMinutes = Math.round(totalMinutes * 0.8);
-            const hardMinutes = totalMinutes - easyMinutes;
+            const paceFactors = {
+                AT: 0.85, MP: 0.9, LT: 0.97, VO2MAX: 1.1, Recovery: 0.7
+            };
 
-            const outputDiv = document.getElementById('output');
-            outputDiv.style.display = 'block';
-            outputDiv.innerHTML = `
-                <h2>Your 16-Week Training Plan:</h2>
-                <p><strong>Goal:</strong> Improve your best time for ${distance} km (Current PB: ${bestTime})</p>
-                <p><strong>Total Weekly Time:</strong> ${totalMinutes} minutes</p>
-                <p><strong>Recommended Breakdown:</strong> ${easyMinutes} minutes Easy/Long Runs (80%), ${hardMinutes} minutes Tempo/Interval Runs (20%)</p>
-                <ul>${plan.map(dayPlan => `<li>${dayPlan}</li>`).join('')}</ul>
-            `;
+            const tableBody = document.querySelector('#trainingTable');
+            const resultsBody = document.querySelector('#resultsTable tbody');
+            resultsBody.innerHTML = '';
+
+            let totalDistance = 0;
+
+            Array.from(tableBody.querySelectorAll('tr')).forEach((row, index) => {
+                const day = row.cells[0].textContent;
+                const type = row.querySelector('.type').value;
+                const duration = parseFloat(row.querySelector('.duration').value) || 0;
+
+                let distance = 0;
+                let pace = '';
+
+                if (type !== 'REST') {
+                    const adjustedVCR = vcr * paceFactors[type];
+                    pace = (1000 / adjustedVCR / 60).toFixed(2); // min/km
+                    distance = Math.ceil((vcr * (duration * 60) / 1000));
+                    totalDistance += distance;
+                } else {
+                    pace = '-';
+                }
+
+                resultsBody.innerHTML += `
+                    <tr>
+                        <td>${day}</td>
+                        <td>${type}</td>
+                        <td>${distance}</td>
+                        <td>${pace}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('totalDistance').textContent = totalDistance;
         }
     </script>
 </body>
