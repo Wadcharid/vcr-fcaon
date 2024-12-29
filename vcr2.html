@@ -172,11 +172,11 @@ function calculateZones() {
     document.getElementById('distance-prediction60').textContent = " " + distanceIn60Minutes.toFixed(2) + " กม.";
 
     // คำนวณระยะทางใน 45 นาที
-    var distanceIn45Minutes = (vcr-0.1) * 2700 / 1000; // แปลงเมตรเป็นกิโลเมตร
+    var distanceIn45Minutes = (vcr+0.1) * 2700 / 1000; // แปลงเมตรเป็นกิโลเมตร
     document.getElementById('distance-prediction45').textContent = " " + distanceIn45Minutes.toFixed(2) + " กม.";
 
     // คำนวณระยะทางใน 30 นาที
-    var distanceIn30Minutes = (vcr-0.2) * 1800 / 1000; // แปลงเมตรเป็นกิโลเมตร
+    var distanceIn30Minutes = (vcr+0.2) * 1800 / 1000; // แปลงเมตรเป็นกิโลเมตร
     document.getElementById('distance-prediction30').textContent = " " + distanceIn30Minutes.toFixed(2) + " กม.";
 
     
