@@ -76,7 +76,14 @@
     <script>
         function formatPace(secondsPerKm) {
             const minutes = Math.floor(secondsPerKm / 60);
-            const seconds = Math.round(secondsPerKm % 60);
+            let seconds = Math.round(secondsPerKm % 60);
+
+            // Adjust seconds to end with 0 or 5
+            seconds = Math.floor(seconds / 5) * 5;
+            if (seconds >= 60) {
+                seconds = 0;
+            }
+
             return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
