@@ -116,7 +116,7 @@
                     const adjustedVCR = vcr * paceFactors[type];
                     const secondsPerKm = 1000 / adjustedVCR;
                     pace = formatPace(secondsPerKm);
-                    distance = Math.ceil((vcr * (duration * 60) / 1000));
+                    distance = Math.floor((adjustedVCR * (duration * 60)) / 1000);
                     totalDistance += distance;
                 } else {
                     pace = '-';
