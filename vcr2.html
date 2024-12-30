@@ -189,7 +189,7 @@ function displayPrediction(timeInMinutes, speedAdjustment, elementId) {
     var distance = calculateDistance(timeInMinutes, speedAdjustment); // คำนวณระยะทาง
     var pace = calculatePaceVCR(timeInMinutes, distance); // คำนวณ Pace
     document.getElementById(elementId).textContent =
-        `${distance.toFixed(2)} กม., Pace: ${pace} นาที/กม.`; // แสดงผลใน Element ที่กำหนด
+        `${distance.toFixed(2)} กม. (Pace: ${pace} นาที/กม.)`; // แสดงผลใน Element ที่กำหนด
 }
 
 // เรียกใช้ฟังก์ชันสำหรับ 60, 45, และ 30 นาที
