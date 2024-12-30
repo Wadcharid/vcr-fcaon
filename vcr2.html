@@ -192,9 +192,6 @@ function displayPrediction(timeInMinutes, speedAdjustment, elementId) {
         `${distance.toFixed(2)} กม., Pace: ${pace} นาที/กม.`; // แสดงผลใน Element ที่กำหนด
 }
 
-// ตัวแปรความเร็ว vcr (ต้องกำหนดค่าในโค้ดจริง)
-var vcr = 5; // ตัวอย่างค่า vcr (5 เมตร/วินาที)
-
 // เรียกใช้ฟังก์ชันสำหรับ 60, 45, และ 30 นาที
 displayPrediction(60, 0, 'distance-prediction60'); // 60 นาที
 displayPrediction(45, 0.1, 'distance-prediction45'); // 45 นาที
