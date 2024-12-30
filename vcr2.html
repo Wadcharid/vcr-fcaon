@@ -176,10 +176,10 @@ function calculateDistance(timeInMinutes, speedAdjustment = 0) {
 }
 
 // ฟังก์ชันสำหรับคำนวณ Pace (xx:yy)
-function calculatePace(timeInMinutes, distance) {
-    var paceInMinutes = timeInMinutes / distance; // Pace หน่วยเป็นนาที/กิโลเมตร
-    var minutes = Math.floor(paceInMinutes); // นาที
-    var seconds = Math.round((paceInMinutes - minutes) * 60); // วินาที
+function calculatePace(vcr) {
+    var paceInSeconds = 1000 / vcr; // Pace หน่วยเป็นวินาที/กิโลเมตร
+    var minutes = Math.floor(paceInSeconds / 60); // นาที
+    var seconds = Math.round(paceInSeconds % 60); // วินาที
     if (seconds < 10) seconds = "0" + seconds; // เติม 0 ด้านหน้า
     return `${minutes}:${seconds}`; // คืนค่าในรูปแบบ xx:yy
 }
