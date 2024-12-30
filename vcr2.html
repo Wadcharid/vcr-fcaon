@@ -186,8 +186,9 @@ function calculatePace(timeInMinutes, distance) {
 
 // คำนวณและแสดงผล
 function displayPrediction(timeInMinutes, speedAdjustment, elementId) {
+    var adjustedVcr = vcr + speedAdjustment; // ปรับความเร็วตามที่กำหนด
     var distance = calculateDistance(timeInMinutes, speedAdjustment); // คำนวณระยะทาง
-    var pace = calculatePace(timeInMinutes, distance); // คำนวณ Pace
+    var pace = calculatePace(adjustedVcr); // คำนวณ Pace
     document.getElementById(elementId).textContent =
         `${distance.toFixed(2)} กม., Pace: ${pace} นาที/กม.`; // แสดงผลใน Element ที่กำหนด
 }
