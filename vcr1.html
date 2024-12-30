@@ -219,7 +219,7 @@
 
             document.getElementById('result').innerHTML = "Pace (" + distance + " กม.): " + paceFormatted + " นาที/กม.";
             document.getElementById('vcrDistance').innerHTML = "VCR Distance (60 mins): " + vcrDistanceMeters + " เมตร";
-            document.getElementById('vcr').innerHTML = "VCR: " + vcrSpeed.toFixed(1) + " m/s";
+            document.getElementById('vcr').innerHTML = "<b>VCR: " + vcrSpeed.toFixed(1) + " m/s</b>";
             document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
 
             document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที สำหรับฟื้นฟู หรือ มากกว่า 120 นาที สำหรับพัฒนาระบบแอโรบิค";
