@@ -167,17 +167,39 @@ function calculateZones() {
     var vcrPace = vcrMinutes + ":" + (vcrSeconds < 10 ? "0" + vcrSeconds : vcrSeconds) + " นาที/กม.";
     document.getElementById('vcr-pace').textContent = " " + vcrPace;
 
-    // คำนวณระยะทางใน 60 นาที
-    var distanceIn60Minutes = vcr * 3600 / 1000; // แปลงเมตรเป็นกิโลเมตร
-    document.getElementById('distance-prediction60').textContent = " " + distanceIn60Minutes.toFixed(2) + " กม.";
+    
+// ฟังก์ชันสำหรับคำนวณระยะทาง
+function calculateDistance(timeInMinutes, speedAdjustment = 0) {
+    var adjustedVcr = vcr + speedAdjustment; // ปรับความเร็วตามที่กำหนด
+    var distance = adjustedVcr * (timeInMinutes * 60) / 1000; // คำนวณระยะทางในกิโลเมตร
+    return distance;
+}
 
-    // คำนวณระยะทางใน 45 นาที
-    var distanceIn45Minutes = (vcr+0.1) * 2700 / 1000; // แปลงเมตรเป็นกิโลเมตร
-    document.getElementById('distance-prediction45').textContent = " " + distanceIn45Minutes.toFixed(2) + " กม.";
+// ฟังก์ชันสำหรับคำนวณ Pace (xx:yy)
+function calculatePace(timeInMinutes, distance) {
+    var paceInMinutes = timeInMinutes / distance; // Pace หน่วยเป็นนาที/กิโลเมตร
+    var minutes = Math.floor(paceInMinutes); // นาที
+    var seconds = Math.round((paceInMinutes - minutes) * 60); // วินาที
+    if (seconds < 10) seconds = "0" + seconds; // เติม 0 ด้านหน้า
+    return `${minutes}:${seconds}`; // คืนค่าในรูปแบบ xx:yy
+}
 
-    // คำนวณระยะทางใน 30 นาที
-    var distanceIn30Minutes = (vcr+0.2) * 1800 / 1000; // แปลงเมตรเป็นกิโลเมตร
-    document.getElementById('distance-prediction30').textContent = " " + distanceIn30Minutes.toFixed(2) + " กม.";
+// คำนวณและแสดงผล
+function displayPrediction(timeInMinutes, speedAdjustment, elementId) {
+    var distance = calculateDistance(timeInMinutes, speedAdjustment); // คำนวณระยะทาง
+    var pace = calculatePace(timeInMinutes, distance); // คำนวณ Pace
+    document.getElementById(elementId).textContent =
+        `${distance.toFixed(2)} กม., Pace: ${pace} นาที/กม.`; // แสดงผลใน Element ที่กำหนด
+}
+
+// ตัวแปรความเร็ว vcr (ต้องกำหนดค่าในโค้ดจริง)
+var vcr = 5; // ตัวอย่างค่า vcr (5 เมตร/วินาที)
+
+// เรียกใช้ฟังก์ชันสำหรับ 60, 45, และ 30 นาที
+displayPrediction(60, 0, 'distance-prediction60'); // 60 นาที
+displayPrediction(45, 0.1, 'distance-prediction45'); // 45 นาที
+displayPrediction(30, 0.2, 'distance-prediction30'); // 30 นาที
+
 
     
     // แสดงผล Training Zones
