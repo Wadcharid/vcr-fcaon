@@ -115,9 +115,9 @@
             <h2>ผลลัพธ์จาก VCR</h2>
             <div class="zone-result">
                 <p><span class="highlight">Pace ของ VCR:</span> <span id="vcr-pace"></span></p>
-                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 60 นาที:</span> <span id="distance-prediction60"></span></p>
-                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 45 นาที:</span> <span id="distance-prediction45"></span></p>
-                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 30 นาที:</span> <span id="distance-prediction30"></span></p>
+                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 60 นาที:<br></span> <span id="distance-prediction60"></span></p>
+                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 45 นาที:<br></span> <span id="distance-prediction45"></span></p>
+                <p><span class="highlight">ระยะทางคาดการณ์ในเวลา 30 นาที:<br></span> <span id="distance-prediction30"></span></p>
             </div>
         </div>
 
@@ -189,7 +189,7 @@ function displayPrediction(timeInMinutes, speedAdjustment, elementId) {
     var distance = calculateDistance(timeInMinutes, speedAdjustment); // คำนวณระยะทาง
     var pace = calculatePaceVCR(timeInMinutes, distance); // คำนวณ Pace
     document.getElementById(elementId).textContent =
-        `${distance.toFixed(2)} กม. (Pace: ${pace} นาที/กม.)`; // แสดงผลใน Element ที่กำหนด
+        `${distance.toFixed(2)} กม. (${pace} นาที/กม.)`; // แสดงผลใน Element ที่กำหนด
 }
 
 // เรียกใช้ฟังก์ชันสำหรับ 60, 45, และ 30 นาที
