@@ -114,7 +114,7 @@
     </select>
     
     <h1>Training Load Calculator</h1>
-    <form onsubmit="calculateTrainingLoad(event)">
+    <form oninput="calculateTrainingLoad()">
         <label for="weekly_tl">Weekly Training Load (TL):</label>
         <input type="number" id="weekly_tl" name="weekly_tl" required>
         
@@ -130,8 +130,6 @@
             <input type="number" id="vcr_minutes" name="vcr_minutes" placeholder="Minutes" required>
             <input type="number" id="vcr_seconds" name="vcr_seconds" placeholder="Seconds" required>
         </div>
-        
-        <button type="submit">Calculate</button>
     </form>
 
     <div id="result" style="text-align: center; margin-top: 20px;"></div>
@@ -144,8 +142,13 @@
         const distanceMultipliers = [0.7, 0.80, 0.9, 0.98];
 
         // Update percentages based on dropdown
-        document.getElementById('phaseSelector').addEventListener('change', (event) => {
-            const phase = event.target.value;
+        document.getElementById('phaseSelector').addEventListener('change', () => {
+            updatePercentages();
+            calculateTrainingLoad();
+        });
+
+        function updatePercentages() {
+            const phase = document.getElementById('phaseSelector').value;
             switch (phase) {
                 case 'Base':
                     percentages = [0.2, 0.6, 0.15, 0.05];
@@ -159,15 +162,19 @@
                 default:
                     percentages = [0.2, 0.6, 0.15, 0.05]; // Default to Base
             }
-        });
+        }
 
-        function calculateTrainingLoad(event) {
-            event.preventDefault();
-
-            const weeklyTL = parseInt(document.getElementById('weekly_tl').value);
-            const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value);
-            const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value);
+        function calculateTrainingLoad() {
+            const weeklyTL = parseInt(document.getElementById('weekly_tl').value) || 0;
+            const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value) || 0;
+            const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value) || 0;
             const vcrPaceSeconds = vcrMinutes * 60 + vcrSeconds;
+
+            if (weeklyTL === 0 || vcrPaceSeconds === 0) {
+                document.getElementById('result').innerHTML = '';
+                document.getElementById('daily-load').innerHTML = '';
+                return;
+            }
 
             const zoneTL = percentages.map(p => Math.floor(weeklyTL * p));
             const durations = zoneTL.map((tl, i) => Math.ceil(tl / durationConstants[i]));
@@ -190,6 +197,9 @@
             document.getElementById('result').innerHTML = tableHTML;
             document.getElementById('daily-load').innerHTML = `Daily Load: <strong>${dailyLoad}</strong>`;
         }
+
+        // Initialize calculation
+        calculateTrainingLoad();
     </script>
 </body>
 </html>
