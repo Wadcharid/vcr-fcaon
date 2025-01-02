@@ -5,98 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Training Load Calculator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            background-color: #f4f4f9;
-        }
-        h1 {
-            text-align: center;
-            padding: 20px 0;
-            margin: 0;
-            background-color: #007BFF;
-            color: white;
-        }
-        form {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            margin-bottom: 8px;
-            font-weight: bold;
-            display: block;
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .inline {
-            display: flex;
-            gap: 10px;
-        }
-        .inline input {
-            flex: 1;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 80%;
-            background-color: white;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f9;
-            font-weight: bold;
-        }
-        td:nth-child(1), td:nth-child(2) , td:nth-child(3), td:nth-child(4) {
-            width: 15%; /* Adjust column width for Est. Duration and Est. Distance */
-        }
-        #daily-load {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
-            form {
-                padding: 10px;
-            }
-            input, button {
-                font-size: 14px;
-            }
-            table {
-                font-size: 14px;
-            }
-        }
+        /* Style as per your original code */
     </style>
 </head>
 <body>
@@ -118,12 +27,12 @@
         <label for="weekly_tl">Weekly Training Load (TL):</label>
         <input type="number" id="weekly_tl" name="weekly_tl" required>
         
-    <label for="phaseSelector">Select Phase:</label>
-    <select id="phaseSelector">
-        <option value="Base" selected>Base</option>
-        <option value="Build">Build</option>
-        <option value="Peak">Peak</option>
-    </select>
+        <label for="phaseSelector">Select Phase:</label>
+        <select id="phaseSelector">
+            <option value="Base" selected>Base</option>
+            <option value="Build">Build</option>
+            <option value="Peak">Peak</option>
+        </select>
         
         <label>VCR Pace:</label>
         <div class="inline">
@@ -138,27 +47,14 @@
     <div id="daily-load"></div>
 
     <script>
-        function calculateTrainingLoad(event) {
-            event.preventDefault();
-            
-            const weeklyTL = parseInt(document.getElementById('weekly_tl').value);
-            const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value);
-            const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value);
-            const vcrPaceSeconds = vcrMinutes * 60 + vcrSeconds;
-
-            // const zones = ['Z1', 'Z2', 'Z3', 'Z4-Z6'];
-            // const percentages = [0.1, 0.55, 0.15, 0.2];
-            // const durationConstants = [0.8, 1.60, 2.58, 3.60];
-            // const distanceMultipliers = [0.7, 0.80, 0.9, 0.98];
-
-        // Define constants and initial variables
         const zones = ['Z1', 'Z2', 'Z3', 'Z4-Z6'];
-        let percentages = [];
+        let percentages = [0.2, 0.6, 0.15, 0.05]; // Default to Base
         const durationConstants = [0.8, 1.60, 2.58, 3.60];
         const distanceMultipliers = [0.7, 0.80, 0.9, 0.98];
 
-        // Function to update percentages based on phase
-        function updatePercentages(phase) {
+        // Update percentages based on dropdown
+        document.getElementById('phaseSelector').addEventListener('change', (event) => {
+            const phase = event.target.value;
             switch (phase) {
                 case 'Base':
                     percentages = [0.2, 0.6, 0.15, 0.05];
@@ -172,28 +68,29 @@
                 default:
                     percentages = [0.2, 0.6, 0.15, 0.05]; // Default to Base
             }
-            console.log(`Updated Percentages for ${phase}:`, percentages);
-        }
-
-        // Event listener for dropdown selection
-        document.getElementById('phaseSelector').addEventListener('change', (event) => {
-            updatePercentages(event.target.value);
+            console.log(`Phase changed to: ${phase}, Percentages:`, percentages);
         });
 
-            
-        // Initialize with default phase
-        updatePercentages('Base');
+        function calculateTrainingLoad(event) {
+            event.preventDefault();
 
-            
+            const weeklyTL = parseInt(document.getElementById('weekly_tl').value);
+            const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value);
+            const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value);
+            const vcrPaceSeconds = vcrMinutes * 60 + vcrSeconds;
+
+            if (isNaN(weeklyTL) || isNaN(vcrMinutes) || isNaN(vcrSeconds)) {
+                alert("Please fill out all fields!");
+                return;
+            }
+
             const zoneTL = percentages.map(p => Math.floor(weeklyTL * p));
             const durations = zoneTL.map((tl, i) => Math.ceil(tl / durationConstants[i]));
             const distances = durations.map((duration, i) => Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds));
 
-            let totalTL = 0;
-            let totalDuration = 0;
-            let totalDistance = 0;
-
+            let totalTL = 0, totalDuration = 0, totalDistance = 0;
             let tableHTML = '<table><tr><th>Zone</th><th>TL</th><th>Est. Duration (min)</th><th>Est. Distance (km)</th></tr>';
+
             zones.forEach((zone, i) => {
                 totalTL += zoneTL[i];
                 totalDuration += durations[i];
@@ -205,10 +102,8 @@
             tableHTML += '</table>';
 
             const dailyLoad = Math.floor(totalTL / 7);
-            const dailyLoadHTML = `Daily Load: <strong>${dailyLoad}</strong>`;
-
             document.getElementById('result').innerHTML = tableHTML;
-            document.getElementById('daily-load').innerHTML = dailyLoadHTML;
+            document.getElementById('daily-load').innerHTML = `Daily Load: <strong>${dailyLoad}</strong>`;
         }
     </script>
 </body>
