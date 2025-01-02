@@ -128,8 +128,8 @@
 
             const zones = ['Z1', 'Z2', 'Z3', 'Z4-Z6'];
             const percentages = [0.1, 0.55, 0.05, 0.3];
-            const durationConstants = [0.8, 1.57, 2.58, 3.47];
-            const distanceMultipliers = [0.7, 0.85, 0.9, 1.0];
+            const durationConstants = [0.8, 1.57, 2.58, 3.65];
+            const distanceMultipliers = [0.7, 0.85, 0.9, 0.98];
 
             const zoneTL = percentages.map(p => Math.floor(weeklyTL * p));
             const durations = zoneTL.map((tl, i) => Math.ceil(tl / durationConstants[i]));
