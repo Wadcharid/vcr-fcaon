@@ -29,6 +29,19 @@
     </style>
 </head>
 <body>
+
+    <label for="menu">Choose a page:</label>
+    <select id="menu" onchange="location = this.value;">
+        <option value="">-- Select --</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/vcr1.html">1.หาค่า VCR</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/vcr2.html">2.หาโซนจาก VCR </option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/pace1.html">3.คำนวณ Pace,Distance,Time</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/pace2.html">4.คำนวณ %Pace</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/pace3.html">5.VCR Weekly Plan</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/load1.html">6.COROS Load</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/training1.html">7.Training Program</option>
+    </select>
+    
     <h1>Running Training Program</h1>
     <label for="vcr">Enter VCR (m/s):</label>
     <input type="number" id="vcr" step="0.01" placeholder="e.g., 3.5">
