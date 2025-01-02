@@ -7,41 +7,62 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
             padding: 0;
             box-sizing: border-box;
+            background-color: #f4f4f9;
         }
         h1 {
             text-align: center;
+            padding: 20px 0;
+            margin: 0;
+            background-color: #007BFF;
+            color: white;
         }
         form {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 90%;
+            margin: 20px auto;
+            padding: 15px;
             border: 1px solid #ccc;
             border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-        label, input, button {
-            display: block;
-            width: 100%;
-            margin-bottom: 15px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         label {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            display: block;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
         .inline {
             display: flex;
-            justify-content: space-between;
-            gap: 10px; /* Adjusted spacing between inputs */
+            gap: 10px;
         }
         .inline input {
-            width: 48%;
+            flex: 1;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
         table {
             margin: 20px auto;
             border-collapse: collapse;
-            width: 80%;
+            width: 95%;
+            background-color: white;
         }
         table, th, td {
             border: 1px solid #ccc;
@@ -50,17 +71,23 @@
             padding: 10px;
             text-align: center;
         }
-        button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        th {
+            background-color: #f4f4f9;
+            font-weight: bold;
         }
-        button:hover {
-            background-color: #0056b3;
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            form {
+                padding: 10px;
+            }
+            input, button {
+                font-size: 14px;
+            }
+            table {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
