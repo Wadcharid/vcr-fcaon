@@ -5,7 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Training Load Calculator</title>
     <style>
-        /* Style as per your original code */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px 0;
+            margin: 0;
+            background-color: #007BFF;
+            color: white;
+        }
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            display: block;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .inline {
+            display: flex;
+            gap: 10px;
+        }
+        .inline input {
+            flex: 1;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            background-color: white;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f9;
+            font-weight: bold;
+        }
+        td:nth-child(1), td:nth-child(2), td:nth-child(3), td:nth-child(4) {
+            width: 15%; /* Adjust column width for Est. Duration and Est. Distance */
+        }
+        #daily-load {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            form {
+                padding: 10px;
+            }
+            input, select, button {
+                font-size: 14px;
+            }
+            table {
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -68,7 +159,6 @@
                 default:
                     percentages = [0.2, 0.6, 0.15, 0.05]; // Default to Base
             }
-            console.log(`Phase changed to: ${phase}, Percentages:`, percentages);
         });
 
         function calculateTrainingLoad(event) {
@@ -78,11 +168,6 @@
             const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value);
             const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value);
             const vcrPaceSeconds = vcrMinutes * 60 + vcrSeconds;
-
-            if (isNaN(weeklyTL) || isNaN(vcrMinutes) || isNaN(vcrSeconds)) {
-                alert("Please fill out all fields!");
-                return;
-            }
 
             const zoneTL = percentages.map(p => Math.floor(weeklyTL * p));
             const durations = zoneTL.map((tl, i) => Math.ceil(tl / durationConstants[i]));
