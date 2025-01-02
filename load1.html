@@ -100,6 +100,15 @@
     </style>
 </head>
 <body>
+
+    <label for="menu">Choose a page:</label>
+    <select id="menu" onchange="location = this.value;">
+        <option value="">-- Select --</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/load1.html">Load1</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/vcr2.html">VCR2</option>
+        <option value="https://wadcharid.github.io/vcr-fcaon/pace2.html">Pace2</option>
+    </select>
+    
     <h1>Training Load Calculator</h1>
     <form onsubmit="calculateTrainingLoad(event)">
         <label for="weekly_tl">Weekly Training Load (TL):</label>
