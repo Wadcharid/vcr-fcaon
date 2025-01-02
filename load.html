@@ -88,12 +88,12 @@
             const distanceMultipliers = [0.7, 0.85, 0.9, 1.0];
 
             const zoneTL = percentages.map(p => weeklyTL * p);
-            const durations = zoneTL.map((tl, i) => tl / durationConstants[i]);
+            const durations = zoneTL.map((tl, i) => Math.ceil(tl / durationConstants[i]));
             const distances = durations.map((duration, i) => duration * 60 * distanceMultipliers[i] / vcrPaceSeconds);
 
             let tableHTML = '<table><tr><th>Zone</th><th>TL</th><th>Est. Duration (min)</th><th>Est. Distance (km)</th></tr>';
             zones.forEach((zone, i) => {
-                tableHTML += `<tr><td>${zone}</td><td>${zoneTL[i].toFixed(2)}</td><td>${durations[i].toFixed(2)}</td><td>${distances[i].toFixed(2)}</td></tr>`;
+                tableHTML += `<tr><td>${zone}</td><td>${zoneTL[i].toFixed(2)}</td><td>${durations[i]}</td><td>${distances[i].toFixed(2)}</td></tr>`;
             });
             tableHTML += '</table>';
 
