@@ -30,6 +30,13 @@
         label {
             margin-bottom: 5px;
         }
+        .inline {
+            display: flex;
+            justify-content: space-between;
+        }
+        .inline input {
+            width: 48%;
+        }
         table {
             margin: 20px auto;
             border-collapse: collapse;
@@ -62,11 +69,11 @@
         <label for="weekly_tl">Weekly Training Load (TL):</label>
         <input type="number" id="weekly_tl" name="weekly_tl" required>
         
-        <label for="vcr_minutes">VCR Pace - Minutes:</label>
-        <input type="number" id="vcr_minutes" name="vcr_minutes" required>
-        
-        <label for="vcr_seconds">VCR Pace - Seconds:</label>
-        <input type="number" id="vcr_seconds" name="vcr_seconds" required>
+        <label>VCR Pace:</label>
+        <div class="inline">
+            <input type="number" id="vcr_minutes" name="vcr_minutes" placeholder="Minutes" required>
+            <input type="number" id="vcr_seconds" name="vcr_seconds" placeholder="Seconds" required>
+        </div>
         
         <button type="submit">Calculate</button>
     </form>
@@ -89,12 +96,21 @@
 
             const zoneTL = percentages.map(p => weeklyTL * p);
             const durations = zoneTL.map((tl, i) => Math.ceil(tl / durationConstants[i]));
-            const distances = durations.map((duration, i) => duration * 60 * distanceMultipliers[i] / vcrPaceSeconds);
+            const distances = durations.map((duration, i) => Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds));
+
+            let totalTL = 0;
+            let totalDuration = 0;
+            let totalDistance = 0;
 
             let tableHTML = '<table><tr><th>Zone</th><th>TL</th><th>Est. Duration (min)</th><th>Est. Distance (km)</th></tr>';
             zones.forEach((zone, i) => {
-                tableHTML += `<tr><td>${zone}</td><td>${zoneTL[i].toFixed(2)}</td><td>${durations[i]}</td><td>${distances[i].toFixed(2)}</td></tr>`;
+                totalTL += zoneTL[i];
+                totalDuration += durations[i];
+                totalDistance += distances[i];
+                tableHTML += `<tr><td>${zone}</td><td>${zoneTL[i].toFixed(2)}</td><td>${durations[i]}</td><td>${distances[i]}</td></tr>`;
             });
+
+            tableHTML += `<tr><th>Total</th><th>${totalTL.toFixed(2)}</th><th>${totalDuration}</th><th>${totalDistance}</th></tr>`;
             tableHTML += '</table>';
 
             document.getElementById('result').innerHTML = tableHTML;
