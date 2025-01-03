@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pace Calculator</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        input {
+            width: 90%;
+            padding: 4px;
+        }
+
+        .result {
+            background-color: #e9f7e9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pace and Time Calculator</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Distance (km)</th>
+                <th>Pace (Minutes)</th>
+                <th>Pace (Seconds)</th>
+                <th>Time (Minutes)</th>
+            </tr>
+        </thead>
+        <tbody id="calculatorTable">
+            <tr>
+                <td><input type="number" class="distance" step="0.01"></td>
+                <td><input type="number" class="pace-minutes"></td>
+                <td><input type="number" class="pace-seconds"></td>
+                <td class="result">0</td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="addRow()">Add Row</button>
+    <button onclick="calculateTime()">Calculate</button>
+
+    <script>
+        function addRow() {
+            const table = document.getElementById('calculatorTable');
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td><input type="number" class="distance" step="0.01"></td>
+                <td><input type="number" class="pace-minutes"></td>
+                <td><input type="number" class="pace-seconds"></td>
+                <td class="result">0</td>
+            `;
+
+            table.appendChild(newRow);
+        }
+
+        function calculateTime() {
+            const rows = document.querySelectorAll('#calculatorTable tr');
+
+            rows.forEach(row => {
+                const distance = parseFloat(row.querySelector('.distance').value) || 0;
+                const paceMinutes = parseInt(row.querySelector('.pace-minutes').value) || 0;
+                const paceSeconds = parseInt(row.querySelector('.pace-seconds').value) || 0;
+
+                const totalPaceSeconds = (paceMinutes * 60) + paceSeconds;
+                const totalSeconds = distance * totalPaceSeconds;
+                const totalMinutes = Math.ceil(totalSeconds / 60); // Round up to the nearest minute
+
+                row.querySelector('.result').textContent = totalMinutes;
+            });
+        }
+    </script>
+</body>
+</html>
