@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coach Running Planner</title>
+  <title>My Running Coach (Advance)</title>
   <style>
     /* รีเซ็ตเบื้องต้น */
     * {
@@ -117,6 +117,14 @@
       margin-top: 1rem;
     }
 
+    /* เพิ่มสไตล์เล็กน้อยสำหรับ Workout Type */
+    .workout-type {
+      font-size: 0.85rem;
+      color: #555;
+      display: block; /* ให้ขึ้นบรรทัดใหม่ */
+      margin-top: 0.25rem;
+    }
+
     @media (max-width: 600px) {
       .form-group label,
       .form-group input,
@@ -132,8 +140,8 @@
 </head>
 <body>
   <header>
-    <h1>My Running Coach</h1>
-    <p>สร้างตารางซ้อมวิ่งที่เหมาะกับคุณโดยอัตโนมัติ</p>
+    <h1>My Running Coach (Advance)</h1>
+    <p>ตัวอย่างโค้ชวิ่งอัตโนมัติที่เพิ่มรายละเอียดการซ้อมและการ Taper</p>
   </header>
 
   <div class="container">
@@ -150,17 +158,17 @@
     </div>
 
     <div class="form-group">
-      <label for="trainingWeeks">จำนวนสัปดาห์ที่ต้องการเตรียมตัว:</label>
+      <label for="trainingWeeks">จำนวนสัปดาห์ที่ต้องการเตรียมตัว (เช่น 8):</label>
       <input type="number" id="trainingWeeks" placeholder="8" min="1" value="8">
     </div>
 
     <div class="form-group">
-      <label for="runDaysPerWeek">จำนวนวันวิ่งต่อสัปดาห์:</label>
+      <label for="runDaysPerWeek">จำนวนวันวิ่งต่อสัปดาห์ (1-7):</label>
       <input type="number" id="runDaysPerWeek" placeholder="3" min="1" max="7" value="3">
     </div>
 
     <div class="form-group">
-      <label for="currentMileage">ไมล์สะสมต่อสัปดาห์ (กิโลเมตร) ในปัจจุบัน:</label>
+      <label for="currentMileage">ไมล์สะสมต่อสัปดาห์ (กม.) ในปัจจุบัน:</label>
       <input type="number" id="currentMileage" placeholder="10" min="0" value="10">
     </div>
 
@@ -177,60 +185,147 @@
     const generatePlanBtn = document.getElementById('generatePlanBtn');
     const resultContainer = document.getElementById('resultContainer');
 
-    // ฟังก์ชั่นจำลองการคำนวณตารางซ้อมอย่างง่าย
-    function generateTrainingPlan(distanceGoal, weeks, runDays, currentMileage) {
-      // สมมติค่าที่เพิ่มระยะทางประมาณ 10% ต่อสัปดาห์
-      // และกระจายลงบนจำนวนวันวิ่ง (runDays)
-      // *** ทั้งหมดนี้เป็นเพียงตัวอย่างอย่างง่าย ควรปรับใช้ตามหลักการซ้อมจริง ***
-      
+    // ฟังก์ชั่นจำลองการคำนวณตารางซ้อม + Taper + Workout Type
+    function generateTrainingPlan(distanceGoal, totalWeeks, runDays, currentMileage) {
+      // สัปดาห์ Taper สุดท้าย 2 สัปดาห์ (ถ้า totalWeeks >= 4)
+      // ตัวอย่างเงื่อนไข: ถ้า totalWeeks >= 4
+      //    - สัปดาห์รองสุดท้าย (week = totalWeeks - 1): 80% ของสัปดาห์ก่อนหน้า
+      //    - สัปดาห์สุดท้าย (week = totalWeeks): 60% ของสัปดาห์ก่อนหน้า
+      // ทั้งนี้ถ้าสัปดาห์น้อยกว่า 4 อาจจะไม่ทำ Taper หรือปรับตามต้องการ
+
       const plan = [];
-      let weeklyMileage = currentMileage; // เริ่มต้นจากค่าปัจจุบัน
+      let weeklyMileage = currentMileage; // เริ่มจากค่าปัจจุบัน
 
-      for(let w = 1; w <= weeks; w++) {
-        // เพิ่มขึ้น 10% ต่อสัปดาห์ (หรือจะปรับเป็นเงื่อนไขอื่น ๆ ก็ได้)
-        if(w > 1) {
-          weeklyMileage = weeklyMileage * 1.1; 
-        }
-        // ปัดเป็นตัวเลขสวย ๆ
-        const roundMileage = Math.round(weeklyMileage);
+      for (let w = 1; w <= totalWeeks; w++) {
+        let roundMileage;
 
-        // สร้างตารางรายวันสมมติ
-        // แจกแจงไมล์รวมทั้งสัปดาห์ลงใน runDays
-        // เช่นถ้าวิ่ง 3 วันต่อสัปดาห์ ก็จะแบ่งเป็น 20%, 30%, 50% ของไมล์รวม
-        // เพื่อให้ได้ตัวเลขต่างกันในแต่ละวัน
-        // (สามารถเขียน logic กระจายได้หลายแบบตามใจชอบ)
-        const dayDist = [];
-        if (runDays === 1) {
-          dayDist.push(roundMileage);
-        } else if (runDays === 2) {
-          dayDist.push(Math.round(roundMileage * 0.5));
-          dayDist.push(Math.round(roundMileage * 0.5));
-        } else {
-          // สมมติ: 20%, 30%, 20%, 30%... วนไปจนครบ runDays
-          let pattern = [0.2, 0.3, 0.2, 0.3, 0.2, 0.2, 0.2]; 
-          // pattern สำหรับ 7 วัน (ตัวอย่าง)
-          // แต่ถ้า runDays น้อยหรือมากกว่า 7 ก็ปรับลด/เพิ่มลูปเอง
-          for(let i = 0; i < runDays; i++){
-            const dist = Math.round(roundMileage * pattern[i % pattern.length]);
-            dayDist.push(dist);
+        if (w > 1) {
+          // ก่อนเข้าสู่ช่วง Taper
+          if (totalWeeks >= 4 && (w === totalWeeks - 1 || w === totalWeeks)) {
+            // 2 สัปดาห์สุดท้าย (Taper)
+            if (w === totalWeeks - 1) {
+              // Taper 80%
+              weeklyMileage = weeklyMileage * 0.8;
+            } else if (w === totalWeeks) {
+              // Taper 60%  
+              weeklyMileage = weeklyMileage * 0.6;
+            }
+          } else {
+            // ไม่ใช่ Taper -> +10%
+            weeklyMileage = weeklyMileage * 1.1;
           }
-          // ตรวจสอบรวมของ dayDist เกินหรือต่ำกว่า weeklyMileage มากเกินไปหรือไม่
-          // (ในตัวอย่างนี้จะปล่อยเรียบง่าย ๆ ไปก่อน)
+        }
+
+        roundMileage = Math.round(weeklyMileage);
+
+        // สร้างตารางรายวัน (Day Distances) พร้อม "ประเภทการซ้อม (Workout Type)"
+        // ตัวอย่างการแบ่งประเภทถ้าวิ่ง 3 วัน:
+        //   - Day1: Easy
+        //   - Day2: Interval/Tempo
+        //   - Day3: Long Run
+        // ถ้าวิ่งมากกว่านี้ อาจกำหนด pattern หลายแบบ หรือสร้าง logic ซับซ้อนขึ้น
+
+        const dayData = []; // เก็บ { distance, workoutType }
+
+        // สมมติรูปแบบการซ้อมตามจำนวนวัน
+        // ตัวอย่าง pattern ง่าย ๆ: [Easy, Interval, Easy, Tempo, Easy, Long Run, Rest?] ...
+        // สามารถปรับให้สอดคล้องกับ runDays ได้ตามต้องการ
+        const workoutPattern = generateWorkoutPattern(runDays);
+
+        // กระจายระยะทางลงในแต่ละวันตามสัดส่วน (ตัวอย่าง)
+        // เช่น ถ้าวิ่ง 3 วัน อาจแบ่ง 25%, 30%, 45%
+        // หรือถ้าวิ่ง 4 วันอาจแบ่ง 20%, 25%, 20%, 35%, เป็นต้น
+        const ratioArr = getDistanceRatio(runDays);
+
+        let totalRatioSum = 0;
+        ratioArr.forEach((r) => (totalRatioSum += r));
+
+        for (let d = 0; d < runDays; d++) {
+          const dist = Math.round(roundMileage * (ratioArr[d] / totalRatioSum));
+          dayData.push({
+            distance: dist,
+            workoutType: workoutPattern[d] || "Easy Run", // fallback ถ้า pattern ไม่พอ
+          });
         }
 
         plan.push({
           weekNum: w,
           totalMileage: roundMileage,
-          days: dayDist
+          days: dayData,
         });
       }
 
       return plan;
     }
 
+    // สร้าง pattern ง่าย ๆ ของประเภทการซ้อม (Workout Type) ตามจำนวนวันวิ่ง
+    function generateWorkoutPattern(runDays) {
+      // ตัวอย่างง่าย ๆ สำหรับ 3 วัน
+      // จะได้ ["Easy Run", "Interval/Tempo", "Long Run"]
+
+      // ถ้าอยากให้รองรับได้หลาย ๆ วัน อาจกำหนดเงื่อนไขว่า
+      //   1: Easy
+      //   2: Interval
+      //   3: Easy
+      //   4: Tempo
+      //   5: Long
+      //   6: Recovery
+      //   7: Rest
+      // หรือแล้วแต่จะออกแบบ
+      // ในตัวอย่างนี้จะยกตัวอย่างสั้น ๆ
+      const pattern3 = ["Easy Run", "Interval/Tempo", "Long Run"];
+      const pattern4 = ["Easy Run", "Interval", "Tempo", "Long Run"];
+      const pattern5 = ["Easy Run", "Interval", "Easy Run", "Tempo", "Long Run"];
+      const pattern6 = ["Easy Run", "Interval", "Tempo", "Easy Run", "Long Run", "Recovery Run"];
+      const pattern7 = ["Easy Run", "Interval", "Easy Run", "Tempo", "Long Run", "Recovery Run", "Rest Day"];
+
+      switch (runDays) {
+        case 1:
+          return ["Long Run"];
+        case 2:
+          return ["Easy Run", "Long Run"];
+        case 3:
+          return pattern3;
+        case 4:
+          return pattern4;
+        case 5:
+          return pattern5;
+        case 6:
+          return pattern6;
+        case 7:
+          return pattern7;
+        default:
+          return pattern3; // fallback
+      }
+    }
+
+    // กำหนดสัดส่วนการแบ่งระยะทางในแต่ละวัน (Total = 1.0)
+    // ตัวอย่าง: ถ้าวิ่ง 3 วัน -> [0.25, 0.3, 0.45]
+    function getDistanceRatio(runDays) {
+      // สามารถปรับได้ตามหลักการซ้อมจริงหรือตามใจชอบ
+      switch (runDays) {
+        case 1:
+          return [1.0];
+        case 2:
+          return [0.4, 0.6];
+        case 3:
+          return [0.25, 0.3, 0.45];
+        case 4:
+          return [0.2, 0.2, 0.25, 0.35];
+        case 5:
+          return [0.15, 0.2, 0.15, 0.2, 0.3];
+        case 6:
+          return [0.15, 0.15, 0.15, 0.2, 0.2, 0.15];
+        case 7:
+          return [0.1, 0.15, 0.15, 0.2, 0.2, 0.15, 0.05];
+        default:
+          return [0.25, 0.3, 0.45];
+      }
+    }
+
     // ฟังก์ชั่นแสดงผลตาราง
     function renderPlan(plan, runDays) {
-      if(plan.length === 0) {
+      if (plan.length === 0) {
         return '<p class="no-plan">ไม่มีข้อมูลตารางซ้อม</p>';
       }
 
@@ -242,26 +337,31 @@
               <th>รวม (กม.)</th>
       `;
       // สร้างหัวตารางย่อยสำหรับวันวิ่ง
-      for(let d = 1; d <= runDays; d++){
+      for (let d = 1; d <= runDays; d++) {
         html += `<th>Day ${d}</th>`;
       }
       html += `</tr></thead><tbody>`;
 
       // สร้างบรรทัดของแต่ละสัปดาห์
-      plan.forEach(week => {
+      plan.forEach((week) => {
         html += `
           <tr>
             <td>W${week.weekNum}</td>
             <td>${week.totalMileage}</td>
         `;
-        // ใส่ข้อมูลไมล์แต่ละวัน
-        week.days.forEach(day => {
-          html += `<td>${day}</td>`;
+        // ใส่ข้อมูลไมล์+ประเภทการซ้อมในแต่ละวัน
+        week.days.forEach((day) => {
+          html += `
+            <td>
+              ${day.distance} กม.
+              <span class="workout-type">${day.workoutType}</span>
+            </td>
+          `;
         });
-        // ถ้า day น้อยกว่าจำนวน runDays ที่ตั้งไว้ (ในกรณี logic ไม่ครอบคลุม) ให้เติมคอลัมน์เปล่า
-        if(week.days.length < runDays) {
-          for(let i = week.days.length; i < runDays; i++) {
-            html += `<td>0</td>`;
+        // ถ้า day น้อยกว่าจำนวน runDays ที่ตั้งไว้ (เช่นบางกรณี logic ไม่ครอบคลุม) ให้เติมคอลัมน์เปล่า
+        if (week.days.length < runDays) {
+          for (let i = week.days.length; i < runDays; i++) {
+            html += `<td> - </td>`;
           }
         }
         html += `</tr>`;
