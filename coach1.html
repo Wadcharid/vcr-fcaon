@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coach Running Planner</title>
+  <style>
+    /* รีเซ็ตเบื้องต้น */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: sans-serif;
+      background: #f6f8fa;
+      color: #333;
+      line-height: 1.5;
+      padding: 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: #666;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 2rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #007BFF;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      margin-top: 1.5rem;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      margin-top: 2rem;
+    }
+
+    .plan-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .plan-table thead {
+      background: #f0f0f0;
+    }
+
+    .plan-table th,
+    .plan-table td {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    .plan-table th {
+      font-weight: 700;
+    }
+
+    .no-plan {
+      text-align: center;
+      color: #999;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-group label,
+      .form-group input,
+      .form-group select {
+        font-size: 0.85rem;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Running Coach</h1>
+    <p>สร้างตารางซ้อมวิ่งที่เหมาะกับคุณโดยอัตโนมัติ</p>
+  </header>
+
+  <div class="container">
+    <h2>กรอกข้อมูลเพื่อสร้างตารางซ้อม</h2>
+    <!-- ฟอร์มกรอกข้อมูลต่าง ๆ -->
+    <div class="form-group">
+      <label for="distanceGoal">ระยะทางเป้าหมาย (Event ที่ตั้งใจวิ่ง):</label>
+      <select id="distanceGoal">
+        <option value="5">5K</option>
+        <option value="10">10K</option>
+        <option value="21">Half Marathon (21K)</option>
+        <option value="42">Full Marathon (42K)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="trainingWeeks">จำนวนสัปดาห์ที่ต้องการเตรียมตัว:</label>
+      <input type="number" id="trainingWeeks" placeholder="8" min="1" value="8">
+    </div>
+
+    <div class="form-group">
+      <label for="runDaysPerWeek">จำนวนวันวิ่งต่อสัปดาห์:</label>
+      <input type="number" id="runDaysPerWeek" placeholder="3" min="1" max="7" value="3">
+    </div>
+
+    <div class="form-group">
+      <label for="currentMileage">ไมล์สะสมต่อสัปดาห์ (กิโลเมตร) ในปัจจุบัน:</label>
+      <input type="number" id="currentMileage" placeholder="10" min="0" value="10">
+    </div>
+
+    <button class="btn" id="generatePlanBtn">สร้างตารางซ้อม</button>
+
+    <!-- ส่วนแสดงผลตารางซ้อม -->
+    <div class="result" id="resultContainer">
+      <!-- ตารางหรือข้อความจะแสดงในนี้ด้วย JS -->
+    </div>
+  </div>
+
+  <!-- JavaScript ส่วนประมวลผล -->
+  <script>
+    const generatePlanBtn = document.getElementById('generatePlanBtn');
+    const resultContainer = document.getElementById('resultContainer');
+
+    // ฟังก์ชั่นจำลองการคำนวณตารางซ้อมอย่างง่าย
+    function generateTrainingPlan(distanceGoal, weeks, runDays, currentMileage) {
+      // สมมติค่าที่เพิ่มระยะทางประมาณ 10% ต่อสัปดาห์
+      // และกระจายลงบนจำนวนวันวิ่ง (runDays)
+      // *** ทั้งหมดนี้เป็นเพียงตัวอย่างอย่างง่าย ควรปรับใช้ตามหลักการซ้อมจริง ***
+      
+      const plan = [];
+      let weeklyMileage = currentMileage; // เริ่มต้นจากค่าปัจจุบัน
+
+      for(let w = 1; w <= weeks; w++) {
+        // เพิ่มขึ้น 10% ต่อสัปดาห์ (หรือจะปรับเป็นเงื่อนไขอื่น ๆ ก็ได้)
+        if(w > 1) {
+          weeklyMileage = weeklyMileage * 1.1; 
+        }
+        // ปัดเป็นตัวเลขสวย ๆ
+        const roundMileage = Math.round(weeklyMileage);
+
+        // สร้างตารางรายวันสมมติ
+        // แจกแจงไมล์รวมทั้งสัปดาห์ลงใน runDays
+        // เช่นถ้าวิ่ง 3 วันต่อสัปดาห์ ก็จะแบ่งเป็น 20%, 30%, 50% ของไมล์รวม
+        // เพื่อให้ได้ตัวเลขต่างกันในแต่ละวัน
+        // (สามารถเขียน logic กระจายได้หลายแบบตามใจชอบ)
+        const dayDist = [];
+        if (runDays === 1) {
+          dayDist.push(roundMileage);
+        } else if (runDays === 2) {
+          dayDist.push(Math.round(roundMileage * 0.5));
+          dayDist.push(Math.round(roundMileage * 0.5));
+        } else {
+          // สมมติ: 20%, 30%, 20%, 30%... วนไปจนครบ runDays
+          let pattern = [0.2, 0.3, 0.2, 0.3, 0.2, 0.2, 0.2]; 
+          // pattern สำหรับ 7 วัน (ตัวอย่าง)
+          // แต่ถ้า runDays น้อยหรือมากกว่า 7 ก็ปรับลด/เพิ่มลูปเอง
+          for(let i = 0; i < runDays; i++){
+            const dist = Math.round(roundMileage * pattern[i % pattern.length]);
+            dayDist.push(dist);
+          }
+          // ตรวจสอบรวมของ dayDist เกินหรือต่ำกว่า weeklyMileage มากเกินไปหรือไม่
+          // (ในตัวอย่างนี้จะปล่อยเรียบง่าย ๆ ไปก่อน)
+        }
+
+        plan.push({
+          weekNum: w,
+          totalMileage: roundMileage,
+          days: dayDist
+        });
+      }
+
+      return plan;
+    }
+
+    // ฟังก์ชั่นแสดงผลตาราง
+    function renderPlan(plan, runDays) {
+      if(plan.length === 0) {
+        return '<p class="no-plan">ไม่มีข้อมูลตารางซ้อม</p>';
+      }
+
+      let html = `
+        <table class="plan-table">
+          <thead>
+            <tr>
+              <th>สัปดาห์</th>
+              <th>รวม (กม.)</th>
+      `;
+      // สร้างหัวตารางย่อยสำหรับวันวิ่ง
+      for(let d = 1; d <= runDays; d++){
+        html += `<th>Day ${d}</th>`;
+      }
+      html += `</tr></thead><tbody>`;
+
+      // สร้างบรรทัดของแต่ละสัปดาห์
+      plan.forEach(week => {
+        html += `
+          <tr>
+            <td>W${week.weekNum}</td>
+            <td>${week.totalMileage}</td>
+        `;
+        // ใส่ข้อมูลไมล์แต่ละวัน
+        week.days.forEach(day => {
+          html += `<td>${day}</td>`;
+        });
+        // ถ้า day น้อยกว่าจำนวน runDays ที่ตั้งไว้ (ในกรณี logic ไม่ครอบคลุม) ให้เติมคอลัมน์เปล่า
+        if(week.days.length < runDays) {
+          for(let i = week.days.length; i < runDays; i++) {
+            html += `<td>0</td>`;
+          }
+        }
+        html += `</tr>`;
+      });
+
+      html += `</tbody></table>`;
+      return html;
+    }
+
+    // เมื่อคลิกปุ่ม "สร้างตารางซ้อม"
+    generatePlanBtn.addEventListener('click', () => {
+      const distanceGoal = parseInt(document.getElementById('distanceGoal').value, 10);
+      const trainingWeeks = parseInt(document.getElementById('trainingWeeks').value, 10);
+      const runDaysPerWeek = parseInt(document.getElementById('runDaysPerWeek').value, 10);
+      const currentMileage = parseFloat(document.getElementById('currentMileage').value);
+
+      // เรียกฟังก์ชั่นสร้างตารางซ้อม
+      const plan = generateTrainingPlan(distanceGoal, trainingWeeks, runDaysPerWeek, currentMileage);
+      // แสดงผล
+      resultContainer.innerHTML = renderPlan(plan, runDaysPerWeek);
+    });
+  </script>
+</body>
+</html>
