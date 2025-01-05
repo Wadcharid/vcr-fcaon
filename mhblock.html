@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Treatment Calculations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            background-color: #f7f7f7;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .block {
+            width: 500px;
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5em;
+            color: #333333;
+            width: 100%;
+        }
+        .calculator h2 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #333333;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555555;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9em;
+        }
+        button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #ffffff;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        p {
+            font-size: 0.9em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Water Treatment Calculations</h1>
+
+<div class="block">
+    <h2>1. Raw Water Flow Rate</h2>
+    <label for="flow_m3s">Flow Rate (m³/s):</label>
+    <input type="number" id="flow_m3s" step="any" oninput="calculateFlowRate('m3s')">
+
+    <label for="flow_m3h">Flow Rate (m³/h):</label>
+    <input type="number" id="flow_m3h" step="any" oninput="calculateFlowRate('m3h')">
+
+    <label for="flow_m3day">Flow Rate (m³/day):</label>
+    <input type="number" id="flow_m3day" step="any" oninput="calculateFlowRate('m3day')">
+</div>
+
+<div class="block">
+    <h2>2. Alum Dosing Calculation</h2>
+    <label for="alum_dose">Dose (mg/L):</label>
+    <input type="number" id="alum_dose" step="any">
+    <button onclick="calculateAlum('dose')">Calculate</button>
+
+    <label for="alum_rw_flow">Raw Water Flow (m³/s):</label>
+    <input type="number" id="alum_rw_flow" step="any">
+    <button onclick="calculateAlum('rw_flow')">Calculate</button>
+
+    <label for="alum_flow">Alum Flow (litres/hour):</label>
+    <input type="number" id="alum_flow" step="any">
+    <button onclick="calculateAlum('flow')">Calculate</button>
+    <p id="alum_flow_lmin">Alum Flow: <span>0</span> litres/min</p>
+</div>
+
+<div class="block">
+    <h2>3. PAC Dosing Calculation</h2>
+    <label for="pac_dose">Dose (mg/L):</label>
+    <input type="number" id="pac_dose" step="any">
+    <button onclick="calculatePAC('dose')">Calculate</button>
+
+    <label for="pac_rw_flow">Raw Water Flow (m³/s):</label>
+    <input type="number" id="pac_rw_flow" step="any">
+    <button onclick="calculatePAC('rw_flow')">Calculate</button>
+
+    <label for="pac_flow">PAC Flow (litres/hour):</label>
+    <input type="number" id="pac_flow" step="any">
+    <button onclick="calculatePAC('flow')">Calculate</button>
+    <p id="pac_flow_lmin">PAC Flow: <span>0</span> litres/min</p>
+</div>
+
+<div class="block">
+    <h2>4. Chlorine Dosing Calculation</h2>
+    <label for="chlorine_dose">Dose (mg/L):</label>
+    <input type="number" id="chlorine_dose" step="any">
+    <button onclick="calculateChlorine('dose')">Calculate</button>
+
+    <label for="chlorine_rw_flow">Raw Water Flow (m³/s):</label>
+    <input type="number" id="chlorine_rw_flow" step="any">
+    <button onclick="calculateChlorine('rw_flow')">Calculate</button>
+
+    <label for="chlorine_flow">Cl2 Flow (kg/hour):</label>
+    <input type="number" id="chlorine_flow" step="any">
+    <button onclick="calculateChlorine('flow')">Calculate</button>
+    <p id="chlorine_flow_kg_day">Cl2 Flow: <span>0</span> kg/day</p>
+</div>
+
+<script>
+// Alum Dosing Calculation
+function calculateAlum(inputField) {
+    const dose = parseFloat(document.getElementById('alum_dose').value) || null;
+    const rwFlow = parseFloat(document.getElementById('alum_rw_flow').value) || null;
+    const flow = parseFloat(document.getElementById('alum_flow').value) || null;
+
+    if (inputField === 'dose' && rwFlow !== null && flow !== null) {
+        document.getElementById('alum_dose').value = ((flow * 1.33 * 0.5 * 1000) / (rwFlow * 3600)).toFixed(2);
+    } else if (inputField === 'rw_flow' && dose !== null && flow !== null) {
+        document.getElementById('alum_rw_flow').value = ((flow * 1.33 * 0.5 * 1000) / (dose * 3600)).toFixed(5);
+    } else if (inputField === 'flow' && dose !== null && rwFlow !== null) {
+        document.getElementById('alum_flow').value = ((dose * rwFlow * 3600) / (1.33 * 0.5 * 1000)).toFixed(2);
+    }
+
+    const alumFlow = parseFloat(document.getElementById('alum_flow').value) || 0;
+    document.getElementById('alum_flow_lmin').innerHTML = `Alum Flow: <span>${(alumFlow / 60).toFixed(2)}</span> litres/min`;
+}
+
+// PAC Dosing Calculation
+function calculatePAC(inputField) {
+    const dose = parseFloat(document.getElementById('pac_dose').value) || null;
+    const rwFlow = parseFloat(document.getElementById('pac_rw_flow').value) || null;
+    const flow = parseFloat(document.getElementById('pac_flow').value) || null;
+
+    if (inputField === 'dose' && rwFlow !== null && flow !== null) {
+        document.getElementById('pac_dose').value = ((flow * 1.19 * 0.35 * 1000) / (rwFlow * 3600)).toFixed(2);
+    } else if (inputField === 'rw_flow' && dose !== null && flow !== null) {
+        document.getElementById('pac_rw_flow').value = ((flow * 1.19 * 0.35 * 1000) / (dose * 3600)).toFixed(5);
+    } else if (inputField === 'flow' && dose !== null && rwFlow !== null) {
+        document.getElementById('pac_flow').value = ((dose * rwFlow * 3600) / (1.19 * 0.35 * 1000)).toFixed(2);
+    }
+
+    const pacFlow = parseFloat(document.getElementById('pac_flow').value) || 0;
+    document.getElementById('pac_flow_lmin').innerHTML = `PAC Flow: <span>${(pacFlow / 60).toFixed(2)}</span> litres/min`;
+}
+
+// Chlorine Dosing Calculation
+function calculateChlorine(inputField) {
+    const dose = parseFloat(document.getElementById('chlorine_dose').value) || null;
+    const rwFlow = parseFloat(document.getElementById('chlorine_rw_flow').value) || null;
+    const flow = parseFloat(document.getElementById('chlorine_flow').value) || null;
+
+    if (inputField === 'dose' && rwFlow !== null && flow !== null) {
+        document.getElementById('chlorine_dose').value = ((flow * 1000) / (rwFlow * 3600)).toFixed(2);
+    } else if (inputField === 'rw_flow' && dose !== null && flow !== null) {
+        document.getElementById('chlorine_rw_flow').value = ((flow * 1000) / (dose * 3600)).toFixed(5);
+    } else if (inputField === 'flow' && dose !== null && rwFlow !== null) {
+        document.getElementById('chlorine_flow').value = ((dose * rwFlow * 3600) / 1000).toFixed(2);
+    }
+
+    const chlorineFlow = parseFloat(document.getElementById('chlorine_flow').value) || 0;
+    document.getElementById('chlorine_flow_kg_day').innerHTML = `Cl2 Flow: <span>${(chlorineFlow * 24).toFixed(2)}</span> kg/day`;
+}
+</script>
+
+</body>
+</html>
