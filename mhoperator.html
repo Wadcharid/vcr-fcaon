@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Treatment Calculations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .calculator {
+            margin-bottom: 30px;
+        }
+        .calculator label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .calculator input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Water Treatment Calculations</h1>
+
+<!-- Flow Rate Calculator -->
+<div class="calculator">
+    <h2>1. Raw Water Flow Rate</h2>
+    <label for="flow_m3s">Flow Rate (m³/s):</label>
+    <input type="number" id="flow_m3s" step="any" oninput="calculateFlowRate('m3s')">
+
+    <label for="flow_m3h">Flow Rate (m³/h):</label>
+    <input type="number" id="flow_m3h" step="any" oninput="calculateFlowRate('m3h')">
+
+    <label for="flow_m3day">Flow Rate (m³/day):</label>
+    <input type="number" id="flow_m3day" step="any" oninput="calculateFlowRate('m3day')">
+</div>
+
+<!-- Alum Dosing Calculator -->
+<div class="calculator">
+    <h2>2. Alum Dosing Calculation</h2>
+    <label for="dose">Dose (mg/L):</label>
+    <input type="number" id="dose" step="any" oninput="calculateAlum('dose')">
+
+    <label for="rw_flow">Raw Water Flow (m³/s):</label>
+    <input type="number" id="rw_flow" step="any" oninput="calculateAlum('rw_flow')">
+
+    <label for="chem_flow_lmin">Chemical Flow (litres/min):</label>
+    <input type="number" id="chem_flow_lmin" step="any" oninput="calculateAlum('chem_flow_lmin')">
+
+    <label for="chem_flow_lhour">Chemical Flow (litres/hour):</label>
+    <input type="number" id="chem_flow_lhour" step="any" oninput="calculateAlum('chem_flow_lhour')">
+</div>
+
+<script>
+// Flow Rate Calculation
+function calculateFlowRate(inputField) {
+    const m3s = parseFloat(document.getElementById('flow_m3s').value) || 0;
+    const m3h = parseFloat(document.getElementById('flow_m3h').value) || 0;
+    const m3day = parseFloat(document.getElementById('flow_m3day').value) || 0;
+
+    if (inputField === 'm3s') {
+        document.getElementById('flow_m3h').value = (m3s * 3600).toFixed(2);
+        document.getElementById('flow_m3day').value = (m3s * 86400).toFixed(2);
+    } else if (inputField === 'm3h') {
+        document.getElementById('flow_m3s').value = (m3h / 3600).toFixed(5);
+        document.getElementById('flow_m3day').value = (m3h * 24).toFixed(2);
+    } else if (inputField === 'm3day') {
+        document.getElementById('flow_m3s').value = (m3day / 86400).toFixed(5);
+        document.getElementById('flow_m3h').value = (m3day / 24).toFixed(2);
+    }
+}
+
+// Alum Dosing Calculation
+function calculateAlum(inputField) {
+    const dose = parseFloat(document.getElementById('dose').value) || 0;
+    const rwFlow = parseFloat(document.getElementById('rw_flow').value) || 0;
+    const chemFlowLmin = parseFloat(document.getElementById('chem_flow_lmin').value) || 0;
+    const chemFlowLhour = parseFloat(document.getElementById('chem_flow_lhour').value) || 0;
+
+    if (inputField === 'chem_flow_lhour') {
+        document.getElementById('chem_flow_lmin').value = (chemFlowLhour / 60).toFixed(2);
+    } else if (inputField === 'chem_flow_lmin') {
+        document.getElementById('chem_flow_lhour').value = (chemFlowLmin * 60).toFixed(2);
+    }
+
+    if (inputField === 'dose') {
+        if (rwFlow > 0) {
+            const chemFlowH = (dose * rwFlow * 3600 * 1000 * 1000) / (1.33 * 0.5);
+            document.getElementById('chem_flow_lhour').value = chemFlowH.toFixed(2);
+            document.getElementById('chem_flow_lmin').value = (chemFlowH / 60).toFixed(2);
+        }
+    } else if (inputField === 'rw_flow') {
+        if (chemFlowLhour > 0) {
+            const calcDose = (chemFlowLhour * 1.33 * 0.5) / (rwFlow * 3600 * 1000 * 1000);
+            document.getElementById('dose').value = (calcDose * 1000000).toFixed(2);
+        }
+    }
+}
+</script>
+
+</body>
+</html>
