@@ -165,4 +165,28 @@ function calculatePAC(inputField) {
         document.getElementById('pac_flow').value = ((dose * rwFlow * 3600) / (1.19 * 0.35 * 1000)).toFixed(2);
     }
 
-    const pacFlow = parseFloat(document.getElementById('pac_flow').
+    const pacFlow = parseFloat(document.getElementById('pac_flow').value) || 0;
+    document.getElementById('pac_flow_lmin').innerHTML = `PAC Flow: <span>${(pacFlow / 60).toFixed(2)}</span> litres/min`;
+}
+
+// Chlorine Dosing Calculation
+function calculateChlorine(inputField) {
+    const dose = parseFloat(document.getElementById('chlorine_dose').value) || null;
+    const rwFlow = parseFloat(document.getElementById('chlorine_rw_flow').value) || null;
+    const flow = parseFloat(document.getElementById('chlorine_flow').value) || null;
+
+    if (inputField === 'dose' && rwFlow !== null && flow !== null) {
+        document.getElementById('chlorine_dose').value = ((flow * 1000) / (rwFlow * 3600)).toFixed(2);
+    } else if (inputField === 'rw_flow' && dose !== null && flow !== null) {
+        document.getElementById('chlorine_rw_flow').value = ((flow * 1000) / (dose * 3600)).toFixed(5);
+    } else if (inputField === 'flow' && dose !== null && rwFlow !== null) {
+        document.getElementById('chlorine_flow').value = ((dose * rwFlow * 3600) / 1000).toFixed(2);
+    }
+
+    const chlorineFlow = parseFloat(document.getElementById('chlorine_flow').value) || 0;
+    document.getElementById('chlorine_flow_kg_day').innerHTML = `Cl2 Flow: <span>${(chlorineFlow * 24).toFixed(2)}</span> kg/day`;
+}
+</script>
+
+</body>
+</html>
