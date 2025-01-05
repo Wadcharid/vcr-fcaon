@@ -133,6 +133,22 @@
     <p id="chlorine_flow_kg_day">Cl2 Flow: <span>0</span> kg/day</p>
 </div>
 
+<div class="block">
+    <h2>5. Sludge Drain Calculation (Phase 1/2)</h2>
+    <label for="frequency">Frequency (sec):</label>
+    <input type="number" id="frequency" step="any">
+    <button onclick="calculateSludge('frequency')">Calculate</button>
+
+    <label for="duration">Duration (sec):</label>
+    <input type="number" id="duration" step="any">
+    <button onclick="calculateSludge('duration')">Calculate</button>
+
+    <label for="sludge_drain">Sludge Drain (m³/day):</label>
+    <input type="number" id="sludge_drain" step="any">
+    <button onclick="calculateSludge('drain')">Calculate</button>
+</div>
+    
+
 <script>
 // Alum Dosing Calculation
 function calculateAlum(inputField) {
@@ -187,6 +203,22 @@ function calculateChlorine(inputField) {
     const chlorineFlow = parseFloat(document.getElementById('chlorine_flow').value) || 0;
     document.getElementById('chlorine_flow_kg_day').innerHTML = `Cl2 Flow: <span>${(chlorineFlow * 24).toFixed(2)}</span> kg/day`;
 }
+
+// Sludge Drain Calculation
+function calculateSludge(inputField) {
+    const frequency = parseFloat(document.getElementById('frequency').value) || null;
+    const duration = parseFloat(document.getElementById('duration').value) || null;
+    const drain = parseFloat(document.getElementById('sludge_drain').value) || null;
+
+    if (inputField === 'frequency' && duration !== null && drain !== null) {
+        document.getElementById('frequency').value = ((24 * 3600 * duration * 480 / 3600 - drain) / drain).toFixed(2);
+    } else if (inputField === 'duration' && frequency !== null && drain !== null) {
+        document.getElementById('duration').value = ((drain * (frequency + duration) / (24 * 3600)) * 3600 / 480).toFixed(2);
+    } else if (inputField === 'drain' && frequency !== null && duration !== null) {
+        document.getElementById('sludge_drain').value = ((24 * 3600 / (frequency + duration)) * duration * 480 / 3600).toFixed(2);
+    }
+}
+    
 </script>
 
 </body>
