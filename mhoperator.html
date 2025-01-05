@@ -8,54 +8,84 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f7f7f7;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .calculator {
             margin-bottom: 30px;
+        }
+        .calculator h2 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333333;
         }
         .calculator label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            color: #555555;
         }
         .calculator input {
-            max width: 400px;
+            width: 100%;
+            max-width: 100%;
             padding: 8px;
             margin-bottom: 15px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
             box-sizing: border-box;
+            font-size: 1em;
+        }
+        .calculator input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+        }
+        h1 {
+            text-align: center;
+            color: #333333;
         }
     </style>
 </head>
 <body>
 
-<h1>Water Treatment Calculations</h1>
+<div class="container">
+    <h1>Water Treatment Calculations</h1>
 
-<!-- Flow Rate Calculator -->
-<div class="calculator">
-    <h2>1. Raw Water Flow Rate</h2>
-    <label for="flow_m3s">Flow Rate (m³/s):</label>
-    <input type="number" id="flow_m3s" step="any" oninput="calculateFlowRate('m3s')">
+    <!-- Flow Rate Calculator -->
+    <div class="calculator">
+        <h2>1. Raw Water Flow Rate</h2>
+        <label for="flow_m3s">Flow Rate (m³/s):</label>
+        <input type="number" id="flow_m3s" step="any" oninput="calculateFlowRate('m3s')">
 
-    <label for="flow_m3h">Flow Rate (m³/h):</label>
-    <input type="number" id="flow_m3h" step="any" oninput="calculateFlowRate('m3h')">
+        <label for="flow_m3h">Flow Rate (m³/h):</label>
+        <input type="number" id="flow_m3h" step="any" oninput="calculateFlowRate('m3h')">
 
-    <label for="flow_m3day">Flow Rate (m³/day):</label>
-    <input type="number" id="flow_m3day" step="any" oninput="calculateFlowRate('m3day')">
-</div>
+        <label for="flow_m3day">Flow Rate (m³/day):</label>
+        <input type="number" id="flow_m3day" step="any" oninput="calculateFlowRate('m3day')">
+    </div>
 
-<!-- Alum Dosing Calculator -->
-<div class="calculator">
-    <h2>2. Alum Dosing Calculation</h2>
-    <label for="dose">Dose (mg/L):</label>
-    <input type="number" id="dose" step="any" oninput="calculateAlum('dose')">
+    <!-- Alum Dosing Calculator -->
+    <div class="calculator">
+        <h2>2. Alum Dosing Calculation</h2>
+        <label for="dose">Dose (mg/L):</label>
+        <input type="number" id="dose" step="any" oninput="calculateAlum('dose')">
 
-    <label for="rw_flow">Raw Water Flow (m³/s):</label>
-    <input type="number" id="rw_flow" step="any" oninput="calculateAlum('rw_flow')">
+        <label for="rw_flow">Raw Water Flow (m³/s):</label>
+        <input type="number" id="rw_flow" step="any" oninput="calculateAlum('rw_flow')">
 
-    <label for="alum_flow_lhour">Alum Flow (litres/hour):</label>
-    <input type="number" id="alum_flow_lhour" step="any" oninput="calculateAlum('alum_flow_lhour')">
+        <label for="alum_flow_lhour">Alum Flow (litres/hour):</label>
+        <input type="number" id="alum_flow_lhour" step="any" oninput="calculateAlum('alum_flow_lhour')">
 
-    <label for="alum_flow_lmin">Alum Flow (litres/min):</label>
-    <input type="number" id="alum_flow_lmin" step="any" readonly>
+        <label for="alum_flow_lmin">Alum Flow (litres/min):</label>
+        <input type="number" id="alum_flow_lmin" step="any" readonly>
+    </div>
 </div>
 
 <script>
