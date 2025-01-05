@@ -88,6 +88,35 @@
         <label for="alum_flow_lmin">Alum Flow (litres/min):</label>
         <input type="number" id="alum_flow_lmin" step="any" readonly>
     </div>
+
+    <!-- PAC Dosing Calculator -->
+    <div class="calculator">
+        <h2>3. PAC Dosing Calculation</h2>
+        <label for="pac_dose">Dose (mg/L):</label>
+        <input type="number" id="pac_dose" step="any" oninput="calculatePAC('dose')">
+
+        <label for="pac_rw_flow">Raw Water Flow (m³/s):</label>
+        <input type="number" id="pac_rw_flow" step="any" oninput="calculatePAC('rw_flow')">
+
+        <label for="pac_flow_lhour">PAC Flow (litres/hour):</label>
+        <input type="number" id="pac_flow_lhour" step="any" oninput="calculatePAC('pac_flow_lhour')">
+
+        <label for="pac_flow_lmin">PAC Flow (litres/min):</label>
+        <input type="number" id="pac_flow_lmin" step="any" readonly>
+    </div>
+
+    <!-- Chlorine Dosing Calculator -->
+    <div class="calculator">
+        <h2>4. Chlorine Dosing Calculation</h2>
+        <label for="chlorine_dose">Dose (mg/L):</label>
+        <input type="number" id="chlorine_dose" step="any" readonly>
+
+        <label for="chlorine_rw_flow">Raw Water Flow (m³/s):</label>
+        <input type="number" id="chlorine_rw_flow" step="any" oninput="calculateChlorine()">
+
+        <label for="chlorine_flow_kg_hour">Cl2 Flow (kg/hour):</label>
+        <input type="number" id="chlorine_flow_kg_hour" step="any" oninput="calculateChlorine()">
+    </div>
 </div>
 
 <script>
@@ -115,31 +144,42 @@ function calculateAlum(inputField) {
     const rwFlow = parseFloat(document.getElementById('rw_flow').value) || null;
     const alumFlowLhour = parseFloat(document.getElementById('alum_flow_lhour').value) || null;
 
-    if (inputField === 'dose' || inputField === 'rw_flow') {
-        if (dose !== null && rwFlow !== null) {
-            const alumFlow = (dose * rwFlow * 3600) / (1.33 * 0.5 * 1000);
-            document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
-            document.getElementById('alum_flow_lmin').value = (alumFlow / 60).toFixed(2);
-        }
-    } else if (inputField === 'alum_flow_lhour' || inputField === 'alum_flow_lmin') {
-        const alumFlow = alumFlowLhour || (alumFlowLhour * 60);
-        document.getElementById('alum_flow_lmin').value = (alumFlowLhour / 60).toFixed(2);
-        if (rwFlow !== null) {
-            const calcDose = (alumFlowLhour * 1.33 * 0.5 * 1000) / (rwFlow * 3600);
-            document.getElementById('dose').value = calcDose.toFixed(2);
-        }
-    }
-
-    if (inputField === 'rw_flow' && dose !== null) {
+    if (dose !== null && rwFlow !== null) {
         const alumFlow = (dose * rwFlow * 3600) / (1.33 * 0.5 * 1000);
         document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
         document.getElementById('alum_flow_lmin').value = (alumFlow / 60).toFixed(2);
     }
+    if (alumFlowLhour !== null && rwFlow !== null) {
+        const calcDose = (alumFlowLhour * 1.33 * 0.5 * 1000) / (rwFlow * 3600);
+        document.getElementById('dose').value = calcDose.toFixed(2);
+    }
+}
 
-    if (inputField === 'dose' && rwFlow !== null) {
-        const alumFlow = (dose * rwFlow * 3600) / (1.33 * 0.5 * 1000);
-        document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
-        document.getElementById('alum_flow_lmin').value = (alumFlow / 60).toFixed(2);
+// PAC Dosing Calculation
+function calculatePAC(inputField) {
+    const dose = parseFloat(document.getElementById('pac_dose').value) || null;
+    const rwFlow = parseFloat(document.getElementById('pac_rw_flow').value) || null;
+    const pacFlowLhour = parseFloat(document.getElementById('pac_flow_lhour').value) || null;
+
+    if (dose !== null && rwFlow !== null) {
+        const pacFlow = (dose * rwFlow * 3600) / (1.19 * 0.35 * 1000);
+        document.getElementById('pac_flow_lhour').value = pacFlow.toFixed(2);
+        document.getElementById('pac_flow_lmin').value = (pacFlow / 60).toFixed(2);
+    }
+    if (pacFlowLhour !== null && rwFlow !== null) {
+        const calcDose = (pacFlowLhour * 1.19 * 0.35 * 1000) / (rwFlow * 3600);
+        document.getElementById('pac_dose').value = calcDose.toFixed(2);
+    }
+}
+
+// Chlorine Dosing Calculation
+function calculateChlorine() {
+    const rwFlow = parseFloat(document.getElementById('chlorine_rw_flow').value) || null;
+    const cl2Flow = parseFloat(document.getElementById('chlorine_flow_kg_hour').value) || null;
+
+    if (rwFlow !== null && cl2Flow !== null) {
+        const dose = (cl2Flow * 1000) / (rwFlow * 3600);
+        document.getElementById('chlorine_dose').value = dose.toFixed(2);
     }
 }
 </script>
