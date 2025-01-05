@@ -33,19 +33,26 @@
             color: #555555;
         }
         .calculator input {
-            width: 100%;
-            max-width: 100%;
+            width: 80%;
             padding: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             border: 1px solid #cccccc;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 0.9em;
         }
-        .calculator input:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 3px rgba(0, 123, 255, 0.25);
+        .calculator button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #ffffff;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        .calculator button:hover {
+            background-color: #0056b3;
         }
         h1 {
             text-align: center;
@@ -76,82 +83,65 @@
     <!-- Alum Dosing Calculator -->
     <div class="calculator">
         <h2>2. Alum Dosing Calculation</h2>
-        <label for="dose">Dose (mg/L):</label>
-        <input type="number" id="dose" step="any" oninput="calculateAlum('dose')">
+        <label for="alum_dose">Dose (mg/L):</label>
+        <input type="number" id="alum_dose" step="any">
+        <button onclick="calculateAlum('dose')">Calculate</button>
 
-        <label for="rw_flow">Raw Water Flow (m³/s):</label>
-        <input type="number" id="rw_flow" step="any" oninput="calculateAlum('rw_flow')">
+        <label for="alum_rw_flow">Raw Water Flow (m³/s):</label>
+        <input type="number" id="alum_rw_flow" step="any">
+        <button onclick="calculateAlum('rw_flow')">Calculate</button>
 
-        <label for="alum_flow_lhour">Alum Flow (litres/hour):</label>
-        <input type="number" id="alum_flow_lhour" step="any" oninput="calculateAlum('alum_flow_lhour')">
-
-        <label for="alum_flow_lmin">Alum Flow (litres/min):</label>
-        <input type="number" id="alum_flow_lmin" step="any" readonly>
+        <label for="alum_flow">Alum Flow (litres/hour):</label>
+        <input type="number" id="alum_flow" step="any">
+        <button onclick="calculateAlum('flow')">Calculate</button>
     </div>
 
     <!-- PAC Dosing Calculator -->
     <div class="calculator">
         <h2>3. PAC Dosing Calculation</h2>
         <label for="pac_dose">Dose (mg/L):</label>
-        <input type="number" id="pac_dose" step="any" oninput="calculatePAC('dose')">
+        <input type="number" id="pac_dose" step="any">
+        <button onclick="calculatePAC('dose')">Calculate</button>
 
         <label for="pac_rw_flow">Raw Water Flow (m³/s):</label>
-        <input type="number" id="pac_rw_flow" step="any" oninput="calculatePAC('rw_flow')">
+        <input type="number" id="pac_rw_flow" step="any">
+        <button onclick="calculatePAC('rw_flow')">Calculate</button>
 
-        <label for="pac_flow_lhour">PAC Flow (litres/hour):</label>
-        <input type="number" id="pac_flow_lhour" step="any" oninput="calculatePAC('pac_flow_lhour')">
-
-        <label for="pac_flow_lmin">PAC Flow (litres/min):</label>
-        <input type="number" id="pac_flow_lmin" step="any" readonly>
+        <label for="pac_flow">PAC Flow (litres/hour):</label>
+        <input type="number" id="pac_flow" step="any">
+        <button onclick="calculatePAC('flow')">Calculate</button>
     </div>
 
     <!-- Chlorine Dosing Calculator -->
     <div class="calculator">
         <h2>4. Chlorine Dosing Calculation</h2>
         <label for="chlorine_dose">Dose (mg/L):</label>
-        <input type="number" id="chlorine_dose" step="any" readonly>
+        <input type="number" id="chlorine_dose" step="any">
+        <button onclick="calculateChlorine('dose')">Calculate</button>
 
         <label for="chlorine_rw_flow">Raw Water Flow (m³/s):</label>
-        <input type="number" id="chlorine_rw_flow" step="any" oninput="calculateChlorine()">
+        <input type="number" id="chlorine_rw_flow" step="any">
+        <button onclick="calculateChlorine('rw_flow')">Calculate</button>
 
-        <label for="chlorine_flow_kg_hour">Cl2 Flow (kg/hour):</label>
-        <input type="number" id="chlorine_flow_kg_hour" step="any" oninput="calculateChlorine()">
+        <label for="chlorine_flow">Cl2 Flow (kg/hour):</label>
+        <input type="number" id="chlorine_flow" step="any">
+        <button onclick="calculateChlorine('flow')">Calculate</button>
     </div>
 </div>
 
 <script>
-// Flow Rate Calculation
-function calculateFlowRate(inputField) {
-    const m3s = parseFloat(document.getElementById('flow_m3s').value) || 0;
-    const m3h = parseFloat(document.getElementById('flow_m3h').value) || 0;
-    const m3day = parseFloat(document.getElementById('flow_m3day').value) || 0;
-
-    if (inputField === 'm3s') {
-        document.getElementById('flow_m3h').value = (m3s * 3600).toFixed(2);
-        document.getElementById('flow_m3day').value = (m3s * 86400).toFixed(2);
-    } else if (inputField === 'm3h') {
-        document.getElementById('flow_m3s').value = (m3h / 3600).toFixed(5);
-        document.getElementById('flow_m3day').value = (m3h * 24).toFixed(2);
-    } else if (inputField === 'm3day') {
-        document.getElementById('flow_m3s').value = (m3day / 86400).toFixed(5);
-        document.getElementById('flow_m3h').value = (m3day / 24).toFixed(2);
-    }
-}
-
 // Alum Dosing Calculation
 function calculateAlum(inputField) {
-    const dose = parseFloat(document.getElementById('dose').value) || null;
-    const rwFlow = parseFloat(document.getElementById('rw_flow').value) || null;
-    const alumFlowLhour = parseFloat(document.getElementById('alum_flow_lhour').value) || null;
+    const dose = parseFloat(document.getElementById('alum_dose').value) || null;
+    const rwFlow = parseFloat(document.getElementById('alum_rw_flow').value) || null;
+    const flow = parseFloat(document.getElementById('alum_flow').value) || null;
 
-    if (dose !== null && rwFlow !== null) {
-        const alumFlow = (dose * rwFlow * 3600) / (1.33 * 0.5 * 1000);
-        document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
-        document.getElementById('alum_flow_lmin').value = (alumFlow / 60).toFixed(2);
-    }
-    if (alumFlowLhour !== null && rwFlow !== null) {
-        const calcDose = (alumFlowLhour * 1.33 * 0.5 * 1000) / (rwFlow * 3600);
-        document.getElementById('dose').value = calcDose.toFixed(2);
+    if (inputField === 'dose' && rwFlow !== null && flow !== null) {
+        document.getElementById('alum_dose').value = ((flow * 1.33 * 0.5 * 1000) / (rwFlow * 3600)).toFixed(2);
+    } else if (inputField === 'rw_flow' && dose !== null && flow !== null) {
+        document.getElementById('alum_rw_flow').value = ((flow * 1.33 * 0.5 * 1000) / (dose * 3600)).toFixed(5);
+    } else if (inputField === 'flow' && dose !== null && rwFlow !== null) {
+        document.getElementById('alum_flow').value = ((dose * rwFlow * 3600) / (1.33 * 0.5 * 1000)).toFixed(2);
     }
 }
 
@@ -159,27 +149,29 @@ function calculateAlum(inputField) {
 function calculatePAC(inputField) {
     const dose = parseFloat(document.getElementById('pac_dose').value) || null;
     const rwFlow = parseFloat(document.getElementById('pac_rw_flow').value) || null;
-    const pacFlowLhour = parseFloat(document.getElementById('pac_flow_lhour').value) || null;
+    const flow = parseFloat(document.getElementById('pac_flow').value) || null;
 
-    if (dose !== null && rwFlow !== null) {
-        const pacFlow = (dose * rwFlow * 3600) / (1.19 * 0.35 * 1000);
-        document.getElementById('pac_flow_lhour').value = pacFlow.toFixed(2);
-        document.getElementById('pac_flow_lmin').value = (pacFlow / 60).toFixed(2);
-    }
-    if (pacFlowLhour !== null && rwFlow !== null) {
-        const calcDose = (pacFlowLhour * 1.19 * 0.35 * 1000) / (rwFlow * 3600);
-        document.getElementById('pac_dose').value = calcDose.toFixed(2);
+    if (inputField === 'dose' && rwFlow !== null && flow !== null) {
+        document.getElementById('pac_dose').value = ((flow * 1.19 * 0.35 * 1000) / (rwFlow * 3600)).toFixed(2);
+    } else if (inputField === 'rw_flow' && dose !== null && flow !== null) {
+        document.getElementById('pac_rw_flow').value = ((flow * 1.19 * 0.35 * 1000) / (dose * 3600)).toFixed(5);
+    } else if (inputField === 'flow' && dose !== null && rwFlow !== null) {
+        document.getElementById('pac_flow').value = ((dose * rwFlow * 3600) / (1.19 * 0.35 * 1000)).toFixed(2);
     }
 }
 
 // Chlorine Dosing Calculation
-function calculateChlorine() {
+function calculateChlorine(inputField) {
+    const dose = parseFloat(document.getElementById('chlorine_dose').value) || null;
     const rwFlow = parseFloat(document.getElementById('chlorine_rw_flow').value) || null;
-    const cl2Flow = parseFloat(document.getElementById('chlorine_flow_kg_hour').value) || null;
+    const flow = parseFloat(document.getElementById('chlorine_flow').value) || null;
 
-    if (rwFlow !== null && cl2Flow !== null) {
-        const dose = (cl2Flow * 1000) / (rwFlow * 3600);
-        document.getElementById('chlorine_dose').value = dose.toFixed(2);
+    if (inputField === 'dose' && rwFlow !== null && flow !== null) {
+        document.getElementById('chlorine_dose').value = ((flow * 1000) / (rwFlow * 3600)).toFixed(2);
+    } else if (inputField === 'rw_flow' && dose !== null && flow !== null) {
+        document.getElementById('chlorine_rw_flow').value = ((flow * 1000) / (dose * 3600)).toFixed(5);
+    } else if (inputField === 'flow' && dose !== null && rwFlow !== null) {
+        document.getElementById('chlorine_flow').value = ((dose * rwFlow * 3600) / 1000).toFixed(2);
     }
 }
 </script>
