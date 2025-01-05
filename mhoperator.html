@@ -51,11 +51,8 @@
     <label for="rw_flow">Raw Water Flow (m³/s):</label>
     <input type="number" id="rw_flow" step="any" oninput="calculateAlum('rw_flow')">
 
-    <label for="chem_flow_lmin">Chemical Flow (litres/min):</label>
-    <input type="number" id="chem_flow_lmin" step="any" oninput="calculateAlum('chem_flow_lmin')">
-
-    <label for="chem_flow_lhour">Chemical Flow (litres/hour):</label>
-    <input type="number" id="chem_flow_lhour" step="any" oninput="calculateAlum('chem_flow_lhour')">
+    <label for="alum_flow_lhour">Alum Flow (litres/hour):</label>
+    <input type="number" id="alum_flow_lhour" step="any" readonly>
 </div>
 
 <script>
@@ -81,25 +78,10 @@ function calculateFlowRate(inputField) {
 function calculateAlum(inputField) {
     const dose = parseFloat(document.getElementById('dose').value) || null;
     const rwFlow = parseFloat(document.getElementById('rw_flow').value) || null;
-    const chemFlowLmin = parseFloat(document.getElementById('chem_flow_lmin').value) || null;
-    const chemFlowLhour = parseFloat(document.getElementById('chem_flow_lhour').value) || null;
-
-    if (inputField === 'chem_flow_lhour' && chemFlowLhour !== null) {
-        document.getElementById('chem_flow_lmin').value = (chemFlowLhour / 60).toFixed(2);
-    } else if (inputField === 'chem_flow_lmin' && chemFlowLmin !== null) {
-        document.getElementById('chem_flow_lhour').value = (chemFlowLmin * 60).toFixed(2);
-    }
 
     if (dose !== null && rwFlow !== null) {
-        const chemFlowH = (dose * rwFlow * 3600 * 1000 * 1000) / (1.33 * 0.5);
-        document.getElementById('chem_flow_lhour').value = chemFlowH.toFixed(2);
-        document.getElementById('chem_flow_lmin').value = (chemFlowH / 60).toFixed(2);
-    } else if (dose !== null && chemFlowLhour !== null) {
-        const calcRwFlow = (chemFlowLhour * 1.33 * 0.5) / (dose * 3600 * 1000 * 1000);
-        document.getElementById('rw_flow').value = calcRwFlow.toFixed(5);
-    } else if (rwFlow !== null && chemFlowLhour !== null) {
-        const calcDose = (chemFlowLhour * 1.33 * 0.5) / (rwFlow * 3600 * 1000 * 1000);
-        document.getElementById('dose').value = (calcDose * 1000000).toFixed(2);
+        const alumFlow = (dose * rwFlow * 3600 * 1000 * 1000) / (1.33 * 0.5);
+        document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
     }
 }
 </script>
