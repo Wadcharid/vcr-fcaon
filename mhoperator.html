@@ -52,7 +52,10 @@
     <input type="number" id="rw_flow" step="any" oninput="calculateAlum('rw_flow')">
 
     <label for="alum_flow_lhour">Alum Flow (litres/hour):</label>
-    <input type="number" id="alum_flow_lhour" step="any" readonly>
+    <input type="number" id="alum_flow_lhour" step="any" oninput="calculateAlum('alum_flow_lhour')">
+
+    <label for="alum_flow_lmin">Alum Flow (litres/min):</label>
+    <input type="number" id="alum_flow_lmin" step="any" readonly>
 </div>
 
 <script>
@@ -78,10 +81,33 @@ function calculateFlowRate(inputField) {
 function calculateAlum(inputField) {
     const dose = parseFloat(document.getElementById('dose').value) || null;
     const rwFlow = parseFloat(document.getElementById('rw_flow').value) || null;
+    const alumFlowLhour = parseFloat(document.getElementById('alum_flow_lhour').value) || null;
 
-    if (dose !== null && rwFlow !== null) {
+    if (inputField === 'dose' || inputField === 'rw_flow') {
+        if (dose !== null && rwFlow !== null) {
+            const alumFlow = (dose * rwFlow * 3600) / (1.33 * 0.5 * 1000);
+            document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
+            document.getElementById('alum_flow_lmin').value = (alumFlow / 60).toFixed(2);
+        }
+    } else if (inputField === 'alum_flow_lhour' || inputField === 'alum_flow_lmin') {
+        const alumFlow = alumFlowLhour || (alumFlowLhour * 60);
+        document.getElementById('alum_flow_lmin').value = (alumFlowLhour / 60).toFixed(2);
+        if (rwFlow !== null) {
+            const calcDose = (alumFlowLhour * 1.33 * 0.5 * 1000) / (rwFlow * 3600);
+            document.getElementById('dose').value = calcDose.toFixed(2);
+        }
+    }
+
+    if (inputField === 'rw_flow' && dose !== null) {
         const alumFlow = (dose * rwFlow * 3600) / (1.33 * 0.5 * 1000);
         document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
+        document.getElementById('alum_flow_lmin').value = (alumFlow / 60).toFixed(2);
+    }
+
+    if (inputField === 'dose' && rwFlow !== null) {
+        const alumFlow = (dose * rwFlow * 3600) / (1.33 * 0.5 * 1000);
+        document.getElementById('alum_flow_lhour').value = alumFlow.toFixed(2);
+        document.getElementById('alum_flow_lmin').value = (alumFlow / 60).toFixed(2);
     }
 }
 </script>
