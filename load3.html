@@ -5,43 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TL Calculator</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
 
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: center;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #007BFF;
+            color: #fff;
         }
 
         input {
-            width: 100%;
+            width: 90%;
             box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .add-row-btn {
+            display: flex;
+            justify-content: flex-end;
         }
     </style>
     <script>
         function calculate(row) {
-            const hr = parseFloat(row.querySelector('.hr').value) || 0;
-            const duration = parseFloat(row.querySelector('.duration').value) || 0;
+            const hr = parseInt(row.querySelector('.hr').value) || 0;
+            const duration = parseInt(row.querySelector('.duration').value) || 0;
             const tlInput = row.querySelector('.tl');
 
             if (hr && duration) {
                 const tl = 0.0117 * Math.exp(0.0581 * hr * 100 / 173) * duration;
-                tlInput.value = tl.toFixed(2);
+                tlInput.value = Math.round(tl);
             } else if (hr && tlInput.value) {
-                const tl = parseFloat(tlInput.value);
+                const tl = parseInt(tlInput.value);
                 const durationCalc = tl / (0.0117 * Math.exp(0.0581 * hr * 100 / 173));
-                row.querySelector('.duration').value = durationCalc.toFixed(2);
+                row.querySelector('.duration').value = Math.round(durationCalc);
             } else if (duration && tlInput.value) {
-                const tl = parseFloat(tlInput.value);
+                const tl = parseInt(tlInput.value);
                 const hrCalc = (Math.log(tl / (0.0117 * duration)) * 173 / 100) / 0.0581;
-                row.querySelector('.hr').value = hrCalc.toFixed(2);
+                row.querySelector('.hr').value = Math.round(hrCalc);
             }
 
             updateTotals();
@@ -53,9 +97,9 @@
             let count = 0;
 
             rows.forEach(row => {
-                const hr = parseFloat(row.querySelector('.hr').value) || 0;
-                const duration = parseFloat(row.querySelector('.duration').value) || 0;
-                const tl = parseFloat(row.querySelector('.tl').value) || 0;
+                const hr = parseInt(row.querySelector('.hr').value) || 0;
+                const duration = parseInt(row.querySelector('.duration').value) || 0;
+                const tl = parseInt(row.querySelector('.tl').value) || 0;
 
                 if (hr && duration && tl) count++;
 
@@ -64,9 +108,9 @@
                 totalTL += tl;
             });
 
-            document.getElementById('totalHR').textContent = (totalHR / count || 0).toFixed(2);
-            document.getElementById('totalDuration').textContent = totalDuration.toFixed(2);
-            document.getElementById('totalTL').textContent = totalTL.toFixed(2);
+            document.getElementById('totalHR').textContent = (totalHR / count || 0).toFixed(0);
+            document.getElementById('totalDuration').textContent = totalDuration.toFixed(0);
+            document.getElementById('totalTL').textContent = totalTL.toFixed(0);
         }
 
         function addRow() {
@@ -88,33 +132,37 @@
     </script>
 </head>
 <body>
-    <h1>TL Calculator</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>HR (bpm)</th>
-                <th>Duration (mins)</th>
-                <th>TL</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode)" /></td>
-                <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode)" /></td>
-                <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode)" /></td>
-                <td><button onclick="removeRow(this)">Remove</button></td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr>
-                <td id="totalHR">0.00</td>
-                <td id="totalDuration">0.00</td>
-                <td id="totalTL">0.00</td>
-                <td>Total</td>
-            </tr>
-        </tfoot>
-    </table>
-    <button onclick="addRow()">Add Row</button>
+    <div class="container">
+        <h1 style="text-align: center;">TL Calculator</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>HR (bpm)</th>
+                    <th>Duration (mins)</th>
+                    <th>TL</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode)" /></td>
+                    <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode)" /></td>
+                    <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode)" /></td>
+                    <td><button onclick="removeRow(this)">Remove</button></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td id="totalHR">0</td>
+                    <td id="totalDuration">0</td>
+                    <td id="totalTL">0</td>
+                    <td>Total</td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="add-row-btn">
+            <button onclick="addRow()">Add Row</button>
+        </div>
+    </div>
 </body>
 </html>
