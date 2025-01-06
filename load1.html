@@ -172,14 +172,14 @@
                 const durations = percentages.map(p => Math.floor(weeklyTIME * p));
                 const zoneTL = durations.map((tl, i) => Math.ceil(tl * durationConstants[i]));
                 const distances = durations.map((duration, i) => 
-                    Math.ceil(duration * 60 * distanceMultipliers[i] / (vcrPaceSeconds*1.05))
+                    Math.ceil(duration * 60 * distanceMultipliers[i] / (vcrPaceSeconds * 0.95))
                 );
                 const distances2 = durations.map((duration, i) => 
-                    Math.floor(duration * 60 * distanceMultipliers[i] / (vcrPaceSeconds*0.95))
+                    Math.floor(duration * 60 * distanceMultipliers[i] / (vcrPaceSeconds * 1.05))
                 );
                 
 
-                let totalTL = 0, totalDuration = 0, totalDistance = 0;
+                let totalTL = 0, totalDuration = 0, totalDistance = 0, totalDistance2 = 0;
                 let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
 
                 zones.forEach((zone, i) => {
