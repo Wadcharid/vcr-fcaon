@@ -3,163 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time, Pace, Distance Calculator</title>
+    <title>Training Load Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            box-sizing: border-box;
             background-color: #f4f4f9;
         }
-
-        .calculator {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
+        h1 {
             text-align: center;
+            padding: 20px 0;
+            margin: 0;
+            background-color: #007BFF;
+            color: white;
         }
-
-        .calculator h1 {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #333;
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
-        .form-group {
-            margin-bottom: 15px;
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            display: block;
         }
-
-        .input-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        input {
-            width: 50px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1em;
-            text-align: center;
-        }
-
-        button {
+        input, select, button {
             width: 100%;
             padding: 10px;
-            max-width: 150px;
-            background-color: #007BFF;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
-
+        .inline {
+            display: flex;
+            gap: 10px;
+        }
+        .inline input {
+            flex: 1;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
         button:hover {
             background-color: #0056b3;
         }
-
-        .memory {
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            background-color: white;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f9;
+            font-weight: bold;
+        }
+        td:nth-child(1), td:nth-child(2), td:nth-child(3), td:nth-child(4) {
+            width: 15%;
+        }
+        #daily-load {
+            text-align: center;
             margin-top: 20px;
-            font-size: 0.9em;
-            color: #666;
+            font-size: 18px;
         }
-
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            form {
+                padding: 10px;
+            }
+            input, select, button {
+                font-size: 14px;
+            }
+            table {
+                font-size: 14px;
+            }
+        }
     </style>
-    <script>
-        function calculateTime() {
-            const paceMinutes = parseInt(document.getElementById('paceMinutes').value) || 0;
-            const paceSeconds = parseInt(document.getElementById('paceSeconds').value) || 0;
-            const distance = parseFloat(document.getElementById('distance').value) || 0;
-
-            const totalPaceInSeconds = (paceMinutes * 60) + paceSeconds;
-            const totalTimeInSeconds = totalPaceInSeconds * distance;
-
-            const hours = Math.floor(totalTimeInSeconds / 3600);
-            const minutes = Math.floor((totalTimeInSeconds % 3600) / 60);
-            const seconds = Math.round(totalTimeInSeconds % 60);
-
-            document.getElementById('timeHours').value = hours;
-            document.getElementById('timeMinutes').value = minutes;
-            document.getElementById('timeSeconds').value = seconds;
-        }
-
-        function calculatePace() {
-            const timeHours = parseInt(document.getElementById('timeHours').value) || 0;
-            const timeMinutes = parseInt(document.getElementById('timeMinutes').value) || 0;
-            const timeSeconds = parseInt(document.getElementById('timeSeconds').value) || 0;
-            const distance = parseFloat(document.getElementById('distance').value) || 0;
-
-            const totalTimeInSeconds = (timeHours * 3600) + (timeMinutes * 60) + timeSeconds;
-            const totalPaceInSeconds = totalTimeInSeconds / distance;
-
-            const paceMinutes = Math.floor(totalPaceInSeconds / 60);
-            const paceSeconds = Math.round(totalPaceInSeconds % 60);
-
-            document.getElementById('paceMinutes').value = paceMinutes;
-            document.getElementById('paceSeconds').value = paceSeconds;
-        }
-
-        function calculateDistance() {
-            const timeHours = parseInt(document.getElementById('timeHours').value) || 0;
-            const timeMinutes = parseInt(document.getElementById('timeMinutes').value) || 0;
-            const timeSeconds = parseInt(document.getElementById('timeSeconds').value) || 0;
-            const paceMinutes = parseInt(document.getElementById('paceMinutes').value) || 0;
-            const paceSeconds = parseInt(document.getElementById('paceSeconds').value) || 0;
-
-            const totalTimeInSeconds = (timeHours * 3600) + (timeMinutes * 60) + timeSeconds;
-            const totalPaceInSeconds = (paceMinutes * 60) + paceSeconds;
-
-            const distance = totalTimeInSeconds / totalPaceInSeconds;
-
-            document.getElementById('distance').value = distance.toFixed(2);
-        }
-    </script>
 </head>
 <body>
 
-<div id="menu-container"></div>
-<script src="menu.js"></script>
+    <div id="menu-container"></div>
+    <script src="menu.js"></script>
 
-    <div class="calculator">
-        <h1>Enter 2 values, calculate the 3rd.</h1>
-
-        <div class="form-group">
-            <div class="input-container">
-                <input type="number" id="timeHours" placeholder="h" min="0">
-                <input type="number" id="timeMinutes" placeholder="m" min="0" max="59">
-                <input type="number" id="timeSeconds" placeholder="s" min="0" max="59">
-            </div>
-            <button onclick="calculateTime()">TIME</button>
+    <h1>Training Load Calculator</h1>
+    <form>
+        <label for="weekly_time">Weekly Duration Training (Minutes):</label>
+        <input type="number" id="weekly_time" name="weekly_time" placeholder="240 mins beginner - > 840 mins Leisurist" required>
+        
+        <label for="phaseSelector">Select Phase:</label>
+        <select id="phaseSelector">
+            <option value="General" selected>General</option>
+            <option value="Base">Base</option>
+            <option value="Build">Build</option>
+        </select>
+        
+        <label>LT Pace (หรือใช้ 60 mins Pace):</label>
+        <div class="inline">
+            <input type="number" id="vcr_minutes" name="vcr_minutes" placeholder="Minutes" required>
+            <input type="number" id="vcr_seconds" name="vcr_seconds" placeholder="Seconds" required>
         </div>
+    </form>
 
-        <div class="form-group">
-            <div class="input-container">
-                <input type="number" id="paceMinutes" placeholder="m" min="0">
-                <input type="number" id="paceSeconds" placeholder="s" min="0" max="59">
-            </div>
-            <button onclick="calculatePace()">PACE</button>
-        </div>
+    <div id="result" style="text-align: center; margin-top: 20px;"></div>
+    <div id="daily-load"></div>
 
-        <div class="form-group">
-            <div class="input-container">
-                <input type="number" id="distance" placeholder="km" min="0" step="0.01">
-            </div>
-            <button onclick="calculateDistance()">DISTANCE</button>
-        </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)', 'Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo', 'Z5-Z6 VO2MAX'];
+            let percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
+            const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
+            const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
 
-        <div class="memory">ขอให้สนุกกับการวิ่งครับ!</div>
-    </div>
+            // อัปเดตเปอร์เซ็นต์ตาม Phase
+            function updatePercentages() {
+                const phase = document.getElementById('phaseSelector').value;
+                switch (phase) {
+                    case 'General':
+                        percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0];
+                        break;
+                    case 'Base':
+                        percentages = [0.20, 0.50, 0.20, 0.10, 0.0, 0.0];
+                        break;
+                    case 'Build':
+                        percentages = [0.20, 0.40, 0.15, 0.10, 0.10, 0.05];
+                        break;
+                }
+            }
+
+            // คำนวณ Training Load
+            function calculateTrainingLoad() {
+                const weeklyTIME = parseInt(document.getElementById('weekly_time').value) || 0;
+                const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value) || 0;
+                const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value) || 0;
+                const vcrPaceSeconds = (vcrMinutes * 60) + vcrSeconds;
+
+                if (!weeklyTIME || !vcrPaceSeconds) {
+                    document.getElementById('result').innerHTML = '<p>Please enter valid values!</p>';
+                    document.getElementById('daily-load').innerHTML = '';
+                    return;
+                }
+
+                const durations = percentages.map(p => Math.floor(weeklyTIME * p));
+                const zoneTL = durations.map((tl, i) => Math.ceil(tl * durationConstants[i]));
+                const distances = durations.map((duration, i) => 
+                    Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds)
+                );
+
+                let totalTL = 0, totalDuration = 0, totalDistance = 0;
+                let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
+
+                zones.forEach((zone, i) => {
+                    totalDuration += durations[i];
+                    totalTL += zoneTL[i];
+                    totalDistance += distances[i];
+                    tableHTML += `
+                        <tr>
+                            <td>${zone}</td>
+                            <td>${durations[i]}</td>
+                            <td>${zoneTL[i]}</td>
+                            <td>${distances[i]}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `
+                    <tr>
+                        <th>Total</th>
+                        <th>${totalDuration}</th>
+                        <th>${totalTL}</th>
+                        <th>${totalDistance}</th>
+                    </tr>
+                `;
+                tableHTML += '</table>';
+
+                const dailyLoad = Math.floor(totalTL / 7);
+                document.getElementById('result').innerHTML = tableHTML;
+                document.getElementById('daily-load').innerHTML = 
+                    `Daily Load: <strong>${dailyLoad}</strong>`;
+            }
+
+            // ตรวจสอบและคำนวณใหม่ทุกครั้งที่เปลี่ยนแปลง
+            document.getElementById('weekly_time').addEventListener('input', calculateTrainingLoad);
+            document.getElementById('vcr_minutes').addEventListener('input', calculateTrainingLoad);
+            document.getElementById('vcr_seconds').addEventListener('input', calculateTrainingLoad);
+            document.getElementById('phaseSelector').addEventListener('change', () => {
+                updatePercentages();
+                calculateTrainingLoad();
+            });
+
+            // คำนวณค่าเริ่มต้นเมื่อโหลดหน้าเสร็จ
+            calculateTrainingLoad();
+        });
+    </script>
 </body>
 </html>
