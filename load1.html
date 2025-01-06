@@ -76,7 +76,7 @@
             font-weight: bold;
         }
         td:nth-child(1), td:nth-child(2), td:nth-child(3), td:nth-child(4) {
-            width: 15%; /* Adjust column width for Est. Duration and Est. Distance */
+            width: 15%;
         }
         #daily-load {
             text-align: center;
@@ -106,8 +106,8 @@
     
     <h1>Training Load Calculator</h1>
     <form oninput="calculateTrainingLoad()">
-        <label for="weekly_tl">Weekly Training Load (TL):</label>
-        <input type="number" id="weekly_time" name="weekly_time" required placeholder="400 beginner - >2000 worldclass">
+        <label for="weekly_time">Weekly Duration Training (Minutes):</label>
+        <input type="number" id="weekly_time" name="weekly_time" required placeholder="240 mins beginner - > 840 mins Leisurist">
         
         <label for="phaseSelector">Select Phase:</label>
         <select id="phaseSelector">
@@ -127,7 +127,7 @@
     <div id="daily-load"></div>
 
     <script>
-        const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)','Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo' , 'Z5-Z6 VO2MAX'];
+        const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)', 'Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo' , 'Z5-Z6 VO2MAX'];
         let percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
         const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
         const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
@@ -161,7 +161,8 @@
             const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value) || 0;
             const vcrPaceSeconds = vcrMinutes * 60 + vcrSeconds;
 
-            if (weeklyTL === 0 || vcrPaceSeconds === 0) {
+            // แก้ไขส่วนนี้ โดยเปลี่ยนจาก weeklyTL เป็น weeklyTIME
+            if (weeklyTIME === 0 || vcrPaceSeconds === 0) {
                 document.getElementById('result').innerHTML = '';
                 document.getElementById('daily-load').innerHTML = '';
                 return;
@@ -169,24 +170,42 @@
 
             const durations = percentages.map(p => Math.floor(weeklyTIME * p));
             const zoneTL = durations.map((tl, i) => Math.ceil(tl * durationConstants[i]));
-            const distances = durations.map((duration, i) => Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds));
+            const distances = durations.map((duration, i) => 
+                Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds)
+            );
 
             let totalTL = 0, totalDuration = 0, totalDistance = 0;
             let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
 
             zones.forEach((zone, i) => {
-                totalTL += durations[i];
-                totalDuration += zoneTL[i];
+                // แก้ไขให้สอดคล้องกับตัวแปร
+                totalDuration += durations[i];  // รวมเวลาซ้อม
+                totalTL += zoneTL[i];           // รวมค่า Training Load
                 totalDistance += distances[i];
-                tableHTML += `<tr><td>${zone}</td><td>${durations[i]}</td><td>${zoneTL[i]}</td><td>${distances[i]}</td></tr>`;
+                tableHTML += `
+                    <tr>
+                        <td>${zone}</td>
+                        <td>${durations[i]}</td>
+                        <td>${zoneTL[i]}</td>
+                        <td>${distances[i]}</td>
+                    </tr>
+                `;
             });
 
-            tableHTML += `<tr><th>Total</th><th>${totalDuration}</th><th>${totalTL}</th><th>${totalDistance}</th></tr>`;
+            tableHTML += `
+                <tr>
+                    <th>Total</th>
+                    <th>${totalDuration}</th>
+                    <th>${totalTL}</th>
+                    <th>${totalDistance}</th>
+                </tr>
+            `;
             tableHTML += '</table>';
 
             const dailyLoad = Math.floor(totalTL / 7);
             document.getElementById('result').innerHTML = tableHTML;
-            document.getElementById('daily-load').innerHTML = `Daily Load: <strong>${dailyLoad}</strong>`;
+            document.getElementById('daily-load').innerHTML = 
+                \`Daily Load: <strong>\${dailyLoad}</strong>\`;
         }
 
         // Initialize calculation
