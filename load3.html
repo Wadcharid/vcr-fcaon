@@ -70,26 +70,28 @@
         }
     </style>
     <script>
-        function calculate(row) {
-            const hr = parseInt(row.querySelector('.hr').value) || 0;
+        function calculate(row, inputChanged) {
+            const hrInput = row.querySelector('.hr');
             const durationInput = row.querySelector('.duration');
             const tlInput = row.querySelector('.tl');
-            let duration = parseInt(durationInput.value) || 0;
-            let tl = parseInt(tlInput.value) || 0;
+            const hr = parseInt(hrInput.value) || 0;
+            const duration = parseInt(durationInput.value) || 0;
+            const tl = parseInt(tlInput.value) || 0;
 
-            if (hr && duration) {
-                tl = 0.0117 * Math.exp(0.0581 * hr * 100 / 173) * duration;
-                tlInput.value = Math.round(tl);
-            } else if (hr && tl) {
-                duration = tl / (0.0117 * Math.exp(0.0581 * hr * 100 / 173));
-                durationInput.value = Math.round(duration);
-            } else if (duration && tl) {
-                hr = (Math.log(tl / (0.0117 * duration)) * 173 / 100) / 0.0581;
-                row.querySelector('.hr').value = Math.round(hr);
-            }
-
-            if (duration === 0) {
-                tlInput.value = 0;
+            if (inputChanged === 'HR' || inputChanged === 'Duration') {
+                if (hr && duration) {
+                    const newTL = 0.0117 * Math.exp(0.0581 * hr * 100 / 173) * duration;
+                    tlInput.value = Math.round(newTL);
+                } else {
+                    tlInput.value = 0;
+                }
+            } else if (inputChanged === 'TL') {
+                if (hr && tl) {
+                    const newDuration = tl / (0.0117 * Math.exp(0.0581 * hr * 100 / 173));
+                    durationInput.value = Math.round(newDuration);
+                } else {
+                    durationInput.value = 0;
+                }
             }
 
             updateTotals();
@@ -121,9 +123,9 @@
             const table = document.querySelector('tbody');
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode)" /></td>
-                <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode)" /></td>
-                <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode)" /></td>
+                <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode, 'HR')" /></td>
+                <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode, 'Duration')" /></td>
+                <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode, 'TL')" /></td>
                 <td><button onclick="removeRow(this)">Remove</button></td>
             `;
             table.appendChild(row);
@@ -149,9 +151,9 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode)" /></td>
-                    <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode)" /></td>
-                    <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode)" /></td>
+                    <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode, 'HR')" /></td>
+                    <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode, 'Duration')" /></td>
+                    <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode, 'TL')" /></td>
                     <td><button onclick="removeRow(this)">Remove</button></td>
                 </tr>
             </tbody>
