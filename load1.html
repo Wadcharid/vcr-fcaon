@@ -101,10 +101,13 @@
 </head>
 <body>
 
+    <div id="menu-container"></div>
+    <script src="menu.js"></script>
+
     <h1>Training Load Calculator</h1>
-    <form oninput="calculateTrainingLoad()">
+    <form>
         <label for="weekly_time">Weekly Duration Training (Minutes):</label>
-        <input type="number" id="weekly_time" name="weekly_time" required placeholder="240 mins beginner - > 840 mins Leisurist">
+        <input type="number" id="weekly_time" name="weekly_time" placeholder="240 mins beginner - > 840 mins Leisurist" required>
         
         <label for="phaseSelector">Select Phase:</label>
         <select id="phaseSelector">
@@ -130,11 +133,7 @@
             const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
             const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
 
-            document.getElementById('phaseSelector').addEventListener('change', () => {
-                updatePercentages();
-                calculateTrainingLoad();
-            });
-
+            // อัปเดตเปอร์เซ็นต์ตาม Phase
             function updatePercentages() {
                 const phase = document.getElementById('phaseSelector').value;
                 switch (phase) {
@@ -147,11 +146,10 @@
                     case 'Build':
                         percentages = [0.20, 0.40, 0.15, 0.10, 0.10, 0.05];
                         break;
-                    default:
-                        percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0];
                 }
             }
 
+            // คำนวณ Training Load
             function calculateTrainingLoad() {
                 const weeklyTIME = parseInt(document.getElementById('weekly_time').value) || 0;
                 const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value) || 0;
@@ -202,8 +200,19 @@
                 document.getElementById('daily-load').innerHTML = 
                     `Daily Load: <strong>${dailyLoad}</strong>`;
             }
+
+            // ตรวจสอบและคำนวณใหม่ทุกครั้งที่เปลี่ยนแปลง
+            document.getElementById('weekly_time').addEventListener('input', calculateTrainingLoad);
+            document.getElementById('vcr_minutes').addEventListener('input', calculateTrainingLoad);
+            document.getElementById('vcr_seconds').addEventListener('input', calculateTrainingLoad);
+            document.getElementById('phaseSelector').addEventListener('change', () => {
+                updatePercentages();
+                calculateTrainingLoad();
+            });
+
+            // คำนวณค่าเริ่มต้นเมื่อโหลดหน้าเสร็จ
+            calculateTrainingLoad();
         });
     </script>
 </body>
 </html>
-
