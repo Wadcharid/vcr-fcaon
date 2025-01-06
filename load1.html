@@ -172,8 +172,12 @@
                 const durations = percentages.map(p => Math.floor(weeklyTIME * p));
                 const zoneTL = durations.map((tl, i) => Math.ceil(tl * durationConstants[i]));
                 const distances = durations.map((duration, i) => 
-                    Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds)
+                    Math.ceil(duration * 60 * distanceMultipliers[i] / (vcrPaceSeconds*1.05))
                 );
+                const distances2 = durations.map((duration, i) => 
+                    Math.floor(duration * 60 * distanceMultipliers[i] / (vcrPaceSeconds*0.95))
+                );
+                
 
                 let totalTL = 0, totalDuration = 0, totalDistance = 0;
                 let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
@@ -182,12 +186,13 @@
                     totalDuration += durations[i];
                     totalTL += zoneTL[i];
                     totalDistance += distances[i];
+                    totalDistance2 += distances2[i];
                     tableHTML += `
                         <tr>
                             <td>${zone}</td>
                             <td>${durations[i]}</td>
                             <td>${zoneTL[i]}</td>
-                            <td>${distances[i]}</td>
+                            <td>${distances2[i]} - ${distances[i]}</td>
                         </tr>
                     `;
                 });
@@ -197,7 +202,7 @@
                         <th>Total</th>
                         <th>${totalDuration}</th>
                         <th>${totalTL}</th>
-                        <th>${totalDistance}</th>
+                        <th>${totalDistance2} - ${totalDistance}</th>
                     </tr>
                 `;
                 tableHTML += '</table>';
