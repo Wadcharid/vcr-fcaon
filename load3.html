@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TL Calculator</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        function calculate(row) {
+            const hr = parseFloat(row.querySelector('.hr').value) || 0;
+            const duration = parseFloat(row.querySelector('.duration').value) || 0;
+            const tlInput = row.querySelector('.tl');
+
+            if (hr && duration) {
+                const tl = 0.0117 * Math.exp(0.0581 * hr * 100 / 173) * duration;
+                tlInput.value = tl.toFixed(2);
+            } else if (hr && tlInput.value) {
+                const tl = parseFloat(tlInput.value);
+                const durationCalc = tl / (0.0117 * Math.exp(0.0581 * hr * 100 / 173));
+                row.querySelector('.duration').value = durationCalc.toFixed(2);
+            } else if (duration && tlInput.value) {
+                const tl = parseFloat(tlInput.value);
+                const hrCalc = (Math.log(tl / (0.0117 * duration)) * 173 / 100) / 0.0581;
+                row.querySelector('.hr').value = hrCalc.toFixed(2);
+            }
+
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const rows = document.querySelectorAll('tbody tr');
+            let totalHR = 0, totalDuration = 0, totalTL = 0;
+            let count = 0;
+
+            rows.forEach(row => {
+                const hr = parseFloat(row.querySelector('.hr').value) || 0;
+                const duration = parseFloat(row.querySelector('.duration').value) || 0;
+                const tl = parseFloat(row.querySelector('.tl').value) || 0;
+
+                if (hr && duration && tl) count++;
+
+                totalHR += hr;
+                totalDuration += duration;
+                totalTL += tl;
+            });
+
+            document.getElementById('totalHR').textContent = (totalHR / count || 0).toFixed(2);
+            document.getElementById('totalDuration').textContent = totalDuration.toFixed(2);
+            document.getElementById('totalTL').textContent = totalTL.toFixed(2);
+        }
+
+        function addRow() {
+            const table = document.querySelector('tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode)" /></td>
+                <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode)" /></td>
+                <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode)" /></td>
+                <td><button onclick="removeRow(this)">Remove</button></td>
+            `;
+            table.appendChild(row);
+        }
+
+        function removeRow(button) {
+            button.parentNode.parentNode.remove();
+            updateTotals();
+        }
+    </script>
+</head>
+<body>
+    <h1>TL Calculator</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>HR (bpm)</th>
+                <th>Duration (mins)</th>
+                <th>TL</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="number" class="hr" oninput="calculate(this.parentNode.parentNode)" /></td>
+                <td><input type="number" class="duration" oninput="calculate(this.parentNode.parentNode)" /></td>
+                <td><input type="number" class="tl" oninput="calculate(this.parentNode.parentNode)" /></td>
+                <td><button onclick="removeRow(this)">Remove</button></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td id="totalHR">0.00</td>
+                <td id="totalDuration">0.00</td>
+                <td id="totalTL">0.00</td>
+                <td>Total</td>
+            </tr>
+        </tfoot>
+    </table>
+    <button onclick="addRow()">Add Row</button>
+</body>
+</html>
