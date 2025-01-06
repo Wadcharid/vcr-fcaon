@@ -101,9 +101,6 @@
 </head>
 <body>
 
-<div id="menu-container"></div>
-<script src="menu.js"></script>
-    
     <h1>Training Load Calculator</h1>
     <form oninput="calculateTrainingLoad()">
         <label for="weekly_time">Weekly Duration Training (Minutes):</label>
@@ -127,89 +124,86 @@
     <div id="daily-load"></div>
 
     <script>
-        const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)', 'Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo' , 'Z5-Z6 VO2MAX'];
-        let percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
-        const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
-        const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
+        document.addEventListener("DOMContentLoaded", () => {
+            const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)', 'Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo', 'Z5-Z6 VO2MAX'];
+            let percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
+            const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
+            const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
 
-        // Update percentages based on dropdown
-        document.getElementById('phaseSelector').addEventListener('change', () => {
-            updatePercentages();
-            calculateTrainingLoad();
-        });
-
-        function updatePercentages() {
-            const phase = document.getElementById('phaseSelector').value;
-            switch (phase) {
-                case 'General':
-                    percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0];
-                    break;
-                case 'Base':
-                    percentages = [0.20, 0.50, 0.20, 0.10, 0.0, 0.0];
-                    break;
-                case 'Build':
-                    percentages = [0.20, 0.40, 0.15, 0.10, 0.10, 0.05];
-                    break;
-                default:
-                    percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
-            }
-        }
-
-        function calculateTrainingLoad() {
-            const weeklyTIME = parseInt(document.getElementById('weekly_time').value) || 0;
-            const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value) || 0;
-            const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value) || 0;
-            const vcrPaceSeconds = vcrMinutes * 60 + vcrSeconds;
-
-            // แก้ไขส่วนนี้ โดยเปลี่ยนจาก weeklyTL เป็น weeklyTIME
-            if (weeklyTIME === 0 || vcrPaceSeconds === 0) {
-                document.getElementById('result').innerHTML = '';
-                document.getElementById('daily-load').innerHTML = '';
-                return;
-            }
-
-            const durations = percentages.map(p => Math.floor(weeklyTIME * p));
-            const zoneTL = durations.map((tl, i) => Math.ceil(tl * durationConstants[i]));
-            const distances = durations.map((duration, i) => 
-                Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds)
-            );
-
-            let totalTL = 0, totalDuration = 0, totalDistance = 0;
-            let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
-
-            zones.forEach((zone, i) => {
-                // แก้ไขให้สอดคล้องกับตัวแปร
-                totalDuration += durations[i];  // รวมเวลาซ้อม
-                totalTL += zoneTL[i];           // รวมค่า Training Load
-                totalDistance += distances[i];
-                tableHTML += `
-                    <tr>
-                        <td>${zone}</td>
-                        <td>${durations[i]}</td>
-                        <td>${zoneTL[i]}</td>
-                        <td>${distances[i]}</td>
-                    </tr>
-                `;
+            document.getElementById('phaseSelector').addEventListener('change', () => {
+                updatePercentages();
+                calculateTrainingLoad();
             });
 
-            tableHTML += `
-                <tr>
-                    <th>Total</th>
-                    <th>${totalDuration}</th>
-                    <th>${totalTL}</th>
-                    <th>${totalDistance}</th>
-                </tr>
-            `;
-            tableHTML += '</table>';
+            function updatePercentages() {
+                const phase = document.getElementById('phaseSelector').value;
+                switch (phase) {
+                    case 'General':
+                        percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0];
+                        break;
+                    case 'Base':
+                        percentages = [0.20, 0.50, 0.20, 0.10, 0.0, 0.0];
+                        break;
+                    case 'Build':
+                        percentages = [0.20, 0.40, 0.15, 0.10, 0.10, 0.05];
+                        break;
+                    default:
+                        percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0];
+                }
+            }
 
-            const dailyLoad = Math.floor(totalTL / 7);
-            document.getElementById('result').innerHTML = tableHTML;
-            document.getElementById('daily-load').innerHTML = 
-                \`Daily Load: <strong>\${dailyLoad}</strong>\`;
-        }
+            function calculateTrainingLoad() {
+                const weeklyTIME = parseInt(document.getElementById('weekly_time').value) || 0;
+                const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value) || 0;
+                const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value) || 0;
+                const vcrPaceSeconds = (vcrMinutes * 60) + vcrSeconds;
 
-        // Initialize calculation
-        calculateTrainingLoad();
+                if (!weeklyTIME || !vcrPaceSeconds) {
+                    document.getElementById('result').innerHTML = '<p>Please enter valid values!</p>';
+                    document.getElementById('daily-load').innerHTML = '';
+                    return;
+                }
+
+                const durations = percentages.map(p => Math.floor(weeklyTIME * p));
+                const zoneTL = durations.map((tl, i) => Math.ceil(tl * durationConstants[i]));
+                const distances = durations.map((duration, i) => 
+                    Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds)
+                );
+
+                let totalTL = 0, totalDuration = 0, totalDistance = 0;
+                let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
+
+                zones.forEach((zone, i) => {
+                    totalDuration += durations[i];
+                    totalTL += zoneTL[i];
+                    totalDistance += distances[i];
+                    tableHTML += `
+                        <tr>
+                            <td>${zone}</td>
+                            <td>${durations[i]}</td>
+                            <td>${zoneTL[i]}</td>
+                            <td>${distances[i]}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `
+                    <tr>
+                        <th>Total</th>
+                        <th>${totalDuration}</th>
+                        <th>${totalTL}</th>
+                        <th>${totalDistance}</th>
+                    </tr>
+                `;
+                tableHTML += '</table>';
+
+                const dailyLoad = Math.floor(totalTL / 7);
+                document.getElementById('result').innerHTML = tableHTML;
+                document.getElementById('daily-load').innerHTML = 
+                    `Daily Load: <strong>${dailyLoad}</strong>`;
+            }
+        });
     </script>
 </body>
 </html>
+
