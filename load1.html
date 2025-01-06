@@ -106,7 +106,7 @@
 
     <h1>Training Load Calculator</h1>
     <form>
-        <label for="weekly_time">Weekly Duration Training (Minutes):</label>
+        <label for="weekly_time">Weekly Duration Training (Minutes):<span title="5 ชั่วโมง ก็ 300 นาที">ℹ️</span></label>
         <input type="number" id="weekly_time" name="weekly_time" placeholder="240 mins beginner - > 840 mins Leisurist" required>
         
         <label for="phaseSelector">Select Phase:</label>
@@ -116,7 +116,7 @@
             <option value="Build">Build</option>
         </select>
         
-        <label>LT Pace (หรือใช้ 60 mins Pace):</label>
+        <label>LT Pace (หรือใช้ 60 mins Pace):<span title="ถ้าคิดไม่ออกเอา Pace 10k ที่ดีที่สุดช่วง 1 ปีที่ผ่าน">ℹ️</span></label>
         <div class="inline">
             <input type="number" id="vcr_minutes" name="vcr_minutes" placeholder="Minutes" min="0" required>
             <input type="number" id="vcr_seconds" name="vcr_seconds" placeholder="Seconds" min="0" max="59" required>
