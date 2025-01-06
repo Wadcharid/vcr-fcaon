@@ -137,10 +137,11 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)', 'Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo', 'Z5-Z6 VO2MAX'];
+            const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)', 'Z2 Aerobic Threshold(AT)', 'Z3 Marathon Zone', 'Z4 Threshold', 'Z5-Z6 VO2MAX'];
             let percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
             const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
             const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
+            const runType = ['วอร์มอัพ / คูลดาวน์', 'Easy, Long run, 90 - 120 นาที', 'Steady , Long run, 60-90 นาที', 'Marathon Pace , Low Tempo, 45-90 นาที', 'Hard Tempo, Long Interval, 20-45นาที', 'Interval 2-4 นาที สลับพัก'];
 
             function updatePercentages() {
                 const phase = document.getElementById('phaseSelector').value;
@@ -180,7 +181,7 @@
                 
 
                 let totalTL = 0, totalDuration = 0, totalDistance = 0, totalDistance2 = 0;
-                let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
+                let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th><th>ลักษณะการซ้อม</th></tr>';
 
                 zones.forEach((zone, i) => {
                     totalDuration += durations[i];
@@ -193,6 +194,7 @@
                             <td>${durations[i]}</td>
                             <td>${zoneTL[i]}</td>
                             <td>${distances2[i]} - ${distances[i]}</td>
+                            <td>${runType}</td>
                         </tr>
                     `;
                 });
