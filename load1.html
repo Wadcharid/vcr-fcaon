@@ -107,7 +107,7 @@
     <h1>Training Load Calculator</h1>
     <form oninput="calculateTrainingLoad()">
         <label for="weekly_tl">Weekly Training Load (TL):</label>
-        <input type="number" id="weekly_tl" name="weekly_tl" required placeholder="400 beginner - >2000 worldclass">
+        <input type="number" id="weekly_time" name="weekly_time" required placeholder="400 beginner - >2000 worldclass">
         
         <label for="phaseSelector">Select Phase:</label>
         <select id="phaseSelector">
@@ -128,7 +128,7 @@
 
     <script>
         const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)','Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo' , 'Z5-Z6 VO2MAX'];
-        let percentages = [0.10, 0.40, 0.25, 0.15, 0.10, 0.0]; // Default to General
+        let percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
         const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
         const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
 
@@ -142,21 +142,21 @@
             const phase = document.getElementById('phaseSelector').value;
             switch (phase) {
                 case 'General':
-                    percentages = [0.10, 0.40, 0.25, 0.15, 0.10, 0.0];
+                    percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0];
                     break;
                 case 'Base':
-                    percentages = [0.10, 0.50, 0.25, 0.15, 0.0, 0.0];
+                    percentages = [0.20, 0.50, 0.20, 0.10, 0.0, 0.0];
                     break;
                 case 'Build':
-                    percentages = [0.10, 0.35, 0.15, 0.15, 0.10, 0.15];
+                    percentages = [0.20, 0.40, 0.15, 0.10, 0.10, 0.05];
                     break;
                 default:
-                    percentages = [0.10, 0.40, 0.25, 0.15, 0.10, 0.0]; // Default to General
+                    percentages = [0.20, 0.40, 0.20, 0.10, 0.10, 0.0]; // Default to General
             }
         }
 
         function calculateTrainingLoad() {
-            const weeklyTL = parseInt(document.getElementById('weekly_tl').value) || 0;
+            const weeklyTIME = parseInt(document.getElementById('weekly_time').value) || 0;
             const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value) || 0;
             const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value) || 0;
             const vcrPaceSeconds = vcrMinutes * 60 + vcrSeconds;
@@ -167,21 +167,21 @@
                 return;
             }
 
-            const zoneTL = percentages.map(p => Math.floor(weeklyTL * p));
-            const durations = zoneTL.map((tl, i) => Math.ceil(tl / durationConstants[i]));
+            const durations = percentages.map(p => Math.floor(weeklyTIME * p));
+            const zoneTL = durations.map((tl, i) => Math.ceil(tl * durationConstants[i]));
             const distances = durations.map((duration, i) => Math.ceil(duration * 60 * distanceMultipliers[i] / vcrPaceSeconds));
 
             let totalTL = 0, totalDuration = 0, totalDistance = 0;
-            let tableHTML = '<table><tr><th>Zone</th><th>TL</th><th>Est. Duration (min)</th><th>Est. Distance (km)</th></tr>';
+            let tableHTML = '<table><tr><th>Zone</th><th>Est. Duration (min)</th><th>TL</th><th>Est. Distance (km)</th></tr>';
 
             zones.forEach((zone, i) => {
-                totalTL += zoneTL[i];
-                totalDuration += durations[i];
+                totalTL += durations[i];
+                totalDuration += zoneTL[i];
                 totalDistance += distances[i];
-                tableHTML += `<tr><td>${zone}</td><td>${zoneTL[i]}</td><td>${durations[i]}</td><td>${distances[i]}</td></tr>`;
+                tableHTML += `<tr><td>${zone}</td><td>${durations[i]}</td><td>${zoneTL[i]}</td><td>${distances[i]}</td></tr>`;
             });
 
-            tableHTML += `<tr><th>Total</th><th>${totalTL}</th><th>${totalDuration}</th><th>${totalDistance}</th></tr>`;
+            tableHTML += `<tr><th>Total</th><th>${totalDuration}</th><th>${totalTL}</th><th>${totalDistance}</th></tr>`;
             tableHTML += '</table>';
 
             const dailyLoad = Math.floor(totalTL / 7);
