@@ -129,7 +129,7 @@
     <script>
         const zones = ['Z1 Recovery/Warm up/Cool down', 'Z2 Aerobic Base(AB)','Z2 Aerobic Threshold(AT)', 'Z3 Low Tempo', 'Z4 Hard Tempo' , 'Z5-Z6 VO2MAX'];
         let percentages = [0.10, 0.40, 0.25, 0.15, 0.10, 0.0]; // Default to General
-        const durationConstants = [0.511, 1.372, 1.731, 2.452, 3.475, 4.925];
+        const durationConstants = [0.767, 1.372, 1.731, 2.452, 3.475, 4.925];
         const distanceMultipliers = [0.65, 0.75, 0.80, 0.90, 0.97, 1.08];
 
         // Update percentages based on dropdown
@@ -148,7 +148,7 @@
                     percentages = [0.10, 0.50, 0.25, 0.15, 0.0, 0.0];
                     break;
                 case 'Build':
-                    percentages = [0.10, 0.30, 0.20, 0.15, 0.10, 0.15];
+                    percentages = [0.10, 0.35, 0.15, 0.15, 0.10, 0.15];
                     break;
                 default:
                     percentages = [0.10, 0.40, 0.25, 0.15, 0.10, 0.0]; // Default to General
