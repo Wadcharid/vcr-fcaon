@@ -72,20 +72,24 @@
     <script>
         function calculate(row) {
             const hr = parseInt(row.querySelector('.hr').value) || 0;
-            const duration = parseInt(row.querySelector('.duration').value) || 0;
+            const durationInput = row.querySelector('.duration');
             const tlInput = row.querySelector('.tl');
+            let duration = parseInt(durationInput.value) || 0;
+            let tl = parseInt(tlInput.value) || 0;
 
             if (hr && duration) {
-                const tl = 0.0117 * Math.exp(0.0581 * hr * 100 / 173) * duration;
+                tl = 0.0117 * Math.exp(0.0581 * hr * 100 / 173) * duration;
                 tlInput.value = Math.round(tl);
-            } else if (hr && tlInput.value) {
-                const tl = parseInt(tlInput.value);
-                const durationCalc = tl / (0.0117 * Math.exp(0.0581 * hr * 100 / 173));
-                row.querySelector('.duration').value = Math.round(durationCalc);
-            } else if (duration && tlInput.value) {
-                const tl = parseInt(tlInput.value);
-                const hrCalc = (Math.log(tl / (0.0117 * duration)) * 173 / 100) / 0.0581;
-                row.querySelector('.hr').value = Math.round(hrCalc);
+            } else if (hr && tl) {
+                duration = tl / (0.0117 * Math.exp(0.0581 * hr * 100 / 173));
+                durationInput.value = Math.round(duration);
+            } else if (duration && tl) {
+                hr = (Math.log(tl / (0.0117 * duration)) * 173 / 100) / 0.0581;
+                row.querySelector('.hr').value = Math.round(hr);
+            }
+
+            if (duration === 0) {
+                tlInput.value = 0;
             }
 
             updateTotals();
