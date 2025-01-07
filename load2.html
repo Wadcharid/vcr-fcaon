@@ -121,7 +121,7 @@
             <option value="Build">Build</option>
         </select>
         
-        <label>10K Pace ที่ดีที่สุด<span title="ถ้าคิดไม่ออกเอา Pace 5k-10k ที่ดีที่สุดช่วง 1 ปีที่ผ่าน">ℹ️</span></label>
+        <label>10K เวลาที่ดีที่สุด<span title="ที่ดีที่สุดช่วง 1 ปีที่ผ่าน">ℹ️</span></label>
         <div class="inline">
             <input type="number" id="vcr_minutes" name="vcr_minutes" placeholder="Minutes" min="0" required>
             <input type="number" id="vcr_seconds" name="vcr_seconds" placeholder="Seconds" min="0" max="59" required>
@@ -167,7 +167,7 @@
                 const weeklyTIME = parseInt(document.getElementById('weekly_time').value) || 0;
                 const vcrMinutes = parseInt(document.getElementById('vcr_minutes').value) || 0;
                 const vcrSeconds = parseInt(document.getElementById('vcr_seconds').value) || 0;
-                const vcrPaceSeconds = ((vcrMinutes * 60) + vcrSeconds);
+                const vcrPaceSeconds =  ((vcrMinutes * 60) + vcrSeconds) / 10;
 
                 if (!weeklyTIME || !vcrPaceSeconds) {
                     document.getElementById('table-container').innerHTML = '<p>Please enter valid values!</p>';
