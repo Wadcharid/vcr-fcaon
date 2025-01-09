@@ -16,12 +16,13 @@
         }
 
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             background: #fff;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            overflow-x: auto;
         }
 
         table {
@@ -42,9 +43,10 @@
         }
 
         input {
-            width: 90%;
+            width: 100%;
             box-sizing: border-box;
-            padding: 5px;
+            padding: 10px;
+            font-size: 1rem;
             border: 1px solid #ccc;
             border-radius: 4px;
             text-align: center;
@@ -57,7 +59,7 @@
             padding: 8px 12px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 1rem;
         }
 
         button:hover {
@@ -67,6 +69,35 @@
         .add-row-btn {
             display: flex;
             justify-content: flex-end;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            input {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 6px 10px;
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 8px;
+            }
         }
     </style>
     <script>
