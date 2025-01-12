@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <title>TL Calculator</title>
+  <title>TL Calculator with Footer</title>
   
   <!-- สำหรับ Mobile Responsive -->
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -14,11 +14,13 @@
   />
 
   <style>
-    /* กรณีอยากปรับสีนิดหน่อยเพิ่มได้ตรงนี้ */
-    /* ตัวอย่าง: เน้นสีหัวตาราง */
     thead tr {
       background-color: #007bff;
       color: #fff;
+    }
+    tfoot td {
+      font-weight: bold;
+      background: #f8f9fa; /* สีพื้นหลังอ่อน ๆ */
     }
   </style>
 </head>
@@ -103,6 +105,21 @@
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <!-- Pace รวม (คำนวณจาก Duration รวม / Distance รวม) -->
+            <td id="footerPace" colspan="2" class="text-primary">
+              Pace: 00:00
+            </td>
+            <!-- Duration รวม -->
+            <td id="footerDuration" class="text-primary">0</td>
+            <!-- TL รวม -->
+            <td id="footerTL" class="text-primary">0</td>
+            <!-- Distance รวม -->
+            <td id="footerDistance" class="text-primary">0</td>
+            <td>รวม</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
 
@@ -120,8 +137,9 @@
   <script>
     /**
      * ฟังก์ชันคำนวณค่าในแต่ละแถว
-     * ตามสมการ: TL = 0.0699 * exp(0.0407 * X) * Duration
-     *         X  = (LT_Pace_in_sec * 100) / paceInSec
+     * สมการ:
+     *   TL = 0.0699 * exp(0.0407 * X) * Duration
+     *   X  = (LT_Pace_in_sec * 100) / paceInSec
      */
     function recalcRow(tr) {
       // 1) อ่านค่า LT Pace
@@ -157,13 +175,13 @@
         return intensity * duration;
       }
 
-      // 3) ตรรกะการคำนวณ: ต้องกรอก 2 ใน 3 ค่า (Pace, Duration, TL)
-      // 3.1 ถ้ามี Pace & Duration แต่ TL เป็น 0 -> คำนวณ TL ใหม่
+      // --- ตรรกะการคำนวณ: ต้องกรอก 2 ใน 3 ค่า (Pace, Duration, TL) ---
+      // 1) ถ้ามี Pace & Duration แต่ TL เป็น 0 -> คำนวณ TL ใหม่
       if (paceInSec > 0 && duration > 0 && tl === 0) {
         tl = computeTL(paceInSec, duration);
         tlInput.value = tl.toFixed(0);
       }
-      // 3.2 ถ้ามี Pace & TL แต่ Duration เป็น 0 -> คำนวณ Duration ใหม่
+      // 2) ถ้ามี Pace & TL แต่ Duration เป็น 0 -> คำนวณ Duration ใหม่
       else if (paceInSec > 0 && tl > 0 && duration === 0) {
         const X = (ltPaceInSec * 100) / paceInSec;
         const intensity = 0.0699 * Math.exp(0.0407 * X);
@@ -172,7 +190,7 @@
           durationInput.value = duration.toFixed(0);
         }
       }
-      // 3.3 ถ้ามี Duration & TL แต่ Pace เป็น 0 -> คำนวณ Pace ใหม่
+      // 3) ถ้ามี Duration & TL แต่ Pace เป็น 0 -> คำนวณ Pace ใหม่
       else if (duration > 0 && tl > 0 && paceInSec === 0) {
         // tl = intensity * duration
         // intensity = 0.0699 * exp(0.0407 * X)
@@ -197,6 +215,52 @@
         distance = duration / paceInMin;
       }
       distField.textContent = distance.toFixed(2);
+
+      // เรียกอัปเดตผลรวมใน tfoot
+      updateFooterTotals();
+    }
+
+    /**
+     * ฟังก์ชันรวมค่าจากทุกแถว (Duration, TL, Distance)
+     * แล้วคำนวณ pace = (Total Duration / Total Distance)
+     * นำมาแสดงผลใน Footer
+     */
+    function updateFooterTotals() {
+      const rows = document.querySelectorAll("#myTable tbody tr");
+
+      let totalDuration = 0;
+      let totalTL = 0;
+      let totalDistance = 0;
+
+      rows.forEach((tr) => {
+        const durationVal = parseFloat(tr.querySelector(".duration")?.value) || 0;
+        const tlVal       = parseFloat(tr.querySelector(".tl")?.value)       || 0;
+        const distVal     = parseFloat(tr.querySelector(".distance")?.textContent) || 0;
+
+        totalDuration += durationVal;
+        totalTL       += tlVal;
+        totalDistance += distVal;
+      });
+
+      // อัปเดตลงใน tfoot
+      document.getElementById("footerDuration").textContent = totalDuration.toFixed(0);
+      document.getElementById("footerTL").textContent       = totalTL.toFixed(0);
+      document.getElementById("footerDistance").textContent = totalDistance.toFixed(2);
+
+      // pace = totalDuration / totalDistance (นาที/กม.)
+      // แล้วแปลงเป็น mm:ss
+      let footerPaceText = "Pace: 00:00";
+      if (totalDistance > 0 && totalDuration > 0) {
+        const paceMinPerKm = totalDuration / totalDistance; 
+        // แปลงเป็นนาที:วินาที
+        const paceMin = Math.floor(paceMinPerKm);
+        const paceSec = Math.round((paceMinPerKm - paceMin) * 60);
+
+        // ใส่ leading zero
+        const paceSecStr = paceSec < 10 ? "0" + paceSec : paceSec;
+        footerPaceText = `Pace: ${paceMin}:${paceSecStr}`;
+      }
+      document.getElementById("footerPace").textContent = footerPaceText;
     }
 
     /**
@@ -204,7 +268,7 @@
      */
     function attachEventsToRow(tr) {
       const inputs = tr.querySelectorAll("input");
-      inputs.forEach(input => {
+      inputs.forEach((input) => {
         input.addEventListener("change", () => recalcRow(tr));
       });
 
@@ -212,6 +276,8 @@
       const removeBtn = tr.querySelector(".removeBtn");
       removeBtn.addEventListener("click", () => {
         tr.parentNode.removeChild(tr);
+        // หลังลบแถวก็ต้องอัปเดต Footer ด้วย
+        updateFooterTotals();
       });
     }
 
@@ -257,12 +323,15 @@
         document.getElementById("ltPaceMin"),
         document.getElementById("ltPaceSec")
       ];
-      ltPaceInputs.forEach(ip => {
+      ltPaceInputs.forEach((ip) => {
         ip.addEventListener("change", () => {
           const rows = document.querySelectorAll("#myTable tbody tr");
-          rows.forEach(row => recalcRow(row));
+          rows.forEach((row) => recalcRow(row));
         });
       });
+
+      // เรียกอัปเดต Footer เผื่อมีการเปลี่ยนค่าในแถวแรก
+      updateFooterTotals();
     });
   </script>
 </body>
