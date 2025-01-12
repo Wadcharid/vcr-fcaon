@@ -2,8 +2,8 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <title>TL Calculator with Footer</title>
-  
+  <title>TL Calculator with Immediate TL Update</title>
+
   <!-- สำหรับ Mobile Responsive -->
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
@@ -12,7 +12,6 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
   />
-
   <style>
     thead tr {
       background-color: #007bff;
@@ -20,7 +19,7 @@
     }
     tfoot td {
       font-weight: bold;
-      background: #f8f9fa; /* สีพื้นหลังอ่อน ๆ */
+      background: #f8f9fa;
     }
   </style>
 </head>
@@ -72,7 +71,6 @@
                 class="paceMin form-control"
                 type="number"
                 min="0"
-                value=""
               />
             </td>
             <td>
@@ -80,7 +78,6 @@
                 class="paceSec form-control"
                 type="number"
                 min="0"
-                value=""
               />
             </td>
             <td>
@@ -88,7 +85,6 @@
                 class="duration form-control"
                 type="number"
                 min="0"
-                value=""
               />
             </td>
             <td>
@@ -96,7 +92,6 @@
                 class="tl form-control"
                 type="number"
                 min="0"
-                value=""
               />
             </td>
             <td class="distance">0</td>
@@ -136,21 +131,29 @@
 
   <script>
     /**
-     * ฟังก์ชันคำนวณค่าในแต่ละแถว
-     * สมการ:
-     *   TL = 0.0699 * exp(0.0407 * X) * Duration
-     *   X  = (LT_Pace_in_sec * 100) / paceInSec
+     * สมการคำนวณ TL
+     *  TL = 0.0699 * exp(0.0407 * X) * Duration
+     *  X  = (LT_Pace_in_sec * 100) / paceInSec
      */
-    function recalcRow(tr) {
-      // 1) อ่านค่า LT Pace
+    function computeTL(ltPaceInSec, paceInSec, duration) {
+      if (ltPaceInSec <= 0 || paceInSec <= 0 || duration <= 0) return 0;
+      const X = (ltPaceInSec * 100) / paceInSec;
+      const intensity = 0.0699 * Math.exp(0.0407 * X);
+      return intensity * duration;
+    }
+
+    /**
+     * เมื่อค่าในแถวใดแถวหนึ่งถูกเปลี่ยน => recalcRow
+     * @param {HTMLElement} tr  แถวที่มีการเปลี่ยนค่า
+     * @param {String} changedClass  className หลักของ input ที่เปลี่ยน
+     */
+    function recalcRow(tr, changedClass) {
+      // อ่านค่า LT Pace
       const ltPaceMin = parseInt(document.getElementById("ltPaceMin").value) || 0;
       const ltPaceSec = parseInt(document.getElementById("ltPaceSec").value) || 0;
       const ltPaceInSec = ltPaceMin * 60 + ltPaceSec;
 
-      // ถ้า LT Pace ยังไม่ถูกกรอก หรือเป็น 0 ให้หยุดคำนวณ
-      if (ltPaceInSec <= 0) return;
-
-      // 2) อ่านค่าจากฟอร์มในแถวปัจจุบัน
+      // ดึง input ในแถว
       const paceMinInput   = tr.querySelector(".paceMin");
       const paceSecInput   = tr.querySelector(".paceSec");
       const durationInput  = tr.querySelector(".duration");
@@ -162,68 +165,51 @@
       let duration  = parseFloat(durationInput.value)  || 0;
       let tl        = parseFloat(tlInput.value)        || 0;
 
-      // paceInSec = pace (นาที/กม.) ในหน่วยวินาที
+      // paceInSec
       const paceInSec = paceMin * 60 + paceSec;
 
-      // ฟังก์ชันคำนวณ TL ตามสูตร
-      // TL = 0.0699 * exp(0.0407 * X) * Duration
-      // X  = (ltPaceInSec * 100) / paceInSec
-      function computeTL(paceInSec, duration) {
-        if (paceInSec <= 0 || duration <= 0) return 0;
-        const X = (ltPaceInSec * 100) / paceInSec;
-        const intensity = 0.0699 * Math.exp(0.0407 * X);
-        return intensity * duration;
-      }
-
-      // --- ตรรกะการคำนวณ: ต้องกรอก 2 ใน 3 ค่า (Pace, Duration, TL) ---
-      // 1) ถ้ามี Pace & Duration แต่ TL เป็น 0 -> คำนวณ TL ใหม่
-      if (paceInSec > 0 && duration > 0 && tl === 0) {
-        tl = computeTL(paceInSec, duration);
-        tlInput.value = tl.toFixed(0);
-      }
-      // 2) ถ้ามี Pace & TL แต่ Duration เป็น 0 -> คำนวณ Duration ใหม่
-      else if (paceInSec > 0 && tl > 0 && duration === 0) {
-        const X = (ltPaceInSec * 100) / paceInSec;
-        const intensity = 0.0699 * Math.exp(0.0407 * X);
-        if (intensity > 0) {
-          duration = tl / intensity;
-          durationInput.value = duration.toFixed(0);
-        }
-      }
-      // 3) ถ้ามี Duration & TL แต่ Pace เป็น 0 -> คำนวณ Pace ใหม่
-      else if (duration > 0 && tl > 0 && paceInSec === 0) {
-        // tl = intensity * duration
-        // intensity = 0.0699 * exp(0.0407 * X)
-        // X = (ltPaceInSec * 100) / paceInSec
-        // => paceInSec = (ltPaceInSec * 100) / X
-        const part = (tl / duration) / 0.0699;
-        if (part > 0) {
-          const newX = Math.log(part) / 0.0407;
-          const newPaceSec = (ltPaceInSec * 100) / newX;
-          let newPaceMin = Math.floor(newPaceSec / 60);
-          let newPaceSecOnly = Math.round(newPaceSec % 60);
-
-          paceMinInput.value = newPaceMin;
-          paceSecInput.value = newPaceSecOnly;
+      // 1) กรณีผู้ใช้แก้ไข Pace หรือ Duration => เราคำนวณ TL ใหม่ทันที
+      if (changedClass === "paceMin" || changedClass === "paceSec" || changedClass === "duration") {
+        if (paceInSec > 0 && duration > 0 && ltPaceInSec > 0) {
+          // คำนวณ TL ใหม่ (ทับของเดิม)
+          tl = computeTL(ltPaceInSec, paceInSec, duration);
+          tlInput.value = tl.toFixed(0);
         }
       }
 
-      // 4) คำนวณ Distance (km) = Duration (นาที) / Pace (นาทีต่อกม.)
+      // 2) กรณีผู้ใช้แก้ไข TL => คำนวณ Duration ใหม่ (ถ้ามี paceInSec)
+      else if (changedClass === "tl") {
+        if (paceInSec > 0 && ltPaceInSec > 0) {
+          // จากสูตร TL = intensity * duration
+          // => duration = TL / intensity
+          const newTL = parseFloat(tlInput.value) || 0;
+          if (newTL > 0) {
+            const X = (ltPaceInSec * 100) / paceInSec;
+            const intensity = 0.0699 * Math.exp(0.0407 * X);
+            if (intensity > 0) {
+              duration = newTL / intensity;
+              durationInput.value = duration.toFixed(0);
+            }
+          }
+        }
+      }
+
+      // 3) คำนวณ Distance = duration (นาที) / pace (นาที/กม.)
       let distance = 0;
       if (paceInSec > 0 && duration > 0) {
-        let paceInMin = paceInSec / 60;  // pace ในนาที/กม.
+        const paceInMin = paceInSec / 60;
         distance = duration / paceInMin;
       }
       distField.textContent = distance.toFixed(2);
 
-      // เรียกอัปเดตผลรวมใน tfoot
+      // 4) อัปเดต Footer
       updateFooterTotals();
     }
 
     /**
      * ฟังก์ชันรวมค่าจากทุกแถว (Duration, TL, Distance)
-     * แล้วคำนวณ pace = (Total Duration / Total Distance)
-     * นำมาแสดงผลใน Footer
+     * และคำนวณ pace (จาก Duration รวม / Distance รวม)
+     * แสดงผลใน Footer
      */
     function updateFooterTotals() {
       const rows = document.querySelectorAll("#myTable tbody tr");
@@ -247,16 +233,13 @@
       document.getElementById("footerTL").textContent       = totalTL.toFixed(0);
       document.getElementById("footerDistance").textContent = totalDistance.toFixed(2);
 
-      // pace = totalDuration / totalDistance (นาที/กม.)
-      // แล้วแปลงเป็น mm:ss
+      // pace รวม = totalDuration / totalDistance
+      // แปลงเป็น mm:ss
       let footerPaceText = "Pace: 00:00";
       if (totalDistance > 0 && totalDuration > 0) {
-        const paceMinPerKm = totalDuration / totalDistance; 
-        // แปลงเป็นนาที:วินาที
+        const paceMinPerKm = totalDuration / totalDistance;
         const paceMin = Math.floor(paceMinPerKm);
         const paceSec = Math.round((paceMinPerKm - paceMin) * 60);
-
-        // ใส่ leading zero
         const paceSecStr = paceSec < 10 ? "0" + paceSec : paceSec;
         footerPaceText = `Pace: ${paceMin}:${paceSecStr}`;
       }
@@ -264,20 +247,34 @@
     }
 
     /**
-     * ฟังก์ชันผูก event ให้ input ทุกช่องในแถวนั้น
+     * ผูก event ให้ input ทุกช่องในแถวนั้น
      */
     function attachEventsToRow(tr) {
       const inputs = tr.querySelectorAll("input");
       inputs.forEach((input) => {
-        input.addEventListener("change", () => recalcRow(tr));
+        input.addEventListener("change", (e) => {
+          // e.target.classList อาจมีหลาย class
+          // เราจะดึงชื่อหลักมาใช้ เช่น paceMin, paceSec, duration, tl
+          if (e.target.classList.contains("paceMin")) {
+            recalcRow(tr, "paceMin");
+          } 
+          else if (e.target.classList.contains("paceSec")) {
+            recalcRow(tr, "paceSec");
+          }
+          else if (e.target.classList.contains("duration")) {
+            recalcRow(tr, "duration");
+          }
+          else if (e.target.classList.contains("tl")) {
+            recalcRow(tr, "tl");
+          }
+        });
       });
 
       // ปุ่ม remove
       const removeBtn = tr.querySelector(".removeBtn");
       removeBtn.addEventListener("click", () => {
         tr.parentNode.removeChild(tr);
-        // หลังลบแถวก็ต้องอัปเดต Footer ด้วย
-        updateFooterTotals();
+        updateFooterTotals(); // ลบเสร็จให้อัปเดต Footer ด้วย
       });
     }
 
@@ -288,28 +285,18 @@
       const tbody = document.querySelector("#myTable tbody");
       const newRow = document.createElement("tr");
       newRow.innerHTML = `
-        <td>
-          <input class="paceMin form-control" type="number" min="0" />
-        </td>
-        <td>
-          <input class="paceSec form-control" type="number" min="0" />
-        </td>
-        <td>
-          <input class="duration form-control" type="number" min="0" />
-        </td>
-        <td>
-          <input class="tl form-control" type="number" min="0" />
-        </td>
+        <td><input class="paceMin form-control" type="number" min="0" /></td>
+        <td><input class="paceSec form-control" type="number" min="0" /></td>
+        <td><input class="duration form-control" type="number" min="0" /></td>
+        <td><input class="tl form-control" type="number" min="0" /></td>
         <td class="distance">0</td>
-        <td>
-          <button class="btn btn-danger removeBtn">Remove</button>
-        </td>
+        <td><button class="btn btn-danger removeBtn">Remove</button></td>
       `;
       tbody.appendChild(newRow);
       attachEventsToRow(newRow);
     }
 
-    // เมื่อหน้าโหลด
+    // ---------- เมื่อหน้าโหลด ----------
     document.addEventListener("DOMContentLoaded", () => {
       // ผูก event ให้แถวแรกที่มีอยู่แล้ว
       const firstRow = document.querySelector("#myTable tbody tr");
@@ -318,7 +305,7 @@
       // ปุ่ม Add Row
       document.getElementById("addRowBtn").addEventListener("click", addRow);
 
-      // ถ้าปรับค่า LT Pace ให้รีคำนวณทุกแถวใหม่
+      // ถ้าปรับค่า LT Pace => ให้รีคำนวณทุกแถวใหม่
       const ltPaceInputs = [
         document.getElementById("ltPaceMin"),
         document.getElementById("ltPaceSec")
@@ -326,11 +313,15 @@
       ltPaceInputs.forEach((ip) => {
         ip.addEventListener("change", () => {
           const rows = document.querySelectorAll("#myTable tbody tr");
-          rows.forEach((row) => recalcRow(row));
+          rows.forEach((row) => {
+            // ในการเปลี่ยน LT Pace ไม่รู้ว่าค่าไหนเปลี่ยนก่อน
+            // ให้สมมติว่าเป็น paceMin เปลี่ยน -> recalcRow
+            recalcRow(row, "paceMin");
+          });
         });
       });
 
-      // เรียกอัปเดต Footer เผื่อมีการเปลี่ยนค่าในแถวแรก
+      // อัปเดต Footer ตอนต้น
       updateFooterTotals();
     });
   </script>
