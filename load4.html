@@ -21,6 +21,24 @@
       font-weight: bold;
       background: #f8f9fa;
     }
+    
+    /* กำหนดให้ input มีความกว้างขั้นต่ำ
+       และใช้ word-wrap: normal ไม่ให้ตัวเลขโดนตัด */
+    input[type="number"] {
+      min-width: 80px;
+      /* ถ้าอยากให้ใหญ่กว่านี้ เพิ่มตามต้องการ */
+      word-wrap: normal;
+      text-align: right; /* ใส่ขวาถ้าชอบ */
+    }    
+
+    /* สำหรับจอเล็กมาก (ต่ำกว่า 576px) เพิ่มเติมได้ตามต้องการ */
+    @media (max-width: 576px) {
+      input[type="number"] {
+        min-width: 100px;
+        font-size: 1.2rem; /* ขยายตัวอักษรให้เห็นชัดขึ้น */
+      }
+    }
+    
   </style>
 </head>
 <body>
