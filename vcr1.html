@@ -165,7 +165,7 @@
             
             document.getElementById('results').style.display = "block";
 
-            var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.063) * distance;
+            var vcrDistanceKm = Math.pow(3600 / totalSeconds, 1 / 1.065) * distance;
             var vcrDistanceMeters = Math.round(vcrDistanceKm * 1000);
             var vcrSpeed = (vcrDistanceMeters / 3600);
             var vcrPaceSecondsPerKm = 1000 / vcrSpeed;
