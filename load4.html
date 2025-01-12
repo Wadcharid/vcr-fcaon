@@ -3,63 +3,124 @@
 <head>
   <meta charset="UTF-8" />
   <title>TL Calculator</title>
+  
+  <!-- สำหรับ Mobile Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <!-- เรียกใช้ Bootstrap 5 CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  />
+
   <style>
-    table, th, td {
-      border: 1px solid #ccc;
-      border-collapse: collapse;
-      padding: 8px;
-    }
-    th {
+    /* กรณีอยากปรับสีนิดหน่อยเพิ่มได้ตรงนี้ */
+    /* ตัวอย่าง: เน้นสีหัวตาราง */
+    thead tr {
       background-color: #007bff;
       color: #fff;
-    }
-    input[type="number"] {
-      width: 60px;
     }
   </style>
 </head>
 <body>
-  <h2>TL Calculator</h2>
+  <div class="container my-4" style="max-width: 800px;">
+    <h2 class="mb-4 text-center">TL Calculator</h2>
 
-  <!-- ฟอร์มกรอก LT Pace (นาที : วินาที) -->
-  <div>
-    <label>LT Pace: </label>
-    <input type="number" id="ltPaceMin" placeholder="Min" /> :
-    <input type="number" id="ltPaceSec" placeholder="Sec" />
+    <!-- ส่วนฟอร์มกรอก LT Pace -->
+    <div class="row mb-3">
+      <label for="ltPaceMin" class="col-sm-2 col-form-label fw-bold">LT Pace:</label>
+      <div class="col-sm-10 d-flex gap-2">
+        <input
+          type="number"
+          class="form-control"
+          id="ltPaceMin"
+          placeholder="Min"
+          min="0"
+          aria-label="LT Pace Min"
+        />
+        <input
+          type="number"
+          class="form-control"
+          id="ltPaceSec"
+          placeholder="Sec"
+          min="0"
+          aria-label="LT Pace Sec"
+        />
+      </div>
+    </div>
+
+    <!-- ตารางหลัก (responsive) -->
+    <div class="table-responsive mb-3">
+      <table class="table table-bordered align-middle text-center" id="myTable">
+        <thead>
+          <tr>
+            <th scope="col">Pace (Min)</th>
+            <th scope="col">Pace (Sec)</th>
+            <th scope="col">Duration (Mins)</th>
+            <th scope="col">TL</th>
+            <th scope="col">Distance (km)</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- แถวตัวอย่างเริ่มต้น 1 แถว -->
+          <tr>
+            <td>
+              <input
+                class="paceMin form-control"
+                type="number"
+                min="0"
+                value=""
+              />
+            </td>
+            <td>
+              <input
+                class="paceSec form-control"
+                type="number"
+                min="0"
+                value=""
+              />
+            </td>
+            <td>
+              <input
+                class="duration form-control"
+                type="number"
+                min="0"
+                value=""
+              />
+            </td>
+            <td>
+              <input
+                class="tl form-control"
+                type="number"
+                min="0"
+                value=""
+              />
+            </td>
+            <td class="distance">0</td>
+            <td>
+              <button class="btn btn-danger removeBtn">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ปุ่ม Add Row -->
+    <div class="text-end">
+      <button class="btn btn-primary" id="addRowBtn">Add Row</button>
+    </div>
   </div>
-  <br />
 
-  <!-- ตารางหลัก -->
-  <table id="myTable">
-    <thead>
-      <tr>
-        <th>Pace (Min)</th>
-        <th>Pace (Sec)</th>
-        <th>Duration (Mins)</th>
-        <th>TL</th>
-        <th>Distance (km)</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- แถวตัวอย่างเริ่มต้น 1 แถว -->
-      <tr>
-        <td><input class="paceMin" type="number" min="0" value="" /></td>
-        <td><input class="paceSec" type="number" min="0" value="" /></td>
-        <td><input class="duration" type="number" min="0" value="" /></td>
-        <td><input class="tl" type="number" min="0" value="" /></td>
-        <td class="distance">0</td>
-        <td><button class="removeBtn">Remove</button></td>
-      </tr>
-    </tbody>
-  </table>
-  <br />
-  <button id="addRowBtn">Add Row</button>
+  <!-- เรียกใช้ Bootstrap 5 JS (รวม Popper) -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+  </script>
 
   <script>
     /**
      * ฟังก์ชันคำนวณค่าในแต่ละแถว
-     * ตามสูตร: TL = 0.0699 * exp(0.0407 * X) * Duration
+     * ตามสมการ: TL = 0.0699 * exp(0.0407 * X) * Duration
      *         X  = (LT_Pace_in_sec * 100) / paceInSec
      */
     function recalcRow(tr) {
@@ -86,9 +147,9 @@
       // paceInSec = pace (นาที/กม.) ในหน่วยวินาที
       const paceInSec = paceMin * 60 + paceSec;
 
-      // ฟังก์ชันคำนวณ TL ตามสูตรใหม่
+      // ฟังก์ชันคำนวณ TL ตามสูตร
       // TL = 0.0699 * exp(0.0407 * X) * Duration
-      // X  = (LT_Pace_in_sec * 100) / paceInSec
+      // X  = (ltPaceInSec * 100) / paceInSec
       function computeTL(paceInSec, duration) {
         if (paceInSec <= 0 || duration <= 0) return 0;
         const X = (ltPaceInSec * 100) / paceInSec;
@@ -96,7 +157,7 @@
         return intensity * duration;
       }
 
-      // 3) ตรรกะการคำนวณ: ต้องกรอก 2 ใน 3 ค่า (Pace, Duration, TL) แล้วให้คำนวณอีกค่า
+      // 3) ตรรกะการคำนวณ: ต้องกรอก 2 ใน 3 ค่า (Pace, Duration, TL)
       // 3.1 ถ้ามี Pace & Duration แต่ TL เป็น 0 -> คำนวณ TL ใหม่
       if (paceInSec > 0 && duration > 0 && tl === 0) {
         tl = computeTL(paceInSec, duration);
@@ -104,9 +165,6 @@
       }
       // 3.2 ถ้ามี Pace & TL แต่ Duration เป็น 0 -> คำนวณ Duration ใหม่
       else if (paceInSec > 0 && tl > 0 && duration === 0) {
-        // tl = intensity * duration
-        // intensity = 0.0699 * exp(0.0407 * X) = computeIntensity
-        // => duration = tl / intensity
         const X = (ltPaceInSec * 100) / paceInSec;
         const intensity = 0.0699 * Math.exp(0.0407 * X);
         if (intensity > 0) {
@@ -116,18 +174,14 @@
       }
       // 3.3 ถ้ามี Duration & TL แต่ Pace เป็น 0 -> คำนวณ Pace ใหม่
       else if (duration > 0 && tl > 0 && paceInSec === 0) {
-        // tl = 0.0699 * exp(0.0407 * X) * duration
-        // => (tl / duration) = 0.0699 * exp(0.0407 * X)
-        // => exp(0.0407 * X) = (tl / duration) / 0.0699
-        // => 0.0407 * X = ln((tl / duration) / 0.0699)
-        // => X = ln((tl / duration) / 0.0699) / 0.0407
-        // แต่ X = (ltPaceInSec * 100) / paceInSec
+        // tl = intensity * duration
+        // intensity = 0.0699 * exp(0.0407 * X)
+        // X = (ltPaceInSec * 100) / paceInSec
         // => paceInSec = (ltPaceInSec * 100) / X
         const part = (tl / duration) / 0.0699;
         if (part > 0) {
           const newX = Math.log(part) / 0.0407;
           const newPaceSec = (ltPaceInSec * 100) / newX;
-          // แปลงกลับเป็น Pace (นาที และวินาที)
           let newPaceMin = Math.floor(newPaceSec / 60);
           let newPaceSecOnly = Math.round(newPaceSec % 60);
 
@@ -136,7 +190,7 @@
         }
       }
 
-      // 4) คำนวณ Distance (km) = Duration (นาที) / Pace (นาที/กม.)
+      // 4) คำนวณ Distance (km) = Duration (นาที) / Pace (นาทีต่อกม.)
       let distance = 0;
       if (paceInSec > 0 && duration > 0) {
         let paceInMin = paceInSec / 60;  // pace ในนาที/กม.
@@ -168,12 +222,22 @@
       const tbody = document.querySelector("#myTable tbody");
       const newRow = document.createElement("tr");
       newRow.innerHTML = `
-        <td><input class="paceMin" type="number" min="0" /></td>
-        <td><input class="paceSec" type="number" min="0" /></td>
-        <td><input class="duration" type="number" min="0" /></td>
-        <td><input class="tl" type="number" min="0" /></td>
+        <td>
+          <input class="paceMin form-control" type="number" min="0" />
+        </td>
+        <td>
+          <input class="paceSec form-control" type="number" min="0" />
+        </td>
+        <td>
+          <input class="duration form-control" type="number" min="0" />
+        </td>
+        <td>
+          <input class="tl form-control" type="number" min="0" />
+        </td>
         <td class="distance">0</td>
-        <td><button class="removeBtn">Remove</button></td>
+        <td>
+          <button class="btn btn-danger removeBtn">Remove</button>
+        </td>
       `;
       tbody.appendChild(newRow);
       attachEventsToRow(newRow);
