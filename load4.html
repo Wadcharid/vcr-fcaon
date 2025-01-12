@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>TL Calculator</title>
+  <style>
+    table, th, td {
+      border: 1px solid #ccc;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+    th {
+      background-color: #007bff;
+      color: #fff;
+    }
+    input[type="number"] {
+      width: 60px;
+    }
+  </style>
+</head>
+<body>
+  <h2>TL Calculator</h2>
+
+  <!-- ฟอร์มกรอก LT Pace (นาที : วินาที) -->
+  <div>
+    <label>LT Pace: </label>
+    <input type="number" id="ltPaceMin" placeholder="Min" /> :
+    <input type="number" id="ltPaceSec" placeholder="Sec" />
+  </div>
+  <br />
+
+  <!-- ตารางหลัก -->
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>Pace (Min)</th>
+        <th>Pace (Sec)</th>
+        <th>Duration (Mins)</th>
+        <th>TL</th>
+        <th>Distance (km)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- แถวตัวอย่างเริ่มต้น 1 แถว -->
+      <tr>
+        <td><input class="paceMin" type="number" min="0" value="" /></td>
+        <td><input class="paceSec" type="number" min="0" value="" /></td>
+        <td><input class="duration" type="number" min="0" value="" /></td>
+        <td><input class="tl" type="number" min="0" value="" /></td>
+        <td class="distance">0</td>
+        <td><button class="removeBtn">Remove</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <button id="addRowBtn">Add Row</button>
+
+  <script>
+    // ฟังก์ชันคำนวณค่าในแถว
+    function recalcRow(tr) {
+      // อ่านค่า LT Pace
+      const ltPaceMin = parseInt(document.getElementById("ltPaceMin").value) || 0;
+      const ltPaceSec = parseInt(document.getElementById("ltPaceSec").value) || 0;
+      const ltPaceInSec = ltPaceMin * 60 + ltPaceSec;
+
+      // ถ้า LT Pace ยังไม่ถูกกรอก หรือเป็น 0 จะคำนวณอะไรไม่ได้
+      if (ltPaceInSec <= 0) return;
+
+      // อ่านค่าจากฟอร์มในแถวปัจจุบัน
+      const paceMinInput = tr.querySelector(".paceMin");
+      const paceSecInput = tr.querySelector(".paceSec");
+      const durationInput = tr.querySelector(".duration");
+      const tlInput      = tr.querySelector(".tl");
+      const distField    = tr.querySelector(".distance");
+
+      let paceMin   = parseInt(paceMinInput.value)   || 0;
+      let paceSec   = parseInt(paceSecInput.value)   || 0;
+      let duration  = parseInt(durationInput.value)  || 0;
+      let tl        = parseFloat(tlInput.value)      || 0;
+
+      // pace (นาที/กม.) ในหน่วยวินาทีทั้งหมด
+      const paceInSec = paceMin * 60 + paceSec;
+
+      // หา Intensity จากสูตร (ขึ้นกับ Pace เทียบกับ LT Pace)
+      // Intensity = 0.0699 * exp(0.0407 * X)
+      // X = (paceInSec * 100) / ltPaceInSec
+      let intensity = 0;
+      if (paceInSec > 0) {
+        const X = (paceInSec * 100) / ltPaceInSec;
+        intensity = 0.0699 * Math.exp(0.0407 * X);
+      }
+
+      // 1) ถ้ามี Pace & Duration แต่ยังไม่มี TL --> คำนวณ TL
+      if (paceInSec > 0 && duration > 0 && tl === 0) {
+        tl = duration * intensity; 
+        tlInput.value = tl.toFixed(0); // ปัดเป็นจำนวนเต็ม
+      }
+      // 2) ถ้ามี Pace & TL แต่ไม่มี Duration --> คำนวณ Duration
+      else if (paceInSec > 0 && tl > 0 && duration === 0) {
+        if (intensity > 0) {
+          duration = tl / intensity; 
+          durationInput.value = duration.toFixed(0);
+        }
+      }
+      // 3) ถ้ามี Duration & TL แต่ Pace เป็น 0 --> คำนวณ Pace จาก TL = duration * intensity
+      else if (duration > 0 && tl > 0 && paceInSec === 0) {
+        // intensity = tl / duration
+        const newIntensity = tl / duration;
+        // newIntensity = 0.0699 * exp(0.0407 * X) => X = ln(newIntensity / 0.0699) / 0.0407
+        const newX = Math.log(newIntensity / 0.0699) / 0.0407;
+        const newPaceSec = (newX * ltPaceInSec) / 100;
+
+        let newPaceMin = Math.floor(newPaceSec / 60);
+        let newPaceSecOnly = Math.round(newPaceSec % 60);
+
+        paceMinInput.value = newPaceMin;
+        paceSecInput.value = newPaceSecOnly;
+      }
+
+      // สุดท้ายคำนวณ Distance (ถ้า paceInSec > 0)
+      // Distance (km) = Duration (mins) / Pace (mins/km)
+      let distance = 0;
+      if (paceInSec > 0 && duration > 0) {
+        let paceInMin = paceInSec / 60;  // pace ในนาที/กม.
+        distance = duration / paceInMin;
+      }
+      distField.textContent = distance.toFixed(2);
+    }
+
+    // ฟังก์ชันผูก event ให้ input ทุกช่องในแถวนั้น
+    function attachEventsToRow(tr) {
+      const inputs = tr.querySelectorAll("input");
+      inputs.forEach(input => {
+        input.addEventListener("change", () => recalcRow(tr));
+      });
+
+      // ปุ่ม remove
+      const removeBtn = tr.querySelector(".removeBtn");
+      removeBtn.addEventListener("click", () => {
+        tr.parentNode.removeChild(tr);
+      });
+    }
+
+    // เพิ่มแถวใหม่
+    function addRow() {
+      const tbody = document.querySelector("#myTable tbody");
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `
+        <td><input class="paceMin" type="number" min="0" /></td>
+        <td><input class="paceSec" type="number" min="0" /></td>
+        <td><input class="duration" type="number" min="0" /></td>
+        <td><input class="tl" type="number" min="0" /></td>
+        <td class="distance">0</td>
+        <td><button class="removeBtn">Remove</button></td>
+      `;
+      tbody.appendChild(newRow);
+
+      // ผูก event ให้ input ในแถวใหม่
+      attachEventsToRow(newRow);
+    }
+
+    // ------------------ เมื่อหน้าโหลด ------------------ //
+    document.addEventListener("DOMContentLoaded", () => {
+      // ผูก event ให้แถวแรกที่มีอยู่แล้ว
+      const firstRow = document.querySelector("#myTable tbody tr");
+      attachEventsToRow(firstRow);
+
+      // ปุ่ม Add Row
+      document.getElementById("addRowBtn").addEventListener("click", addRow);
+
+      // ถ้าปรับ LT Pace ก็ให้รีคำนวณทุกแถวใหม่หมด
+      const ltPaceInputs = [document.getElementById("ltPaceMin"), document.getElementById("ltPaceSec")];
+      ltPaceInputs.forEach(ip => {
+        ip.addEventListener("change", () => {
+          const rows = document.querySelectorAll("#myTable tbody tr");
+          rows.forEach(row => recalcRow(row));
+        });
+      });
+    });
+  </script>
+</body>
+</html>
