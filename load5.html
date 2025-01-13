@@ -107,11 +107,11 @@
 //========== ฟังก์ชันคำนวณ TL จาก (paceInSec, hr, duration, ltPaceInSec, lthr) ==========//
 function computeTL(paceInSec, hr, duration, ltPaceInSec, lthr) {
   // TL1
-  const TL1 = 0.0122 * Math.exp(0.0581 * (hr * 100 / lthr)) * duration;
+  const TL1 = 0.0127 * Math.exp(0.0581 * (hr * 100 / lthr)) * duration;
   // TL2
   if(paceInSec <= 0 || ltPaceInSec <= 0) return 0; // กัน NaN
   const X = (ltPaceInSec * 100) / paceInSec;
-  const TL2 = 0.0704 * Math.exp(0.0407 * X) * duration;
+  const TL2 = 0.0709 * Math.exp(0.0407 * X) * duration;
   // TL
   return 0.5 * (TL1 + TL2);
 }
