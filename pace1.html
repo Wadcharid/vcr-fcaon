@@ -5,115 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time, Pace, Distance Calculator</title>
     <style>
+        /* General Styling */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             background-color: #f4f4f9;
+            color: #333;
         }
 
-        .calculator {
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.2em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        main {
+            margin: 80px auto 0;
+            max-width: 400px;
             background: #fff;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
             text-align: center;
-
         }
 
-        .calculator h1 {
-            font-size: 1.2em;
+        h1 {
+            font-size: 1.5em;
             margin-bottom: 20px;
-            text-align: center;
-            color: #333;
+            color: #007BFF;
         }
 
         .form-group {
             margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
 
         .input-container {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             gap: 10px;
-            margin-bottom: 10px;
         }
 
         input {
-            width: 50px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            width: calc(33% - 10px);
+            padding: 10px;
             font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             text-align: center;
         }
 
         button {
-            width: 100%;
-            padding: 10px;
-            max-width: 150px;
             background-color: #007BFF;
-            border: none;
-            border-radius: 4px;
             color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
             font-size: 1em;
             cursor: pointer;
+            margin-top: 10px;
             transition: background-color 0.3s ease;
+            width: 100%;
         }
 
         button:hover {
             background-color: #0056b3;
         }
 
-        .memory {
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #666;
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
         }
 
-        /* เพิ่มสไตล์สำหรับระยะทาง */
-        #distance {
-            width: 100px; /* ปรับความกว้างเพิ่ม */
-        }
-
-        /* สไตล์สำหรับแสดงผลลัพธ์ Pace% */
         #pacePercentResults {
-    margin-top: 10px; /* เว้นระยะจากปุ่ม %PACE */
-    padding-top: 20px; /* เพิ่มระยะจากเมนูด้านบน */
-    text-align: left;
-    max-height: calc(100vh - 120px); /* จำกัดความสูงไม่ให้เกินพื้นที่ที่เหลือใต้เมนู */
-    overflow-y: auto; /* เพิ่ม scroll หากเนื้อหาเกิน */
-            
-        }
-        .pace-item {
+            margin-top: 20px;
+            padding-top: 10px;
+            text-align: left;
             background: #f9f9f9;
-            padding: 8px;
-            margin-bottom: 5px;
-            border-radius: 4px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
         }
-/*         #menu-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 50px; /* กำหนดความสูงเมนู */
-    line-height: 30px;
-} */
-        
-    </style>
 
+        .pace-item {
+            margin-bottom: 5px;
+            padding: 8px;
+            border-radius: 5px;
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <header id="menu-container">
+        Time, Pace, Distance Calculator
+    </header>
+    <main class="calculator">
+        <h1>Calculate Time, Pace, or Distance</h1>
+
+        <div class="form-group">
+            <label>Time (hh:mm:ss):</label>
+            <div class="input-container">
+                <input type="number" id="timeHours" placeholder="h" min="0">
+                <input type="number" id="timeMinutes" placeholder="m" min="0" max="59">
+                <input type="number" id="timeSeconds" placeholder="s" min="0" max="59">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Pace (mm:ss):</label>
+            <div class="input-container">
+                <input type="number" id="paceMinutes" placeholder="m" min="0">
+                <input type="number" id="paceSeconds" placeholder="s" min="0" max="59">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Distance (km):</label>
+            <input type="number" id="distance" placeholder="km" min="0" step="0.01">
+        </div>
+
+        <div class="button-group">
+            <button onclick="calculateTime()">Calculate Time</button>
+            <button onclick="calculatePace()">Calculate Pace</button>
+            <button onclick="calculateDistance()">Calculate Distance</button>
+            <button onclick="calculatePacePercent()">Calculate % Pace</button>
+        </div>
+
+        <div id="pacePercentResults"></div>
+    </main>
     <script>
         function calculateTime() {
             const paceMinutes = parseInt(document.getElementById('paceMinutes').value) || 0;
@@ -163,88 +201,36 @@
             document.getElementById('distance').value = distance.toFixed(2);
         }
 
-        // ฟังก์ชันใหม่: คำนวณเปอร์เซ็นต์ของ Pace ตั้งแต่ 70% ถึง 110%
         function calculatePacePercent() {
             const paceMinutes = parseInt(document.getElementById('paceMinutes').value) || 0;
             const paceSeconds = parseInt(document.getElementById('paceSeconds').value) || 0;
 
-            // แปลง pace รวมเป็นวินาที
             const totalPaceSeconds = (paceMinutes * 60) + paceSeconds;
 
             if (totalPaceSeconds <= 0) {
-                alert("กรุณากรอก Pace (นาที/วินาที) ให้ถูกต้องก่อน");
+                alert("Please enter a valid pace.");
                 return;
             }
 
-            // ชุดเปอร์เซ็นต์ที่ต้องการคำนวณ
             const percentages = [70, 75, 80, 85, 90, 95, 97, 100, 105, 110];
             let resultHTML = '';
 
             percentages.forEach(percent => {
-                // pace (วินาทีต่อกม.) ที่ได้เมื่อปรับตามเปอร์เซ็นต์
-                // ตัวอย่างเช่น 70% -> pace = pace / (70/100) = pace / 0.7 = pace * (100/70)
                 const newPaceSeconds = totalPaceSeconds / (percent / 100);
-
-                // แปลงกลับเป็น นาที/วินาที
                 const newPaceMinutes = Math.floor(newPaceSeconds / 60);
                 const newPaceRemainSec = Math.round(newPaceSeconds % 60);
 
-                // สร้างข้อความเพื่อแสดงผล
                 resultHTML += `
                     <div class="pace-item">
                         <strong>${percent}%</strong> = 
                         ${newPaceMinutes}:${newPaceRemainSec.toString().padStart(2, '0')} 
-                        นาที/กม.
+                        minutes/km
                     </div>
                 `;
             });
 
-            // แสดงผลใน div ที่เรากำหนด
             document.getElementById('pacePercentResults').innerHTML = resultHTML;
         }
     </script>
-</head>
-<body>
-    
-        
-    <div class="calculator">
-        <div id="menu-container">
-    <script src="menu.js"></script>
-    </div>
-        <h1>Enter 2 values, calculate the 3rd.</h1>
-
-        <div class="form-group">
-            <div class="input-container">
-                <input type="number" id="timeHours" placeholder="h" min="0">
-                <input type="number" id="timeMinutes" placeholder="m" min="0" max="59">
-                <input type="number" id="timeSeconds" placeholder="s" min="0" max="59">
-            </div>
-            <button onclick="calculateTime()">TIME</button>
-        </div>
-
-        <div class="form-group">
-            <div class="input-container">
-                <input type="number" id="paceMinutes" placeholder="m" min="0">
-                <input type="number" id="paceSeconds" placeholder="s" min="0" max="59">
-            </div>
-            <button onclick="calculatePace()">PACE</button>
-        </div>
-
-        <div class="form-group">
-            <div class="input-container">
-                <input type="number" id="distance" placeholder="km" min="0" step="0.01">
-            </div>
-            <button onclick="calculateDistance()">DISTANCE</button>
-        </div>
-
-        <!-- ปุ่มใหม่สำหรับคำนวณเปอร์เซ็นต์ของ Pace -->
-        <div class="form-group">
-            <button onclick="calculatePacePercent()">%PACE</button>
-        </div>
-        <!-- โซนแสดงผลลัพธ์เปอร์เซ็นต์ของ Pace -->
-        <div id="pacePercentResults"></div>
-
-        <div class="memory">ขอให้สนุกกับการวิ่งครับ!</div>
-    </div>
 </body>
 </html>
