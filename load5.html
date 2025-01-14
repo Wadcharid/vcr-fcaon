@@ -75,11 +75,18 @@
         </tr>
       </tbody>
       <tfoot>
+        <!-- แถวแสดงผลรวม Duration, Distance, TL -->
         <tr>
           <td colspan="3" class="text-end fw-bold">รวม</td>
           <td id="footDuration" class="text-primary">0</td>
           <td id="footDistance" class="text-primary">0</td>
           <td id="footTL"       class="text-primary">0</td>
+          <td></td>
+        </tr>
+        <!-- แถวแสดง Pace เฉลี่ย (xx:xx) -->
+        <tr>
+          <td colspan="3" class="text-end fw-bold">Pace รวม</td>
+          <td colspan="3" id="footPace" class="text-primary">00:00</td>
           <td></td>
         </tr>
       </tfoot>
@@ -100,7 +107,7 @@
    1) TL1 = 0.0117 * exp(0.0581 * (HR * 100 / LTHR)) * Duration
    2) TL2 = 0.0699 * exp(0.0407 * X) * Duration
       โดย X = (LT_Pace_in_sec * 100) / paceInSec
-   3) TL  = 0.5 * (TL1 + TL2)
+   3) TL  = 0.45 * TL1 + 0.55 * TL2   (ปรับสัดส่วนตามตัวอย่าง)
    4) Distance = Duration / (paceInMin)  [paceInMin = paceInSec/60]
 ------------------------------------ */
 
@@ -109,10 +116,10 @@ function computeTL(paceInSec, hr, duration, ltPaceInSec, lthr) {
   // TL1
   const TL1 = 0.0117 * Math.exp(0.0581 * (hr * 100 / lthr)) * duration;
   // TL2
-  if(paceInSec <= 0 || ltPaceInSec <= 0) return 0; // กัน NaN
+  if (paceInSec <= 0 || ltPaceInSec <= 0) return 0; // กัน NaN
   const X = (ltPaceInSec * 100) / paceInSec;
   const TL2 = 0.0699 * Math.exp(0.0407 * X) * duration;
-  // TL
+  // TL (ผสม 0.45/0.55 ตามตัวอย่าง)
   return (0.45 * TL1) + (0.55 * TL2);
 }
 
@@ -125,36 +132,31 @@ function computeDistance(paceInSec, duration) {
 
 //========== ฟังก์ชันแก้สมการ หา "paceInSec" ด้วย Binary Search ==========//
 //   เมื่อรู้ hr, duration, TL, ltPaceInSec, lthr
-//   โดย TL = computeTL(paceInSec, hr, duration, ltPaceInSec, lthr)
 function solvePace(hr, duration, TL, ltPaceInSec, lthr) {
-  // กำหนดขอบเขต paceInSec ที่เป็นไปได้ (เช่น 120 - 1200 วินาที/กม.)
-  let left  = 60;    // 1:00 min/km (เร็วมากๆ)
-  let right = 1800;  // 30:00 min/km (ช้ามากๆ)
-  let eps   = 0.0001;
-  let target = TL;
+  let left  = 60;    // 1:00 min/km
+  let right = 1800;  // 30:00 min/km
+  const target = TL;
 
-  for(let i=0; i<30; i++){  // วนจำกัดรอบ เช่น 30 ครั้ง
+  for(let i=0; i<30; i++){
     let mid = (left + right)/2;
     let guessTL = computeTL(mid, hr, duration, ltPaceInSec, lthr);
     if(Math.abs(guessTL - target) < 0.0001) {
       return mid;
     }
     if(guessTL > target) {
-      // ถ้า TL มากไป แปลว่า paceInSec น้อยไป (เร็วไป) => ต้องขยาย pace ให้มากขึ้น
+      // ถ้า TL มากไป => paceInSec น้อยไป => ขยาย pace ให้มากขึ้น
       left = mid;
     } else {
-      // ถ้า TL น้อยไป => paceInSec มากไป (ช้าไป) => ลด paceInSec
       right = mid;
     }
   }
-  return (left + right)/2;  // ถ้าหาไม่ตรงมาก ก็คืนค่ากลาง
+  return (left + right)/2;
 }
 
 //========== ฟังก์ชันแก้สมการ หา "hr" ด้วย Binary Search ==========//
-//   เมื่อรู้ paceInSec, duration, TL, ltPaceInSec, lthr
 function solveHR(paceInSec, duration, TL, ltPaceInSec, lthr) {
-  let left = 50;   // HR ต่ำๆ
-  let right = 250; // HR สูงๆ
+  let left = 50;
+  let right = 250;
   for(let i=0; i<30; i++){
     let mid = (left + right)/2;
     let guessTL = computeTL(paceInSec, mid, duration, ltPaceInSec, lthr);
@@ -171,7 +173,6 @@ function solveHR(paceInSec, duration, TL, ltPaceInSec, lthr) {
 }
 
 //========== ฟังก์ชันแก้สมการ หา "duration" ด้วย Binary Search ==========//
-//   เมื่อรู้ paceInSec, hr, TL, ltPaceInSec, lthr
 function solveDuration(paceInSec, hr, TL, ltPaceInSec, lthr) {
   let left = 1;    // 1 นาที
   let right = 600; // 10 ชม. = 600 นาที
@@ -211,52 +212,44 @@ function recalcRow(tr, changedClass) {
   let duration  = parseFloat(durationInput.value) || 0;
   let tl        = parseFloat(tlInput.value)       || 0;
 
+  // ถ้ายังไม่มี LT Pace หรือ LTHR ก็ไม่คำนวณ TL
   if(lthr <= 0 || ltPaceInSec <= 0) {
-    // ถ้า LTHR หรือ LT Pace ยังไม่ถูก set ก็ให้ clear TL=0 หรือเตือน
-    // (แล้วแต่จะออกแบบ ตรงนี้ขอแค่กัน error)
-    // console.warn("กรุณาระบุ LTHR และ LT Pace ให้ครบก่อน");
-    updateDistanceAndFooter(tr, 0, 0);
+    // ถ้า LTHR หรือ LT Pace ยังไม่ถูก set => กัน error
+    // set Distance เป็น 0
+    distSpan.textContent = "0.00";
+    updateFooterTotals();
     return;
   }
 
-  // paceInSec
   let paceInSec = paceMin*60 + paceSec;
 
-  // นับจำนวนฟิลด์ (paceInSec>0 ?, hr>0 ?, duration>0 ?, tl>0 ?)
-  let hasPace    = (paceInSec > 0);
-  let hasHR      = (hr > 0);
-  let hasDur     = (duration > 0);
-  let hasTL      = (tl > 0);
-
+  // เช็กว่ามีค่าไหนบ้าง
+  let hasPace = (paceInSec > 0);
+  let hasHR   = (hr > 0);
+  let hasDur  = (duration > 0);
+  let hasTL   = (tl > 0);
   let countKnown = [hasPace, hasHR, hasDur, hasTL].filter(x=>x).length;
-  
-  // 1) ถ้า countKnown < 3 => ยังไม่คำนวณอะไร (ต้องการให้กรอกให้ได้ 3 ตัวก่อน)
+
+  // ถ้ามีน้อยกว่า 3 ค่า => คำนวณไม่ได้ (อัปเดต distance อย่างน้อย)
   if(countKnown < 3) {
-    // อัปเดต Distance ตาม Pace+Duration ถ้ามี
     let dist = computeDistance(paceInSec, duration);
     distSpan.textContent = dist.toFixed(2);
     updateFooterTotals();
     return;
   }
 
-  // 2) ถ้า countKnown == 4 => เราคำนวณค่า TL ใหม่ (หรือปรับทีเดียว)
-  //    แต่ในที่นี้จะถือเอาว่าถ้าผู้ใช้กรอกครบ 4 อาจจะ override TL ด้วยค่าที่คำนวณ
-  //    (หรือจะไม่ทำอะไร ก็แล้วแต่การออกแบบ)
-  //    ตรงนี้จะทำเหมือนในกรณี "คำนวณ TL" เพื่อ sync ให้ถูกต้อง
+  // ถ้ามีครบ 4 แล้ว + user เพิ่งเปลี่ยน pace/hr/duration => คำนวณ TL ใหม่อัตโนมัติ
   if(countKnown == 4 && (changedClass==="paceMin" || changedClass==="paceSec" || changedClass==="hr" || changedClass==="duration")) {
-    // สมมติ override TL
     let computed = computeTL(paceInSec, hr, duration, ltPaceInSec, lthr);
     tlInput.value = computed.toFixed(1);
     tl = computed;
   }
 
-  // 3) ถ้า countKnown == 3 หรือ 4 => เช็คว่า "ตัวไหน" เป็นตัวที่ยังไม่ได้ใส่ (หรือเป็นตัวที่ต้องคำนวณ)
+  // หาว่าตัวไหนขาด => หาโดยการแก้สมการ
   if(!hasPace) {
     // Solve for Pace
-    // ใช้ TL, HR, Duration, LTHR, LT Pace => หา paceInSec
-    let paceSecFound = solvePace(hr, duration, tl, ltPaceInSec, lthr);
-    paceInSec = paceSecFound;
-    // อัปเดตลงช่อง Pace (min,sec)
+    let pSecFound = solvePace(hr, duration, tl, ltPaceInSec, lthr);
+    paceInSec = pSecFound;
     let pm = Math.floor(paceInSec/60);
     let ps = Math.round(paceInSec - pm*60);
     paceMinInput.value = pm;
@@ -281,32 +274,33 @@ function recalcRow(tr, changedClass) {
     tl = computed;
   }
   else {
-    // กรณี countKnown==4 แล้ว ผู้ใช้เพิ่งปรับ TL => หา duration ใหม่ (ตามเงื่อนไขข้อ 4)
+    // ถ้ากดเปลี่ยน TL => หา duration ใหม่
     if(changedClass==="tl") {
       let durFound = solveDuration(paceInSec, hr, tl, ltPaceInSec, lthr);
       durationInput.value = durFound.toFixed(1);
       duration = durFound;
     }
     else {
-      // ถ้าปรับ pace/hr/duration => compute TL
+      // ถ้าเปลี่ยน pace/hr/duration => คำนวณ TL
       let computed = computeTL(paceInSec, hr, duration, ltPaceInSec, lthr);
       tlInput.value = computed.toFixed(1);
       tl = computed;
     }
   }
 
-  // 4) สุดท้ายคำนวณ Distance
+  // สุดท้ายคำนวณ Distance ใหม่
   let dist = computeDistance(paceInSec, duration);
   distSpan.textContent = dist.toFixed(2);
 
-  // 5) อัปเดต Footer
+  // อัปเดต Footer
   updateFooterTotals();
 }
 
-// อัปเดตผลรวมใน tfoot
+// อัปเดตผลรวมใน tfoot และ Pace รวม
 function updateFooterTotals() {
   const rows = document.querySelectorAll("#mainTable tbody tr");
   let sumDur = 0, sumTL = 0, sumDist = 0;
+
   rows.forEach((tr)=>{
     const durVal = parseFloat(tr.querySelector(".duration")?.value) || 0;
     const tlVal  = parseFloat(tr.querySelector(".tl")?.value)       || 0;
@@ -315,21 +309,46 @@ function updateFooterTotals() {
     sumTL   += tlVal;
     sumDist += distVal;
   });
+
+  // แสดงผลรวม Duration, Distance, TL
   document.getElementById("footDuration").textContent = sumDur.toFixed(1);
   document.getElementById("footDistance").textContent = sumDist.toFixed(2);
   document.getElementById("footTL").textContent       = sumTL.toFixed(1);
+
+  // คำนวณ Pace รวม (xx:xx)
+  let paceStr = "00:00";
+  if(sumDist > 0 && sumDur > 0) {
+    // paceMinPerKm = (รวม duration นาที) / (รวม distance km)
+    let paceMinPerKm = sumDur / sumDist;
+    let paceMin = Math.floor(paceMinPerKm);
+    let paceSec = Math.round((paceMinPerKm - paceMin) * 60);
+    // format xx:xx
+    let secStr = (paceSec < 10) ? ("0" + paceSec) : ("" + paceSec);
+    paceStr = paceMin + ":" + secStr;
+  }
+  document.getElementById("footPace").textContent = paceStr;
 }
 
-// ผูก event ให้แถว
+// ผูก event ให้แต่ละแถว
 function attachEvents(tr) {
   const inputs = tr.querySelectorAll("input");
   inputs.forEach((inp)=>{
     inp.addEventListener("change", (e)=>{
-      if(e.target.classList.contains("paceMin"))  recalcRow(tr,"paceMin");
-      else if(e.target.classList.contains("paceSec")) recalcRow(tr,"paceSec");
-      else if(e.target.classList.contains("hr"))       recalcRow(tr,"hr");
-      else if(e.target.classList.contains("duration")) recalcRow(tr,"duration");
-      else if(e.target.classList.contains("tl"))       recalcRow(tr,"tl");
+      if(e.target.classList.contains("paceMin")) {
+        recalcRow(tr, "paceMin");
+      }
+      else if(e.target.classList.contains("paceSec")) {
+        recalcRow(tr, "paceSec");
+      }
+      else if(e.target.classList.contains("hr")) {
+        recalcRow(tr, "hr");
+      }
+      else if(e.target.classList.contains("duration")) {
+        recalcRow(tr, "duration");
+      }
+      else if(e.target.classList.contains("tl")) {
+        recalcRow(tr, "tl");
+      }
     });
   });
 
@@ -337,7 +356,7 @@ function attachEvents(tr) {
   const removeBtn = tr.querySelector(".removeBtn");
   removeBtn.addEventListener("click", ()=>{
     tr.parentNode.removeChild(tr);
-    updateFooterTotals();
+    updateFooterTotals(); // ลบแถวเสร็จให้อัปเดต footer
   });
 }
 
@@ -366,7 +385,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   // ปุ่ม Add Row
   document.getElementById("addRowBtn").addEventListener("click", addRow);
 
-  // ถ้าเปลี่ยน LT Pace หรือ LTHR => รีคำนวณทุกแถว
+  // ถ้าปรับ LT Pace หรือ LTHR => รีคำนวณทุกแถว
   const ltPaceMinInput = document.getElementById("ltPaceMin");
   const ltPaceSecInput = document.getElementById("ltPaceSec");
   const lthrInput      = document.getElementById("lthrInput");
@@ -374,7 +393,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
   [ltPaceMinInput, ltPaceSecInput, lthrInput].forEach(ip=>{
     ip.addEventListener("change", ()=>{
       const rows = document.querySelectorAll("#mainTable tbody tr");
-      rows.forEach((r)=> recalcRow(r, "paceMin")); // สมมติให้เรียกเหมือนเปลี่ยน pace เพื่อให้มันคำนวณใหม่
+      rows.forEach((r)=> recalcRow(r, "paceMin")); 
+      // ให้เรียกเหมือนเปลี่ยน pace เพื่อคำนวณใหม่ทุกแถว
     });
   });
 });
