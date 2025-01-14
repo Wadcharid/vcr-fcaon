@@ -89,6 +89,7 @@
     text-align: left;
     max-height: calc(100vh - 120px); /* จำกัดความสูงไม่ให้เกินพื้นที่ที่เหลือใต้เมนู */
     overflow-y: auto; /* เพิ่ม scroll หากเนื้อหาเกิน */
+            
         }
         .pace-item {
             background: #f9f9f9;
@@ -96,7 +97,7 @@
             margin-bottom: 5px;
             border-radius: 4px;
         }
-        #menu-container {
+/*         #menu-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -107,9 +108,9 @@
     text-align: center;
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 50px; /* กำหนดความสูงคงที่ */
-    line-height: 30px; /* จัดข้อความให้อยู่กลาง */
-}
+    height: 50px; /* กำหนดความสูงเมนู */
+    line-height: 30px;
+} */
         
     </style>
 
@@ -204,12 +205,12 @@
     </script>
 </head>
 <body>
-    <div id="menu-container">
-        <br>
-    <script src="menu.js"></script>
-    </div>
+    
         
     <div class="calculator">
+        <div id="menu-container">
+    <script src="menu.js"></script>
+    </div>
         <h1>Enter 2 values, calculate the 3rd.</h1>
 
         <div class="form-group">
