@@ -99,15 +99,15 @@
                 <td id="scr"></td>
             </tr>
             <tr>
-                <td>Low Tempo Run / Marathon Pace</td>
+                <td>Tempo Run / Marathon Pace</td>
                 <td id="mcr"></td>
             </tr>
             <tr>
-                <td>Tempo Run</td>
+                <td>Threshold Run</td>
                 <td id="fcr"></td>
             </tr>
             <tr>
-                <td>Interval Run</td>
+                <td>VO2MAX</td>
                 <td id="eir"></td>
             </tr>
         </table>
@@ -225,10 +225,10 @@
             document.getElementById('vcr').innerHTML = "<b>VCR: " + vcrSpeed.toFixed(1) + " m/s</b>";
             document.getElementById('vcrPace').innerHTML = "VCR Pace: " + vcrPaceMinutes + ":" + (vcrPaceSeconds < 10 ? "0" + vcrPaceSeconds : vcrPaceSeconds) + " นาที/กม.";
 
-            document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา 30 นาที หรือ มากกว่า สำหรับฟื้นฟู";
+            document.getElementById('arr').innerHTML = ": " + pace1 + " นาที/กม. หรือช้ากว่า ระยะเวลา... ได้เรื่อยๆ";
             document.getElementById('lsd').innerHTML = ": " + pace2 + " - " + pace1 + " นาที/กม. ระยะเวลา 90-120 นาที ขยายฐานโซน 2";
             document.getElementById('scr').innerHTML = ": " + pace3 + " - " + pace2 + " นาที/กม. ระยะเวลา 60-90 นาที ขยายเพดานโซน 2";
-            document.getElementById('mcr').innerHTML = ": " + pace4 + " - " + pace3 + " นาที/กม. ระยะเวลา 45-60 นาที ควบคุมจังหวะหายใจ";
+            document.getElementById('mcr').innerHTML = ": " + pace4 + " - " + pace3 + " นาที/กม. ระยะเวลา 45-60 นาที พัฒนามาราธอนเพช";
             document.getElementById('fcr').innerHTML = ": " + pace5 + " - " + pace4 + " นาที/กม. ระยะเวลา 30-45 นาที ฝึกความอดทนต่อกรดแลคติก";
             document.getElementById('eir').innerHTML = ": " + pace7 + " - " + pace6 + " วิ่ง (1 กม. หรือ 4 นาที) พัก 1-3 นาที 4-7 รอบ สำหรับพัฒนา VO2MAX";
 
