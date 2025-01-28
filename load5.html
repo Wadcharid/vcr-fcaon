@@ -120,7 +120,7 @@ function computeTL(paceInSec, hr, duration, ltPaceInSec, lthr) {
   const X = (ltPaceInSec * 100) / paceInSec;
   const TL2 = 0.0699 * Math.exp(0.0407 * X) * duration;
   // TL (ผสม 0.45/0.55 ตามตัวอย่าง)
-  return (0.45 * TL1) + (0.55 * TL2);
+  return (0.50 * TL1) + (0.50 * TL2);
 }
 
 //========== ฟังก์ชันคำนวณ Distance (จาก paceInSec, duration) ==========//
