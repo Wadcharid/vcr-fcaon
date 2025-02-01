@@ -147,7 +147,7 @@
   
     <!-- ผลลัพธ์สำหรับระยะทางตามที่กรอก -->
     <div id="result"></div>
-    <div id="breakdown"></div>
+<!--     <div id="breakdown"></div> -->
     
     <!-- ผลลัพธ์สำหรับระยะมาตรฐาน -->
     <div id="standardResults"></div>
@@ -210,7 +210,7 @@
       // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60%
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
-        totalTimeMinutes += remainingDistance * pace70;
+        totalTimeMinutes += remainingDistance * pace60;
       }
       return totalTimeMinutes;
     }
@@ -264,8 +264,8 @@
       
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
-        totalTimeMinutes += remainingDistance * pace70;
-        segmentBreakdown.push({ distance: remainingDistance, pace: pace70 });
+        totalTimeMinutes += remainingDistance * pace60;
+        segmentBreakdown.push({ distance: remainingDistance, pace: pace60 });
         remainingDistance = 0;
       }
       
