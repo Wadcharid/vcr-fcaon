@@ -2,40 +2,145 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Race Predict (Race Pace) Calculator</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    label { display: inline-block; width: 250px; margin-top: 10px; vertical-align: top; }
-    input { margin-top: 10px; }
-    button { margin-top: 20px; padding: 5px 15px; }
-    .inline-input { margin-bottom: 10px; }
-    .inline-input input { width: 60px; }
-    .segment-list { margin-top: 20px; }
+    /* Reset พื้นฐาน */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      background: #fff;
+      margin: 30px auto;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1, h2, h3 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 15px;
+    }
+    form {
+      margin-top: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 500;
+    }
+    .inline-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .inline-inputs input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .inline-inputs span {
+      font-size: 16px;
+      color: #555;
+      white-space: nowrap;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    small {
+      display: block;
+      margin-top: 5px;
+      color: #888;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #result, #breakdown {
+      margin-top: 25px;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 4px;
+    }
+    .segment-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .segment-list li {
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 4px solid #007bff;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-size: 16px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 10px;
+        padding: 15px 20px;
+      }
+      button {
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Race Predict (Race Pace) Calculator</h1>
-  <form id="raceForm" onsubmit="event.preventDefault(); calculateRacePredict();">
-    <div class="inline-input">
-      <label for="ltMinutes">LT Pace (นาที/กม.)<br>
-        [เร็วที่สุดที่วิ่งได้ต่อเนื่อง 50-60 นาที หรือ 10K]:
-      </label>
-      <input type="number" id="ltMinutes" name="ltMinutes" min="0" placeholder="นาที" required> :
-      <input type="number" id="ltSeconds" name="ltSeconds" min="0" max="59" placeholder="วินาที" required>
-    </div>
-    <div>
-      <label for="distance">ระยะทางที่ต้องการคาดการณ์เวลาที่ทำได้ (กม.):</label>
-      <input type="number" id="distance" name="distance" step="any" required>
-    </div>
-    <button type="submit">คำนวณ</button>
-  </form>
-
-  <h2>ผลลัพธ์:</h2>
-  <div id="result"></div>
-  <div id="breakdown"></div>
+  <div class="container">
+    <h1>Race Predict (Race Pace) Calculator</h1>
+    <form id="raceForm" onsubmit="event.preventDefault(); calculateRacePredict();">
+      <div class="form-group">
+        <label for="ltMinutes">LT Pace (นาที/กม.)</label>
+        <div class="inline-inputs">
+          <input type="number" id="ltMinutes" name="ltMinutes" min="0" placeholder="นาที" required>
+          <span>:</span>
+          <input type="number" id="ltSeconds" name="ltSeconds" min="0" max="59" placeholder="วินาที" required>
+        </div>
+        <small>LT Pace คือ Pace ที่เร็วที่สุดที่วิ่งได้ต่อเนื่อง 50-60 นาที หรือ Pace ที่ดีที่สุดในการวิ่งระยะ 10K</small>
+      </div>
+      <div class="form-group">
+        <label for="distance">ระยะทางที่ต้องการคาดการณ์เวลาที่ทำได้ (กม.)</label>
+        <input type="number" id="distance" name="distance" step="any" required>
+      </div>
+      <button type="submit">คำนวณ</button>
+    </form>
+  
+    <div id="result"></div>
+    <div id="breakdown"></div>
+  </div>
 
   <script>
-    // ฟังก์ชันแปลงเวลา (วินาที) ให้เป็น "ชั่วโมง นาที วินาที"
+    // แปลงเวลาจากวินาทีเป็น "ชั่วโมง นาที วินาที"
     function formatTime(totalSeconds) {
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -51,7 +156,7 @@
       return timeString;
     }
 
-    // ฟังก์ชันแปลง pace (นาที/กม.) ให้เป็นรูปแบบ "m:ss"
+    // แปลง pace (นาที/กม.) ให้อยู่ในรูปแบบ "m:ss"
     function formatPace(pace) {
       const paceMinutes = Math.floor(pace);
       const paceSeconds = Math.round((pace - paceMinutes) * 60);
@@ -60,20 +165,19 @@
     }
 
     function calculateRacePredict() {
-      // รับค่า LT Pace จาก input (นาที และ วินาที)
       const ltMinutes = parseInt(document.getElementById("ltMinutes").value, 10);
       const ltSeconds = parseInt(document.getElementById("ltSeconds").value, 10);
       const targetDistance = parseFloat(document.getElementById("distance").value);
 
       if (isNaN(ltMinutes) || isNaN(ltSeconds) || isNaN(targetDistance)) {
-        document.getElementById("result").innerHTML = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        document.getElementById("result").innerHTML = "<p style='color:red;'>กรุณากรอกข้อมูลให้ครบถ้วน</p>";
         return;
       }
       
       // คำนวณ LT Pace เป็นวินาทีต่อกม.
       const ltTotalSec = ltMinutes * 60 + ltSeconds;
       
-      // กำหนด segments ที่มีช่วงเวลา (นาที) และเปอร์เซ็นต์ LT Pace
+      // กำหนด segments (ช่วงเวลาและเปอร์เซ็นต์ LT Pace)
       const segments = [
         { duration: 10, percent: 108 },
         { duration: 30, percent: 100 },
@@ -81,29 +185,27 @@
         { duration: 180, percent: 85 }
       ];
       
-      let totalTimeMinutes = 0;         // เวลาที่ใช้ทั้งหมด (นาที)
-      let remainingDistance = targetDistance;  // ระยะทางที่เหลือ
-      let segmentBreakdown = [];         // เก็บข้อมูลของแต่ละ segment
+      let totalTimeMinutes = 0;
+      let remainingDistance = targetDistance;
+      let segmentBreakdown = [];
 
-      // ฟังก์ชันคำนวณ adjusted pace (นาที/กม.) จากเปอร์เซ็นต์
+      // ฟังก์ชันคำนวณ adjusted pace (นาที/กม.) ตามเปอร์เซ็นต์
       function adjustedPace(percent) {
-        // adjusted pace (sec/km) = LT Pace (sec/km) × (100/percent)
-        return (ltTotalSec * (100 / percent)) / 60; // นาที/กม.
+        return (ltTotalSec * (100 / percent)) / 60;
       }
       
-      // คำนวณจาก segments ที่กำหนด
+      // คำนวณในแต่ละ segment
       for (let i = 0; i < segments.length; i++) {
         const seg = segments[i];
-        const segDuration = seg.duration; // นาที
-        const pace = adjustedPace(seg.percent);  // นาที/กม. สำหรับ segment นี้
-        const segDistance = segDuration / pace;    // กม.
+        const segDuration = seg.duration;
+        const pace = adjustedPace(seg.percent);
+        const segDistance = segDuration / pace;
         
         if (segDistance < remainingDistance) {
           totalTimeMinutes += segDuration;
           remainingDistance -= segDistance;
           segmentBreakdown.push({ distance: segDistance, pace: pace });
         } else {
-          // หาก segment นี้วิ่งได้เกินที่ต้องการ ให้ใช้แค่ส่วนที่พอเพียง
           const timeNeeded = remainingDistance * pace;
           totalTimeMinutes += timeNeeded;
           segmentBreakdown.push({ distance: remainingDistance, pace: pace });
@@ -112,7 +214,7 @@
         }
       }
       
-      // ถ้ายังเหลือระยะทาง ให้ใช้ความเร็วที่ 70% สำหรับส่วนที่เหลือ
+      // หากยังเหลือระยะทาง ใช้ความเร็วที่ 70%
       if (remainingDistance > 0) {
         const pace70 = adjustedPace(70);
         const timeForRemaining = remainingDistance * pace70;
@@ -121,29 +223,24 @@
         remainingDistance = 0;
       }
       
-      // คำนวณเวลารวมเป็นวินาที
+      // คำนวณเวลาและ pace เฉลี่ย
       const totalTimeSec = Math.round(totalTimeMinutes * 60);
       const overallTimeStr = formatTime(totalTimeSec);
-      
-      // คำนวณ pace เฉลี่ย (นาที/กม.) จากเวลารวมและระยะทางเป้าหมาย
       const avgPace = totalTimeMinutes / targetDistance;
       const avgPaceStr = formatPace(avgPace);
       
-      // แสดงผลลัพธ์รวม (เวลาที่คาดว่าจะทำได้ พร้อม pace เฉลี่ย)
-      let resultHTML = "<p><strong>เวลาที่คาดว่าจะทำได้:</strong> " + overallTimeStr +
-                       " (Pace เฉลี่ย: " + avgPaceStr + " นาที/กม.)</p>";
+      // แสดงผลลัพธ์รวม
+      const resultHTML = `<p><strong>เวลาที่คาดว่าจะทำได้:</strong> ${overallTimeStr} (Pace เฉลี่ย: ${avgPaceStr} นาที/กม.)</p>`;
       document.getElementById("result").innerHTML = resultHTML;
       
-      // แสดงรายละเอียดการวิ่งในแต่ละ segment
-      // เรียงลำดับ segment จาก pace ที่ช้าก่อน (นาที/กม. มากที่สุด)
+      // เรียงรายละเอียด segment จาก pace ที่ช้าก่อน (นาที/กม. มากที่สุด)
       segmentBreakdown.sort((a, b) => b.pace - a.pace);
       
       let breakdownHTML = "<h3>รายละเอียดการวิ่งตาม Pace:</h3><ul class='segment-list'>";
       segmentBreakdown.forEach(function(seg) {
-        // แสดงระยะทางเป็นเลขจำนวนเต็ม (ปัดเศษ)
         const distanceInt = Math.round(seg.distance);
         const paceStr = formatPace(seg.pace);
-        breakdownHTML += "<li>" + distanceInt + " กม. (" + paceStr + " นาที/กม.)</li>";
+        breakdownHTML += `<li>${distanceInt} กม. (${paceStr} นาที/กม.)</li>`;
       });
       breakdownHTML += "</ul>";
       document.getElementById("breakdown").innerHTML = breakdownHTML;
