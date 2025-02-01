@@ -84,18 +84,18 @@
     button:hover {
       background: #0056b3;
     }
-    #result, #breakdown, #standardResults {
+    #result, #standardResults {
       margin-top: 25px;
       padding: 15px;
       background: #e9ecef;
       border-radius: 4px;
     }
-    .segment-list, .standard-list {
+    .standard-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
-    .segment-list li, .standard-list li {
+    .standard-list li {
       background: #fff;
       padding: 10px;
       margin-bottom: 10px;
@@ -145,9 +145,8 @@
       <button type="submit">คำนวณ</button>
     </form>
   
-    <!-- ผลลัพธ์สำหรับระยะทางตามที่กรอก -->
+    <!-- ผลลัพธ์สำหรับระยะทางที่กรอก -->
     <div id="result"></div>
-
     
     <!-- ผลลัพธ์สำหรับระยะมาตรฐาน -->
     <div id="standardResults"></div>
@@ -208,7 +207,7 @@
           break;
         }
       }
-      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60 (แทน 70)
+      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60 (แทนการใช้ 70)
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
         totalTimeMinutes += remainingDistance * pace60;
@@ -232,7 +231,6 @@
       //--- คำนวณผลลัพธ์สำหรับระยะทางที่กรอก ---
       let totalTimeMinutes = 0;
       let remainingDistance = targetDistance;
-      let segmentBreakdown = [];
       
       // เปลี่ยน segment สุดท้ายจาก percent: 85 เป็น percent: 80
       const segments = [
@@ -253,22 +251,17 @@
         if (segDistance < remainingDistance) {
           totalTimeMinutes += seg.duration;
           remainingDistance -= segDistance;
-          segmentBreakdown.push({ distance: segDistance, pace: pace });
         } else {
-          const timeNeeded = remainingDistance * pace;
-          totalTimeMinutes += timeNeeded;
-          segmentBreakdown.push({ distance: remainingDistance, pace: pace });
+          totalTimeMinutes += remainingDistance * pace;
           remainingDistance = 0;
           break;
         }
       }
       
-      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60 (แทนการใช้ 70)
+      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
         totalTimeMinutes += remainingDistance * pace60;
-        segmentBreakdown.push({ distance: remainingDistance, pace: pace60 });
-        remainingDistance = 0;
       }
       
       const totalTimeSec = Math.round(totalTimeMinutes * 60);
@@ -278,17 +271,6 @@
       
       const resultHTML = `<p><strong>เวลาที่คาดว่าจะทำได้:</strong> ${overallTimeStr} (Pace เฉลี่ย: ${avgPaceStr} นาที/กม.)</p>`;
       document.getElementById("result").innerHTML = resultHTML;
-      
-      // แสดงรายละเอียดการวิ่งในแต่ละ segment (เรียงจาก pace ที่ช้าก่อน)
-      segmentBreakdown.sort((a, b) => b.pace - a.pace);
-      let breakdownHTML = "<h3>รายละเอียดการวิ่งตาม Pace:</h3><ul class='segment-list'>";
-      segmentBreakdown.forEach(function(seg) {
-        const distanceInt = Math.round(seg.distance);
-        const paceStr = formatPace(seg.pace);
-        breakdownHTML += `<li>${distanceInt} กม. (${paceStr} นาที/กม.)</li>`;
-      });
-      breakdownHTML += "</ul>";
-      document.getElementById("breakdown").innerHTML = breakdownHTML;
       
       //--- คำนวณผลลัพธ์สำหรับระยะมาตรฐาน ---
       const standardDistances = [
