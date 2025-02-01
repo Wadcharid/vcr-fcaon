@@ -104,6 +104,16 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       font-size: 16px;
     }
+    /* Style สำหรับ Pace เฉลี่ยใน standardResults ให้ดูเป็น badge (วงเล็ก) */
+    .badge {
+      background: #007bff;
+      color: #fff;
+      border-radius: 12px;
+      padding: 2px 6px;
+      font-size: 14px;
+      margin-left: 8px;
+      display: inline-block;
+    }
     @media (max-width: 600px) {
       .container {
         margin: 10px;
@@ -197,10 +207,10 @@
           break;
         }
       }
-      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 70%
+      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60%
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
-        totalTimeMinutes += remainingDistance * pace60;
+        totalTimeMinutes += remainingDistance * pace70;
       }
       return totalTimeMinutes;
     }
@@ -255,7 +265,7 @@
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
         totalTimeMinutes += remainingDistance * pace70;
-        segmentBreakdown.push({ distance: remainingDistance, pace: pace60 });
+        segmentBreakdown.push({ distance: remainingDistance, pace: pace70 });
         remainingDistance = 0;
       }
       
@@ -293,7 +303,10 @@
         const timeMin = computeRaceTime(item.distance, ltTotalSec);
         const timeSec = Math.round(timeMin * 60);
         const timeStr = formatTime(timeSec);
-        standardHTML += `<li>${item.label} (${item.distance} กม.): ${timeStr}</li>`;
+        // คำนวณ Pace เฉลี่ยสำหรับระยะมาตรฐาน
+        const avgPaceForStandard = timeMin / item.distance;
+        const avgPaceForStandardStr = formatPace(avgPaceForStandard);
+        standardHTML += `<li>${item.label} (${item.distance} กม.): ${timeStr} <span class="badge">(${avgPaceForStandardStr} นาที/กม.)</span></li>`;
       });
       standardHTML += "</ul>";
       document.getElementById("standardResults").innerHTML = standardHTML;
