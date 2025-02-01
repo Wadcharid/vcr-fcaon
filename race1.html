@@ -147,7 +147,7 @@
   
     <!-- ผลลัพธ์สำหรับระยะทางตามที่กรอก -->
     <div id="result"></div>
-    <div id="breakdown"></div>
+<!--     <div id="breakdown"></div> -->
     
     <!-- ผลลัพธ์สำหรับระยะมาตรฐาน -->
     <div id="standardResults"></div>
@@ -180,16 +180,17 @@
 
     // ฟังก์ชันคำนวณเวลาทั้งหมด (นาที) สำหรับระยะทางที่กำหนด โดยใช้ LT Pace (ltTotalSec)
     function computeRaceTime(targetDistance, ltTotalSec) {
+      // เปลี่ยน segment สุดท้ายจาก percent: 85 เป็น percent: 80
       const segments = [
         { duration: 10, percent: 108 },
         { duration: 30, percent: 100 },
         { duration: 120, percent: 90 },
-        { duration: 180, percent: 85 }
+        { duration: 180, percent: 80 }
       ];
       let totalTimeMinutes = 0;
       let remainingDistance = targetDistance;
 
-      // คำนวณ adjusted pace (นาที/กม.) สำหรับเปอร์เซ็นต์ที่กำหนด
+      // ฟังก์ชันคำนวณ adjusted pace (นาที/กม.) สำหรับเปอร์เซ็นต์ที่กำหนด
       function adjustedPace(percent) {
         return (ltTotalSec * (100 / percent)) / 60;
       }
@@ -207,7 +208,7 @@
           break;
         }
       }
-      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60%
+      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60 (แทน 70)
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
         totalTimeMinutes += remainingDistance * pace60;
@@ -233,7 +234,7 @@
       let remainingDistance = targetDistance;
       let segmentBreakdown = [];
       
-      // segments ที่กำหนดไว้
+      // เปลี่ยน segment สุดท้ายจาก percent: 85 เป็น percent: 80
       const segments = [
         { duration: 10, percent: 108 },
         { duration: 30, percent: 100 },
@@ -262,6 +263,7 @@
         }
       }
       
+      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60 (แทนการใช้ 70)
       if (remainingDistance > 0) {
         const pace60 = adjustedPace(60);
         totalTimeMinutes += remainingDistance * pace60;
