@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Race Predict (Race Pace) Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    label { display: inline-block; width: 150px; margin-top: 10px; }
+    input { margin-top: 10px; }
+    button { margin-top: 20px; padding: 5px 15px; }
+  </style>
+</head>
+<body>
+  <h1>Race Predict (Race Pace) Calculator</h1>
+  <form id="raceForm" onsubmit="event.preventDefault(); calculateRacePredict();">
+    <div>
+      <label for="vcrMinutes">VCR Pace – นาที:</label>
+      <input type="number" id="vcrMinutes" name="vcrMinutes" min="0" required>
+    </div>
+    <div>
+      <label for="vcrSeconds">VCR Pace – วินาที:</label>
+      <input type="number" id="vcrSeconds" name="vcrSeconds" min="0" max="59" required>
+    </div>
+    <div>
+      <label for="distance">เป้าหมายระยะทาง (กม.):</label>
+      <input type="number" id="distance" name="distance" step="any" required>
+    </div>
+    <button type="submit">คำนวณ</button>
+  </form>
+
+  <h2>ผลลัพธ์:</h2>
+  <div id="result"></div>
+
+  <script>
+    function calculateRacePredict() {
+      // รับข้อมูล input
+      const vcrMinutes = parseInt(document.getElementById("vcrMinutes").value, 10);
+      const vcrSeconds = parseInt(document.getElementById("vcrSeconds").value, 10);
+      const targetDistance = parseFloat(document.getElementById("distance").value);
+
+      if (isNaN(vcrMinutes) || isNaN(vcrSeconds) || isNaN(targetDistance)) {
+        document.getElementById("result").innerHTML = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        return;
+      }
+      
+      // คำนวณ VCR Pace เป็นวินาทีต่อกม.
+      const vcrTotalSec = vcrMinutes * 60 + vcrSeconds;
+      
+      // กำหนดช่วงเวลา (segments) ที่มีระยะเวลาคงที่และเปอร์เซ็นต์ความเร็ว
+      const segments = [
+        { duration: 10, percent: 108 },
+        { duration: 30, percent: 100 },
+        { duration: 120, percent: 90 },
+        { duration: 180, percent: 85 }
+      ];
+      
+      let totalTimeMinutes = 0;   // เวลาในหน่วยนาทีที่ใช้ทั้งหมด
+      let remainingDistance = targetDistance;  // ระยะทางที่เหลือ
+      
+      // ฟังก์ชันคำนวณ adjusted pace (นาที/กม.) จากเปอร์เซ็นต์ที่กำหนด
+      function adjustedPace(percent) {
+        // adjusted pace (sec/km) = VCR pace (sec/km) × (100/percent)
+        // แปลงเป็นนาที/กม.
+        return (vcrTotalSec * (100 / percent)) / 60;
+      }
+      
+      // คำนวณสำหรับแต่ละช่วงที่กำหนดไว้
+      for (let i = 0; i < segments.length; i++) {
+        const seg = segments[i];
+        const segDuration = seg.duration; // หนึ่งช่วงมีระยะเวลาเท่าไหร่ (นาที)
+        const pace = adjustedPace(seg.percent);  // เวลาที่ใช้วิ่ง 1 กม. ในช่วงนี้ (นาที/กม.)
+        const segDistance = segDuration / pace;  // ระยะทางที่สามารถวิ่งได้ในช่วงนี้ (กม.)
+        
+        if (segDistance < remainingDistance) {
+          // ถ้าช่วงนี้วิ่งได้ไม่ถึงระยะทางที่เหลือ ใช้เวลาทั้งช่วง
+          totalTimeMinutes += segDuration;
+          remainingDistance -= segDistance;
+        } else {
+          // ถ้าวิ่งช่วงนี้เกินที่ต้องการ ให้คำนวณเฉพาะส่วนที่พอเพียง
+          const timeNeeded = remainingDistance * pace;  // นาทีที่ต้องใช้ในช่วงนี้
+          totalTimeMinutes += timeNeeded;
+          remainingDistance = 0;
+          break;
+        }
+      }
+      
+      // หากยังเหลือระยะทางอยู่ ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 70%
+      if (remainingDistance > 0) {
+        const pace70 = adjustedPace(70);
+        const timeForRemaining = remainingDistance * pace70;
+        totalTimeMinutes += timeForRemaining;
+        remainingDistance = 0;
+      }
+      
+      // แปลงเวลาเป็น ชั่วโมง:นาที:วินาที
+      const totalTimeSec = Math.round(totalTimeMinutes * 60);
+      const hours = Math.floor(totalTimeSec / 3600);
+      const minutes = Math.floor((totalTimeSec % 3600) / 60);
+      const seconds = totalTimeSec % 60;
+      
+      // ฟอร์แมตผลลัพธ์เป็นข้อความ
+      let timeString = "";
+      if (hours > 0) {
+        timeString += hours + " ชั่วโมง ";
+      }
+      if (minutes > 0 || hours > 0) {
+        timeString += minutes + " นาที ";
+      }
+      timeString += seconds + " วินาที";
+      
+      // แสดงผลลัพธ์
+      document.getElementById("result").innerHTML = 
+        "<strong>เวลาที่คาดว่าจะทำได้:</strong> " + timeString;
+    }
+  </script>
+</body>
+</html>
