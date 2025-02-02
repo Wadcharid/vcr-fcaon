@@ -183,8 +183,8 @@
       const segments = [
         { duration: 10, percent: 108 },
         { duration: 30, percent: 100 },
-        { duration: 120, percent: 88 },
-        { duration: 180, percent: 78 }
+        { duration: 120, percent: 85 },
+        { duration: 180, percent: 75 }
       ];
       let totalTimeMinutes = 0;
       let remainingDistance = targetDistance;
@@ -207,9 +207,9 @@
           break;
         }
       }
-      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60 (แทนการใช้ 70)
+      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 55 (แทนการใช้ 70)
       if (remainingDistance > 0) {
-        const pace60 = adjustedPace(60);
+        const pace55 = adjustedPace(55);
         totalTimeMinutes += remainingDistance * pace60;
       }
       return totalTimeMinutes;
@@ -236,8 +236,8 @@
       const segments = [
         { duration: 10, percent: 108 },
         { duration: 30, percent: 100 },
-        { duration: 120, percent: 90 },
-        { duration: 180, percent: 80 }
+        { duration: 120, percent: 85 },
+        { duration: 180, percent: 75 }
       ];
       
       function adjustedPace(percent) {
@@ -258,10 +258,10 @@
         }
       }
       
-      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 60
+      // หากยังเหลือระยะทาง ให้วิ่งส่วนที่เหลือด้วยความเร็วที่ 55
       if (remainingDistance > 0) {
-        const pace60 = adjustedPace(60);
-        totalTimeMinutes += remainingDistance * pace60;
+        const pace55 = adjustedPace(55);
+        totalTimeMinutes += remainingDistance * pace55;
       }
       
       const totalTimeSec = Math.round(totalTimeMinutes * 60);
