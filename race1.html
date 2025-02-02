@@ -199,8 +199,8 @@
         const pace = adjustedPace(seg.percent);
         const segDistance = seg.duration / pace;
         if (segDistance < remainingDistance) {
-          totalTimeMinutes += seg.duration*0.5;
-          remainingDistance -= segDistance*0.5;
+          totalTimeMinutes += seg.duration * 0.5;
+          remainingDistance -= segDistance * 0.5;
         } else {
           totalTimeMinutes += remainingDistance * pace;
           remainingDistance = 0;
@@ -249,8 +249,8 @@
         const pace = adjustedPace(seg.percent);
         const segDistance = seg.duration / pace;
         if (segDistance < remainingDistance) {
-          totalTimeMinutes += seg.duration*0.5;
-          remainingDistance -= segDistance*0.5;
+          totalTimeMinutes += seg.duration * 0.5;
+          remainingDistance -= segDistance * 0.5;
         } else {
           totalTimeMinutes += remainingDistance * pace;
           remainingDistance = 0;
