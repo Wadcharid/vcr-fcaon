@@ -183,8 +183,8 @@
       const segments = [
         { duration: 10, percent: 108 },
         { duration: 30, percent: 100 },
-        { duration: 120, percent: 90 },
-        { duration: 180, percent: 80 }
+        { duration: 120, percent: 88 },
+        { duration: 180, percent: 78 }
       ];
       let totalTimeMinutes = 0;
       let remainingDistance = targetDistance;
@@ -199,7 +199,7 @@
         const pace = adjustedPace(seg.percent);
         const segDistance = seg.duration / pace;
         if (segDistance < remainingDistance) {
-          totalTimeMinutes += seg.duration * 1.06;
+          totalTimeMinutes += seg.duration ;
           remainingDistance -= segDistance ;
         } else {
           totalTimeMinutes += remainingDistance * pace;
@@ -249,7 +249,7 @@
         const pace = adjustedPace(seg.percent);
         const segDistance = seg.duration / pace;
         if (segDistance < remainingDistance) {
-          totalTimeMinutes += seg.duration * 1.06;
+          totalTimeMinutes += seg.duration;
           remainingDistance -= segDistance;
         } else {
           totalTimeMinutes += remainingDistance * pace;
