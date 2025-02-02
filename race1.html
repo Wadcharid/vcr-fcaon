@@ -200,7 +200,7 @@
         const segDistance = seg.duration / pace;
         if (segDistance < remainingDistance) {
           totalTimeMinutes += seg.duration;
-          remainingDistance -= segDistance;
+          remainingDistance -= segDistance * 0.8;
         } else {
           totalTimeMinutes += remainingDistance * pace;
           remainingDistance = 0;
@@ -250,7 +250,7 @@
         const segDistance = seg.duration / pace;
         if (segDistance < remainingDistance) {
           totalTimeMinutes += seg.duration;
-          remainingDistance -= segDistance;
+          remainingDistance -= segDistance * 0.8;
         } else {
           totalTimeMinutes += remainingDistance * pace;
           remainingDistance = 0;
