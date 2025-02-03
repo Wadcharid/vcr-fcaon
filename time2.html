@@ -13,7 +13,7 @@
     }
     .card {
       margin: auto;
-      max-width: 600px;
+      max-width: 700px;
     }
   </style>
 </head>
@@ -23,24 +23,22 @@
       <div class="card-body">
         <h3 class="card-title text-center mb-4">เครื่องคิดเวลาตามเปอร์เซ็นต์</h3>
         <form id="timeForm">
-          <div class="mb-3 row">
-            <label for="hours" class="col-sm-3 col-form-label">ชั่วโมง</label>
-            <div class="col-sm-9">
+          <!-- ช่องกรอกชั่วโมง, นาที, วินาที ในบรรทัดเดียวกัน -->
+          <div class="row mb-3">
+            <div class="col-md-4 col-12">
+              <label for="hours" class="form-label">ชั่วโมง</label>
               <input type="number" class="form-control" id="hours" placeholder="0" min="0" value="0" required>
             </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="minutes" class="col-sm-3 col-form-label">นาที</label>
-            <div class="col-sm-9">
+            <div class="col-md-4 col-12">
+              <label for="minutes" class="form-label">นาที</label>
               <input type="number" class="form-control" id="minutes" placeholder="0" min="0" max="59" value="0" required>
             </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="seconds" class="col-sm-3 col-form-label">วินาที</label>
-            <div class="col-sm-9">
+            <div class="col-md-4 col-12">
+              <label for="seconds" class="form-label">วินาที</label>
               <input type="number" class="form-control" id="seconds" placeholder="0" min="0" max="59" value="0" required>
             </div>
           </div>
+          <!-- ช่องกรอกเปอร์เซ็นต์สำหรับคำนวณแบบกำหนดเอง -->
           <div class="mb-3 row">
             <label for="customPercent" class="col-sm-3 col-form-label">เปอร์เซ็นต์</label>
             <div class="col-sm-9">
@@ -102,19 +100,15 @@
 
       // ฟังก์ชันคำนวณเวลาใหม่จากเปอร์เซ็นต์
       function calculateNewTime(totalSeconds, percent) {
-        // ถ้า percent > 0 => เวลาใหม่ = totalSeconds * (1 - percent/100) (เร็วขึ้น)
-        // ถ้า percent < 0 => เวลาใหม่ = totalSeconds * (1 - percent/100) (ช้าลง)
         return totalSeconds * (1 - (percent / 100));
       }
 
       // ฟังก์ชันแปลงวินาทีเป็นรูปแบบ HH:MM:SS
       function formatTime(totalSeconds) {
-        // ปัดเป็นวินาทีที่ใกล้ที่สุด
         const rounded = Math.round(totalSeconds);
         const h = Math.floor(rounded / 3600);
         const m = Math.floor((rounded % 3600) / 60);
         const s = rounded % 60;
-        // เติม 0 หน้าตัวเลขถ้าจำเป็น
         const hh = h.toString().padStart(2, '0');
         const mm = m.toString().padStart(2, '0');
         const ss = s.toString().padStart(2, '0');
@@ -134,8 +128,8 @@
       document.getElementById("customResultText").innerText = `เมื่อปรับ ${customPercent}% (${customNote}) เวลาใหม่คือ: ${formatTime(customNewTime)}`;
       document.getElementById("customResult").style.display = "block";
 
-      // กำหนดเปอร์เซ็นต์มาตรฐานที่ต้องการแสดงผล
-      const standardPercents = [-15, -10, -5, 0, 5, 10, 15];
+      // กำหนดเปอร์เซ็นต์มาตรฐานที่ต้องการแสดงผล (เพิ่ม -25, -20, 20, 25)
+      const standardPercents = [-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25];
       const tableBody = document.getElementById("resultsTableBody");
       tableBody.innerHTML = "";
       
