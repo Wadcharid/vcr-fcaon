@@ -23,19 +23,19 @@
       <div class="card-body">
         <h3 class="card-title text-center mb-4">เครื่องคิดเวลาตามเปอร์เซ็นต์</h3>
         <form id="timeForm">
-          <!-- ช่องกรอกชั่วโมง, นาที, วินาที ในบรรทัดเดียวกัน -->
+          <!-- ช่องกรอกชั่วโมง, นาที, วินาที อยู่ในบรรทัดเดียวกัน -->
           <div class="row mb-3">
             <div class="col-md-4 col-12">
               <label for="hours" class="form-label">ชั่วโมง</label>
-              <input type="number" class="form-control" id="hours" placeholder="0" min="0" value="0" required>
+              <input type="number" class="form-control" id="hours" placeholder="0" min="0" value="0">
             </div>
             <div class="col-md-4 col-12">
               <label for="minutes" class="form-label">นาที</label>
-              <input type="number" class="form-control" id="minutes" placeholder="0" min="0" max="59" value="0" required>
+              <input type="number" class="form-control" id="minutes" placeholder="0" min="0" max="59" value="0">
             </div>
             <div class="col-md-4 col-12">
               <label for="seconds" class="form-label">วินาที</label>
-              <input type="number" class="form-control" id="seconds" placeholder="0" min="0" max="59" value="0" required>
+              <input type="number" class="form-control" id="seconds" placeholder="0" min="0" max="59" value="0">
             </div>
           </div>
           <!-- ช่องกรอกเปอร์เซ็นต์สำหรับคำนวณแบบกำหนดเอง -->
@@ -43,7 +43,7 @@
             <label for="customPercent" class="col-sm-3 col-form-label">เปอร์เซ็นต์</label>
             <div class="col-sm-9">
               <div class="input-group">
-                <input type="number" class="form-control" id="customPercent" placeholder="ตัวอย่าง: 10" required>
+                <input type="number" class="form-control" id="customPercent" placeholder="ตัวอย่าง: 10" value="0">
                 <span class="input-group-text">%</span>
               </div>
             </div>
@@ -84,11 +84,11 @@
     document.getElementById("timeForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      // รับค่า input
+      // รับค่า input โดยถ้าไม่มีการป้อน ให้ใช้ค่า 0
       const hours = parseInt(document.getElementById("hours").value) || 0;
       const minutes = parseInt(document.getElementById("minutes").value) || 0;
       const seconds = parseInt(document.getElementById("seconds").value) || 0;
-      const customPercent = parseFloat(document.getElementById("customPercent").value);
+      const customPercent = parseFloat(document.getElementById("customPercent").value) || 0;
 
       // คำนวณเวลาเริ่มต้น (แปลงเป็นวินาที)
       const baseTimeInSeconds = hours * 3600 + minutes * 60 + seconds;
