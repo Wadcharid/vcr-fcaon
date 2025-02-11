@@ -1,93 +1,242 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Running Training Calculator</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 20px;
-      max-width: 600px;
+    * {
+      box-sizing: border-box;
     }
-    h1, h2, h3 {
+    body {
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Segoe UI', Tahoma, sans-serif; 
+      background: #f4f6f9;
       color: #333;
     }
-    label, p, ul, li {
-      margin: 8px 0;
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    input {
-      width: 120px;
-      padding: 4px;
-      margin-right: 8px;
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .input-group label {
+      font-weight: 600;
+      min-width: 70px;
+    }
+    .input-group input {
+      width: 70px;
+      padding: 0.4rem;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
     }
     button {
-      padding: 6px 12px;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: #fff;
+      font-size: 1rem;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
-    .result {
+    button:hover {
+      background: #0056b3;
+    }
+    hr {
+      margin: 2rem 0;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+    .results {
+      margin-top: 1rem;
+    }
+    .results p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+    .result-highlight {
       font-weight: bold;
       color: #006400;
     }
-    hr {
-      margin: 20px 0;
+    /* Responsive */
+    @media (max-width: 480px) {
+      .input-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .input-group label, .input-group input {
+        width: auto;
+      }
     }
   </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Running Training Calculator</h1>
+
+    <!-- ส่วนกรอกข้อมูลเวลา 10K ที่ดีที่สุด -->
+    <div class="input-group">
+      <label for="hourInput">ชั่วโมง</label>
+      <input type="number" id="hourInput" min="0" placeholder="0" />
+      <label for="minInput">นาที</label>
+      <input type="number" id="minInput" min="0" placeholder="0" />
+      <label for="secInput">วินาที</label>
+      <input type="number" id="secInput" min="0" placeholder="0" />
+      <button id="calcBtn" onclick="calculateTraining()">คำนวณ</button>
+    </div>
+
+    <hr />
+
+    <!-- ส่วนแสดงผล -->
+    <div class="results">
+      <p>ระยะทางที่คาดว่าจะวิ่งได้ใน 1 ชั่วโมง: 
+        <span class="result-highlight" id="distIn1Hour">-</span> km
+      </p>
+      <p>LT Pace (เพซเกณฑ์ จากการประเมิน 1 ชม.): 
+        <span class="result-highlight" id="ltPace">-</span> นาที/กม.
+      </p>
+      <p>Low Intensity Pace: 
+        <span class="result-highlight" id="lowPace">-</span> นาที/กม.
+      </p>
+      <p>Med Intensity Pace: 
+        <span class="result-highlight" id="medPace">-</span> นาที/กม.
+      </p>
+      <p>Hard Intensity Pace: 
+        <span class="result-highlight" id="hardPace">-</span> นาที/กม.
+      </p>
+    </div>
+
+    <hr />
+
+    <h3>คำแนะนำการฝึกซ้อม (สรุป)</h3>
+    <ol>
+      <li><strong>Low Intensity</strong> (ช้าสุด, สบาย ๆ)  
+        <ul>
+          <li>ใช้เวลาวิ่ง 60-180 นาที ตามเป้าหมายและความแข็งแรง</li>
+          <li>ตัวอย่างความถี่:
+            <ul>
+              <li>เป้าหมาย 10K-21K:
+                <ul>
+                  <li>Low (&lt; 90 นาที) ซ้อมได้เกือบทุกวัน</li>
+                  <li>Low (&gt; 90 นาที) 1 ครั้ง/สัปดาห์</li>
+                </ul>
+              </li>
+              <li>เป้าหมาย 42K:
+                <ul>
+                  <li>Low (&lt; 90 นาที) ซ้อมได้ทุกวัน</li>
+                  <li>Low (&gt; 90 นาที) 2 ครั้ง/สัปดาห์</li>
+                </ul>
+              </li>
+              <li>เป้าหมาย 5K:
+                <ul>
+                  <li>Low (60-90 นาที) ซ้อมได้ทุกวัน</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Med Intensity</strong> (หนักขึ้น)
+        <ul>
+          <li>ใช้เวลาวิ่ง 30-60 นาที</li>
+          <li>ตัวอย่างความถี่:
+            <ul>
+              <li>เป้าหมาย 10K-21K: 1 ครั้ง/สัปดาห์</li>
+              <li>เป้าหมาย 42K: 1 ครั้ง/สัปดาห์ (อาจสลับกับ Hard)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Hard Intensity</strong> (หนักสุด, มักเป็น Interval)
+        <ul>
+          <li>ทำเป็นชุดวิ่งสลับพัก เช่น วิ่ง 2-4 นาที พัก 2 นาที</li>
+          <li>เวลา "วิ่ง" รวมกัน 20-40 นาที ขึ้นกับความแข็งแรง</li>
+          <li>ตัวอย่างความถี่:
+            <ul>
+              <li>เป้าหมาย 10K-21K: 1 ครั้ง/สัปดาห์ (เช่น วิ่ง 2 นาที 110-115% LT Pace สลับพัก)</li>
+              <li>เป้าหมาย 42K: 1 ครั้ง/สัปดาห์ (4 นาที 105-110% LT Pace สลับพัก)</li>
+              <li>เป้าหมาย 5K: 2-3 ครั้ง/สัปดาห์ (2 นาที ~115% LT Pace สลับพัก)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ol>
+  </div>
 
   <script>
-    function calculateTraining() {
-      // อ่านค่าจาก input
-      let best10kMin = parseFloat(document.getElementById("best10k").value);
+    // ทำให้กด Enter ที่ช่องใดก็ได้แล้วคำนวณ
+    document.addEventListener("keydown", function(e) {
+      if(e.key === "Enter") {
+        calculateTraining();
+      }
+    });
 
-      // ตรวจสอบความถูกต้อง
-      if (isNaN(best10kMin) || best10kMin <= 0) {
-        alert("กรุณาใส่เวลาที่ถูกต้อง (เป็นจำนวนนาที)");
+    function calculateTraining() {
+      // 1) อ่านค่า ชั่วโมง นาที วินาที (ถ้าเป็นค่าว่าง ให้แทนเป็น 0)
+      let h = parseInt(document.getElementById("hourInput").value) || 0;
+      let m = parseInt(document.getElementById("minInput").value) || 0;
+      let s = parseInt(document.getElementById("secInput").value) || 0;
+
+      // รวมเป็น "นาที" สำหรับระยะ 10K
+      let totalMin = h * 60 + m + s / 60;
+
+      if (totalMin <= 0) {
+        alert("กรุณากรอกเวลา 10K ให้ถูกต้อง (อย่างน้อยควรมากกว่า 0)");
         return;
       }
 
-      // 1) รับเวลา 10k ที่ดีที่สุด (best10kMin)
-      // 2) ประเมินว่า ถ้าใช้ pace เดียวกัน 1 ชั่วโมง จะวิ่งได้ระยะทางเท่าไร
-      //    - ความเร็ว (km/h) = 10 km / (best10kMin/60 ชม.) = (10 * 60) / best10kMin
-      let speed = (10 * 60) / best10kMin; // km/h
+      // --- สูตร Riegel ---
+      // T1 = totalMin, ระยะ 10k = 10 km, T2 = 60 (ต้องการ 1 ชม = 60 นาที)
+      // k = T1 / (10^1.06)
+      // D2 = [ 60 / k ]^(1/1.06)
+      let k = totalMin / Math.pow(10, 1.06);
+      let distIn1Hour = Math.pow(60 / k, 1 / 1.06); // กิโลเมตร
 
-      //    ระยะทางใน 1 ชั่วโมง
-      let distIn1Hour = speed; // เพราะ speed เป็น km/h
+      // LT Pace = 60 / distIn1Hour (นาที/กม.)
+      let ltPace = 60 / distIn1Hour;
 
-      //    Pace (นาที/กม.) = 60 / speed
-      let ltPace = 60 / speed; // เรียกว่า "LT Pace"
-
-      // 3) ใช้ Pace ข้อ 2 เป็น LT Pace (ltPace)
-
-      // 4) คำนวณช่วง Pace สำหรับการฝึกซ้อมตาม % ของ LT Pace
-      //    หมายเหตุ: ในที่นี้ "XX% ของ LT Pace" แปลว่า XX% ของความเร็ว (speed)
-      //    ดังนั้นเพื่อหา "pace" เราต้องแบ่ง (LT Pace) ด้วย (XX% ในรูปทศนิยม)
-      //    เช่น Low Intensity = 70%-80% speed => pace = ltPace / 0.7 ถึง ltPace / 0.8
-      //    (ยิ่ง % speed น้อย = ความเร็วต่ำ => pace มากขึ้น => ช้าลง)
-
-      // Low Intensity = 70-80% speed => pace = LT Pace / 0.7 ... LT Pace / 0.8
-      let lowPaceMin = ltPace / 0.8; // (80% speed => pace ช้าลง)
-      let lowPaceMax = ltPace / 0.7;
-
-      // Med Intensity = 90-97% speed => pace = LT Pace / 0.9 ... LT Pace / 0.97
-      let medPaceMin = ltPace / 0.97;
-      let medPaceMax = ltPace / 0.9;
-
-      // Hard Intensity = 105-115% speed => pace = LT Pace / 1.05 ... LT Pace / 1.15
-      let hardPaceMin = ltPace / 1.15;
+      // คำนวณ Pace ช่วงต่าง ๆ จาก % ความเร็ว
+      // หมายเหตุ: "X% ของ LT Pace" กำลังหมายถึง X% ของ "ความเร็ว" (ไม่ใช่ pace)
+      // ความเร็ว LT = 1 / (ltPace ในหน่วยชม./กม.) => 
+      // แต่เพื่อให้ง่ายขึ้น: pace = ltPace / (เปอร์เซ็นต์ในรูปทศนิยม)
+      // ตัวอย่าง Low = 70%-80% speed => pace = ltPace / 0.7 ... ltPace / 0.8
+      let lowPaceMin  = ltPace / 0.8; // 80%
+      let lowPaceMax  = ltPace / 0.7; // 70%
+      let medPaceMin  = ltPace / 0.97; 
+      let medPaceMax  = ltPace / 0.9;
+      let hardPaceMin = ltPace / 1.15; 
       let hardPaceMax = ltPace / 1.05;
 
-      // แสดงผลลัพธ์
-      document.getElementById("distIn1Hour").textContent = distIn1Hour.toFixed(2) + " km";
-      document.getElementById("ltPace").textContent = formatPace(ltPace) + " นาที/กม.";
+      // แสดงผล
+      document.getElementById("distIn1Hour").textContent = distIn1Hour.toFixed(2);
+      document.getElementById("ltPace").textContent     = formatPace(ltPace);
 
-      document.getElementById("lowPace").textContent =
-        formatPace(lowPaceMin) + " - " + formatPace(lowPaceMax) + " นาที/กม.";
-      document.getElementById("medPace").textContent =
-        formatPace(medPaceMin) + " - " + formatPace(medPaceMax) + " นาที/กม.";
+      document.getElementById("lowPace").textContent  =
+        formatPace(lowPaceMin) + " - " + formatPace(lowPaceMax);
+      document.getElementById("medPace").textContent  =
+        formatPace(medPaceMin) + " - " + formatPace(medPaceMax);
       document.getElementById("hardPace").textContent =
-        formatPace(hardPaceMin) + " - " + formatPace(hardPaceMax) + " นาที/กม.";
+        formatPace(hardPaceMin) + " - " + formatPace(hardPaceMax);
     }
 
-    // ฟังก์ชันช่วยในการ format pace (นาที/กม.) ให้อยู่ในรูป mm:ss
+    // แปลง pace เป็น mm:ss
     function formatPace(paceInMinPerKm) {
       let minutes = Math.floor(paceInMinPerKm);
       let seconds = Math.round((paceInMinPerKm - minutes) * 60);
@@ -97,81 +246,5 @@
       return minutes + ":" + seconds;
     }
   </script>
-</head>
-<body>
-  <h1>Running Training Calculator</h1>
-  
-  <label for="best10k">เวลาที่ดีที่สุด 10K (นาที):</label>
-  <input type="number" id="best10k" placeholder="เช่น 55" />
-  <button onclick="calculateTraining()">คำนวณ</button>
-
-  <hr>
-
-  <h2>ผลการคำนวณ</h2>
-  <p>ระยะทางที่วิ่งได้ใน 1 ชั่วโมง: <span class="result" id="distIn1Hour">-</span></p>
-  <p>LT Pace (เพซเกณฑ์): <span class="result" id="ltPace">-</span></p>
-
-  <p><strong>Low Intensity Pace:</strong> <span class="result" id="lowPace">-</span></p>
-  <p><strong>Med Intensity Pace:</strong> <span class="result" id="medPace">-</span></p>
-  <p><strong>Hard Intensity Pace:</strong> <span class="result" id="hardPace">-</span></p>
-
-  <hr>
-
-  <h2>คำแนะนำการฝึกซ้อม (ตัวอย่างสรุป)</h2>
-  <ol>
-    <li><strong>Low Intensity</strong> (ช้าสุด, สบาย ๆ)  
-      <ul>
-        <li>ใช้เวลาวิ่ง 60-180 นาที ตามเป้าหมายและความแข็งแรง</li>
-        <li>
-          ความถี่ (ตัวอย่าง):
-          <ul>
-            <li>เป้าหมาย 10K-21K:
-              <ul>
-                <li>Low (< 90 นาที) ซ้อมได้เกือบทุกวัน</li>
-                <li>Low (> 90 นาที) 1 ครั้ง/สัปดาห์</li>
-              </ul>
-            </li>
-            <li>เป้าหมาย 42K:
-              <ul>
-                <li>Low (< 90 นาที) ซ้อมได้ทุกวัน</li>
-                <li>Low (> 90 นาที) 2 ครั้ง/สัปดาห์</li>
-              </ul>
-            </li>
-            <li>เป้าหมาย 5K:
-              <ul>
-                <li>Low (60-90 นาที) ซ้อมได้ทุกวัน</li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li><strong>Med Intensity</strong> (หนักขึ้น)
-      <ul>
-        <li>ใช้เวลาวิ่ง 30-60 นาที</li>
-        <li>
-          ความถี่ (ตัวอย่าง):
-          <ul>
-            <li>เป้าหมาย 10K-21K: 1 ครั้ง/สัปดาห์</li>
-            <li>เป้าหมาย 42K: 1 ครั้ง/สัปดาห์ (อาจสลับกับ Hard)</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li><strong>Hard Intensity</strong> (หนักสุด, มักเป็น Interval)
-      <ul>
-        <li>ทำเป็นชุดวิ่งสลับพัก เช่น วิ่ง 2-4 นาที พัก 2 นาที</li>
-        <li>เวลา "วิ่ง" รวมกัน 20-40 นาที ขึ้นกับความแข็งแรง</li>
-        <li>
-          ความถี่ (ตัวอย่าง):
-          <ul>
-            <li>เป้าหมาย 10K-21K: 1 ครั้ง/สัปดาห์ (2 นาทีที่ 110-115% LT Pace, พัก 2 นาที)</li>
-            <li>เป้าหมาย 42K: 1 ครั้ง/สัปดาห์ (4 นาทีที่ 105-110% LT Pace, พัก 2 นาที)</li>
-            <li>เป้าหมาย 5K: 2-3 ครั้ง/สัปดาห์ (2 นาทีที่ ~115% LT Pace, พัก 2 นาที)</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ol>
 </body>
 </html>
