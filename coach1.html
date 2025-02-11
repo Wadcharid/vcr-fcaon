@@ -26,6 +26,11 @@
       text-align: center;
       margin-bottom: 1rem;
     }
+    .description {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #555;
+    }
     .input-group {
       display: flex;
       flex-wrap: wrap;
@@ -75,6 +80,13 @@
       font-weight: bold;
       color: #006400;
     }
+    h3 {
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    p, li {
+      line-height: 1.5;
+    }
     /* Responsive */
     @media (max-width: 480px) {
       .input-group {
@@ -90,6 +102,9 @@
 <body>
   <div class="container">
     <h1>Running Training Calculator</h1>
+    <div class="description">
+      <p>ป้อนเวลาวิ่ง 10K ที่ดีที่สุดในช่วง 1 ปีที่ผ่านมา</p>
+    </div>
 
     <!-- ส่วนกรอกข้อมูลเวลา 10K ที่ดีที่สุด -->
     <div class="input-group">
@@ -125,59 +140,31 @@
 
     <hr />
 
-    <h3>คำแนะนำการฝึกซ้อม (สรุป)</h3>
-    <ol>
-      <li><strong>Low Intensity</strong> (ช้าสุด, สบาย ๆ)  
-        <ul>
-          <li>ใช้เวลาวิ่ง 60-180 นาที ตามเป้าหมายและความแข็งแรง</li>
-          <li>ตัวอย่างความถี่:
-            <ul>
-              <li>เป้าหมาย 10K-21K:
-                <ul>
-                  <li>Low (&lt; 90 นาที) ซ้อมได้เกือบทุกวัน</li>
-                  <li>Low (&gt; 90 นาที) 1 ครั้ง/สัปดาห์</li>
-                </ul>
-              </li>
-              <li>เป้าหมาย 42K:
-                <ul>
-                  <li>Low (&lt; 90 นาที) ซ้อมได้ทุกวัน</li>
-                  <li>Low (&gt; 90 นาที) 2 ครั้ง/สัปดาห์</li>
-                </ul>
-              </li>
-              <li>เป้าหมาย 5K:
-                <ul>
-                  <li>Low (60-90 นาที) ซ้อมได้ทุกวัน</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li><strong>Med Intensity</strong> (หนักขึ้น)
-        <ul>
-          <li>ใช้เวลาวิ่ง 30-60 นาที</li>
-          <li>ตัวอย่างความถี่:
-            <ul>
-              <li>เป้าหมาย 10K-21K: 1 ครั้ง/สัปดาห์</li>
-              <li>เป้าหมาย 42K: 1 ครั้ง/สัปดาห์ (อาจสลับกับ Hard)</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li><strong>Hard Intensity</strong> (หนักสุด, มักเป็น Interval)
-        <ul>
-          <li>ทำเป็นชุดวิ่งสลับพัก เช่น วิ่ง 2-4 นาที พัก 2 นาที</li>
-          <li>เวลา "วิ่ง" รวมกัน 20-40 นาที ขึ้นกับความแข็งแรง</li>
-          <li>ตัวอย่างความถี่:
-            <ul>
-              <li>เป้าหมาย 10K-21K: 1 ครั้ง/สัปดาห์ (เช่น วิ่ง 2 นาที 110-115% LT Pace สลับพัก)</li>
-              <li>เป้าหมาย 42K: 1 ครั้ง/สัปดาห์ (4 นาที 105-110% LT Pace สลับพัก)</li>
-              <li>เป้าหมาย 5K: 2-3 ครั้ง/สัปดาห์ (2 นาที ~115% LT Pace สลับพัก)</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ol>
+    <!-- ข้อความอธิบายการฝึกซ้อม -->
+    <h3>Low Intensity (ช้าสุด, สบาย ๆ)</h3>
+    <p>
+      วิ่งได้ทุกวัน ใช้เวลาวิ่ง 60-180 นาที ตามเป้าหมายและความแข็งแรง 
+      <br>
+      เป็นการวิ่งเพื่อเก็บ Base และเก็บระยะ ถ้าเป้าหมายคือ ระยะไกล ก็ต้องมาเน้นเก็บ Low เยอะๆ
+    </p>
+
+    <h3>Med Intensity (หนักขึ้น)</h3>
+    <p>
+      วิ่งต่อเนื่องใช้เวลาวิ่ง 30-60 นาที 
+    </p>
+
+    <h3>Hard Intensity (หนักสุด, มักเป็น Interval)</h3>
+    <p>
+      ทำเป็นชุดวิ่งสลับพัก เช่น วิ่ง 2-4 นาที พัก 2 นาที <br>
+      เวลา "วิ่ง" รวมกัน 20-40 นาที ขึ้นกับความแข็งแรง
+    </p>
+
+    <p>
+      <strong>ตัวอย่าง:</strong><br>
+      - 5k-10k: เน้น Hard เป็นหลัก มีสลับ Med บ้าง<br>
+      - 21k-42k: เน้น Med เป็นหลัก มีสลับ Hard บ้าง<br>
+      <em>ไม่ซีเรียส เลือกอย่างใดก็ได้ จำนวน 1-2 ครั้ง/สัปดาห์ ขึ้นอยู่กับเป้าหมายและความแข็งแรง</em>
+    </p>
   </div>
 
   <script>
@@ -217,8 +204,8 @@
       // ความเร็ว LT = 1 / (ltPace ในหน่วยชม./กม.) => 
       // แต่เพื่อให้ง่ายขึ้น: pace = ltPace / (เปอร์เซ็นต์ในรูปทศนิยม)
       // ตัวอย่าง Low = 70%-80% speed => pace = ltPace / 0.7 ... ltPace / 0.8
-      let lowPaceMin  = ltPace / 0.8; // 80%
-      let lowPaceMax  = ltPace / 0.7; // 70%
+      let lowPaceMin  = ltPace / 0.8; 
+      let lowPaceMax  = ltPace / 0.7; 
       let medPaceMin  = ltPace / 0.97; 
       let medPaceMax  = ltPace / 0.9;
       let hardPaceMin = ltPace / 1.15; 
