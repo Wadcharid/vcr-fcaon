@@ -124,11 +124,11 @@
       <div class="form-group">
         <label>เวลา (ที่ทำได้) <small>(ชั่วโมง, นาที, วินาที)</small></label>
         <div class="inline-inputs">
-          <input type="number" id="achievedHours" name="achievedHours" min="0" placeholder="ชั่วโมง" required>
+          <input type="number" id="achievedHours" name="achievedHours" min="0" placeholder="ชั่วโมง" value="0">
           <span>:</span>
-          <input type="number" id="achievedMinutes" name="achievedMinutes" min="0" max="59" placeholder="นาที" required>
+          <input type="number" id="achievedMinutes" name="achievedMinutes" min="0" max="59" placeholder="นาที" value="0">
           <span>:</span>
-          <input type="number" id="achievedSeconds" name="achievedSeconds" min="0" max="59" placeholder="วินาที" required>
+          <input type="number" id="achievedSeconds" name="achievedSeconds" min="0" max="59" placeholder="วินาที" value="0">
         </div>
       </div>
       
@@ -233,14 +233,21 @@
     function calculateRacePredict() {
       // รับค่าผลการแข่งขันที่ทำได้
       const achievedDistance = parseFloat(document.getElementById("achievedDistance").value);
-      const achievedHours = parseInt(document.getElementById("achievedHours").value, 10);
-      const achievedMinutes = parseInt(document.getElementById("achievedMinutes").value, 10);
-      const achievedSeconds = parseInt(document.getElementById("achievedSeconds").value, 10);
+      
+      // หากช่องเวลาไม่ได้ถูกกรอกค่า ให้ใช้ 0 เป็นค่าเริ่มต้น
+      let achievedHours = parseInt(document.getElementById("achievedHours").value, 10);
+      let achievedMinutes = parseInt(document.getElementById("achievedMinutes").value, 10);
+      let achievedSeconds = parseInt(document.getElementById("achievedSeconds").value, 10);
+      
+      // ตรวจสอบว่าเป็น NaN หรือไม่ หาก NaN ให้ตั้งค่าเป็น 0
+      achievedHours = isNaN(achievedHours) ? 0 : achievedHours;
+      achievedMinutes = isNaN(achievedMinutes) ? 0 : achievedMinutes;
+      achievedSeconds = isNaN(achievedSeconds) ? 0 : achievedSeconds;
       
       // รับระยะทางคาดการณ์
       const forecastDistance = parseFloat(document.getElementById("distance").value);
 
-      if (isNaN(achievedDistance) || isNaN(achievedHours) || isNaN(achievedMinutes) || isNaN(achievedSeconds) || isNaN(forecastDistance)) {
+      if (isNaN(achievedDistance) || isNaN(forecastDistance)) {
         document.getElementById("result").innerHTML = "<p style='color:red;'>กรุณากรอกข้อมูลให้ครบถ้วน</p>";
         return;
       }
