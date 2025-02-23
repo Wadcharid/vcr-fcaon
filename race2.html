@@ -163,14 +163,13 @@
 
     // แปลง pace (นาที/กม.) ให้อยู่ในรูปแบบ "m:ss"
     function formatPace(pace) {
-      const paceMinutes = Math.floor(pace);
-      let paceSeconds = Math.round((pace - paceMinutes) * 60);
-      if(paceSeconds === 60) { 
-        paceSeconds = 0;
-      }
-      const secondsStr = paceSeconds < 10 ? "0" + paceSeconds : paceSeconds;
-      return paceMinutes + ":" + secondsStr;
-    }
+  const totalSeconds = Math.round(pace * 60);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const secondsStr = seconds < 10 ? "0" + seconds : seconds;
+  return minutes + ":" + secondsStr;
+}
+
 
     // ฟังก์ชันคำนวณเวลาที่คาดว่าจะใช้ในการวิ่งสำหรับระยะทางที่กำหนด โดยใช้ LT Pace (ltTotalSec: วินาที/กม.)
     function computeRaceTime(targetDistance, ltTotalSec) {
