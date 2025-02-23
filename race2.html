@@ -289,7 +289,7 @@
       
       // แสดง % ของ Pace จาก LT Pace (70% - 125% ทุก 5%)
       let ltPacePercentHTML = "<h3>ผลลัพธ์ % ของ Pace จาก LT Pace:</h3><ul class='standard-list'>";
-      for (let percent = 70; percent <= 125; percent += 5) {
+      for (let percent = 60; percent <= 125; percent += 5) {
         let paceAtPercent = (ltTotalSec * (100 / percent)) / 60; 
         ltPacePercentHTML += `<li>${percent}%: ${formatPace(paceAtPercent)} นาที/กม.</li>`;
       }
@@ -297,7 +297,7 @@
       
       // แสดง % ของ Pace จากผลการแข่งขันที่ทำได้ (Input Pace) (70% - 125% ทุก 5%)
       let inputPacePercentHTML = "<h3>ผลลัพธ์ % ของ Pace จากผลการแข่งขันที่ทำได้:</h3><ul class='standard-list'>";
-      for (let percent = 70; percent <= 125; percent += 5) {
+      for (let percent = 60; percent <= 125; percent += 5) {
         let paceAtPercent = inputPace * (100 / percent);
         inputPacePercentHTML += `<li>${percent}%: ${formatPace(paceAtPercent)} นาที/กม.</li>`;
       }
