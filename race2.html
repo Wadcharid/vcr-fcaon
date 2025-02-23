@@ -141,10 +141,10 @@
       <button type="submit">คำนวณ</button>
     </form>
   
-    <!-- แสดงผลลัพธ์สำหรับระยะทางคาดการณ์ -->
+    <!-- แสดงผลลัพธ์สำหรับข้อมูล Input -->
     <div id="result"></div>
     
-    <!-- แสดงผลลัพธ์สำหรับระยะมาตรฐาน -->
+    <!-- แสดงผลลัพธ์สำหรับระยะมาตรฐานและ % Pace -->
     <div id="standardResults"></div>
   </div>
 
@@ -165,7 +165,7 @@
     function formatPace(pace) {
       const paceMinutes = Math.floor(pace);
       let paceSeconds = Math.round((pace - paceMinutes) * 60);
-      if(paceSeconds === 60) { // กรณีปัดขึ้นเป็น 60
+      if(paceSeconds === 60) { 
         paceSeconds = 0;
       }
       const secondsStr = paceSeconds < 10 ? "0" + paceSeconds : paceSeconds;
@@ -212,19 +212,15 @@
 
     // ฟังก์ชันหา LT Pace (ltTotalSec) จากผลการแข่งขันที่ทำได้ (โดยใช้ binary search)
     function findLTPace(achievedDistance, achievedTimeMinutes) {
-      // กำหนดช่วงค้นหา (วินาที/กม.)
-      let low = 180;  // เร็วมาก ประมาณ 3 นาที/กม.
-      let high = 600; // ช้า ประมาณ 10 นาที/กม.
+      let low = 180;  
+      let high = 600; 
       let mid;
-      // ทำการค้นหาซ้ำประมาณ 30 ครั้งเพื่อความแม่นยำ
       for (let i = 0; i < 30; i++) {
         mid = (low + high) / 2;
         const computedTime = computeRaceTime(achievedDistance, mid);
         if (computedTime > achievedTimeMinutes) {
-          // ถ้าเวลาที่คำนวณได้มากกว่าเวลาที่ทำได้ => LT Pace ที่คำนวณได้ช้าเกินไป => ลดค่า high
           high = mid;
         } else {
-          // ถ้าเวลาที่คำนวณได้น้อยกว่า => LT Pace เร็วเกินไป => เพิ่มค่า low
           low = mid;
         }
       }
@@ -232,20 +228,15 @@
     }
 
     function calculateRacePredict() {
-      // รับค่าผลการแข่งขันที่ทำได้
       const achievedDistance = parseFloat(document.getElementById("achievedDistance").value);
-      
-      // หากช่องเวลาไม่ได้ถูกกรอกค่า ให้ใช้ 0 เป็นค่าเริ่มต้น
       let achievedHours = parseInt(document.getElementById("achievedHours").value, 10);
       let achievedMinutes = parseInt(document.getElementById("achievedMinutes").value, 10);
       let achievedSeconds = parseInt(document.getElementById("achievedSeconds").value, 10);
       
-      // ตรวจสอบว่าเป็น NaN หรือไม่ หาก NaN ให้ตั้งค่าเป็น 0
       achievedHours = isNaN(achievedHours) ? 0 : achievedHours;
       achievedMinutes = isNaN(achievedMinutes) ? 0 : achievedMinutes;
       achievedSeconds = isNaN(achievedSeconds) ? 0 : achievedSeconds;
       
-      // รับระยะทางคาดการณ์
       const forecastDistance = parseFloat(document.getElementById("distance").value);
 
       if (isNaN(achievedDistance) || isNaN(forecastDistance)) {
@@ -253,28 +244,29 @@
         return;
       }
       
-      // คำนวณเวลาที่ทำได้ทั้งหมด (หน่วย: นาที)
+      // คำนวณเวลาที่ทำได้ทั้งหมด (นาที)
       const totalAchievedTimeMinutes = achievedHours * 60 + achievedMinutes + achievedSeconds / 60;
-
-      // 3. คำนวณย้อนกลับหาค่า LT Pace (ltTotalSec: วินาที/กม.) โดยใช้ผลการแข่งขันที่ทำได้
-      const ltTotalSec = findLTPace(achievedDistance, totalAchievedTimeMinutes);
+      // คำนวณ pace จากผลการแข่งขันที่ทำได้ (นาที/กม.)
+      const inputPace = totalAchievedTimeMinutes / achievedDistance;
       
-      // แปลง LT Pace เป็นรูปแบบ "m:ss" (โดยแปลงวินาที/กม. เป็นนาที/กม.)
+      // คำนวณ LT Pace (วินาที/กม.)
+      const ltTotalSec = findLTPace(achievedDistance, totalAchievedTimeMinutes);
       const ltPaceInMinutes = ltTotalSec / 60;
       const ltPaceStr = formatPace(ltPaceInMinutes);
 
-      // 4. คำนวณผลลัพธ์สำหรับระยะทางคาดการณ์ โดยใช้ LT Pace ที่คำนวณได้
+      // คำนวณผลลัพธ์สำหรับระยะทางคาดการณ์
       const forecastTimeMinutes = computeRaceTime(forecastDistance, ltTotalSec);
       const forecastTimeSec = Math.round(forecastTimeMinutes * 60);
       const forecastTimeStr = formatTime(forecastTimeSec);
       const avgPaceForecast = forecastTimeMinutes / forecastDistance;
       const avgPaceForecastStr = formatPace(avgPaceForecast);
       
-      let resultHTML = `<p><strong>LT Pace ที่คำนวณได้:</strong> ${ltPaceStr} นาที/กม.</p>`;
+      let resultHTML = `<p><strong>Pace จากผลการแข่งขันที่ทำได้:</strong> ${formatPace(inputPace)} นาที/กม.</p>`;
+      resultHTML += `<p><strong>LT Pace ที่คำนวณได้:</strong> ${ltPaceStr} นาที/กม.</p>`;
       resultHTML += `<p><strong>สำหรับระยะทาง ${forecastDistance} กม. คาดว่าจะใช้เวลา:</strong> ${forecastTimeStr} <br>(Pace เฉลี่ย: ${avgPaceForecastStr} นาที/กม.)</p>`;
       document.getElementById("result").innerHTML = resultHTML;
       
-      // คำนวณผลลัพธ์สำหรับระยะมาตรฐาน
+      // ผลลัพธ์สำหรับระยะมาตรฐาน
       const standardDistances = [
         { label: "5K", distance: 5 },
         { label: "10K", distance: 10 },
@@ -294,7 +286,25 @@
         standardHTML += `<li>${item.label} (${item.distance} กม.): ${timeStr} <span class="badge">(${avgPaceForStandardStr} นาที/กม.)</span></li>`;
       });
       standardHTML += "</ul>";
-      document.getElementById("standardResults").innerHTML = standardHTML;
+      
+      // แสดง % ของ Pace จาก LT Pace (70% - 125% ทุก 5%)
+      let ltPacePercentHTML = "<h3>ผลลัพธ์ % ของ Pace จาก LT Pace:</h3><ul class='standard-list'>";
+      for (let percent = 70; percent <= 125; percent += 5) {
+        let paceAtPercent = (ltTotalSec * (100 / percent)) / 60; 
+        ltPacePercentHTML += `<li>${percent}%: ${formatPace(paceAtPercent)} นาที/กม.</li>`;
+      }
+      ltPacePercentHTML += "</ul>";
+      
+      // แสดง % ของ Pace จากผลการแข่งขันที่ทำได้ (Input Pace) (70% - 125% ทุก 5%)
+      let inputPacePercentHTML = "<h3>ผลลัพธ์ % ของ Pace จากผลการแข่งขันที่ทำได้:</h3><ul class='standard-list'>";
+      for (let percent = 70; percent <= 125; percent += 5) {
+        let paceAtPercent = inputPace * (100 / percent);
+        inputPacePercentHTML += `<li>${percent}%: ${formatPace(paceAtPercent)} นาที/กม.</li>`;
+      }
+      inputPacePercentHTML += "</ul>";
+      
+      // รวมผลลัพธ์ทั้งหมดใน standardResults
+      document.getElementById("standardResults").innerHTML = standardHTML + ltPacePercentHTML + inputPacePercentHTML;
     }
   </script>
 </body>
