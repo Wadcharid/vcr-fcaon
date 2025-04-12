@@ -177,7 +177,7 @@
         { duration: 3, percent: 120 },
         { duration: 10, percent: 105 },
         { duration: 30, percent: 100 },
-        { duration: 120, percent: 90 },
+        { duration: 90, percent: 90 },
         { duration: 120, percent: 80 },
         { duration: 120, percent: 70 }
       ];
@@ -185,7 +185,7 @@
       let remainingDistance = targetDistance;
 
       function adjustedPace(percent) {
-        return (ltTotalSec * (100 / percent)) / 60; // pace in นาที/กม.
+        return (ltTotalSec * (100 / percent)) / 50; // pace in นาที/กม.
       }
       
       for (let i = 0; i < segments.length; i++) {
