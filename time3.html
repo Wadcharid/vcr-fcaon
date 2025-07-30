@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pace Calculator</title>
+    <style>
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        input {
+            width: 90%;
+            padding: 4px;
+        }
+        .result {
+            background-color: #e9f7e9;
+        }
+        .summary {
+            font-weight: bold;
+            background-color: #d9edf7;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Pace Calculator (Time ➡️ Distance)</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Time (Minutes)</th>
+                <th>Time (Seconds)</th>
+                <th>Pace (Min/km)</th>
+                <th>Pace (Sec/km)</th>
+                <th>Distance (km)</th>
+            </tr>
+        </thead>
+        <tbody id="calculatorTable">
+            <tr>
+                <td><input type="number" class="time-minutes" oninput="calculateRow(this)"></td>
+                <td><input type="number" class="time-seconds" oninput="calculateRow(this)"></td>
+                <td><input type="number" class="pace-minutes" oninput="calculateRow(this)"></td>
+                <td><input type="number" class="pace-seconds" oninput="calculateRow(this)"></td>
+                <td class="result">0.00</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="summary">
+                <td colspan="4">Total Distance: <span id="totalDistance">0.00</span> km</td>
+                <td>
+                    Total Time: <span id="totalTime">0:00:00</span><br>
+                    Avg Pace: <span id="averagePace">0:00</span>/km
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <button onclick="addRow()">Add Row</button>
+
+    <script>
+        function addRow() {
+            const table = document.getElementById('calculatorTable');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="number" class="time-minutes" oninput="calculateRow(this)"></td>
+                <td><input type="number" class="time-seconds" oninput="calculateRow(this)"></td>
+                <td><input type="number" class="pace-minutes" oninput="calculateRow(this)"></td>
+                <td><input type="number" class="pace-seconds" oninput="calculateRow(this)"></td>
+                <td class="result">0.00</td>
+            `;
+            table.appendChild(newRow);
+        }
+
+        function calculateRow(inputElement) {
+            const row = inputElement.closest('tr');
+            const timeMinutes = parseInt(row.querySelector('.time-minutes').value) || 0;
+            const timeSeconds = parseInt(row.querySelector('.time-seconds').value) || 0;
+            const paceMinutes = parseInt(row.querySelector('.pace-minutes').value) || 0;
+            const paceSeconds = parseInt(row.querySelector('.pace-seconds').value) || 0;
+
+            const totalTimeSeconds = (timeMinutes * 60) + timeSeconds;
+            const pacePerKmSeconds = (paceMinutes * 60) + paceSeconds;
+
+            let distance = 0;
+            if (pacePerKmSeconds > 0) {
+                distance = totalTimeSeconds / pacePerKmSeconds;
+            }
+
+            row.querySelector('.result').textContent = distance.toFixed(2);
+
+            calculateSummary();
+        }
+
+        function calculateSummary() {
+            const rows = document.querySelectorAll('#calculatorTable tr');
+            let totalDistance = 0;
+            let totalTimeInSeconds = 0;
+
+            rows.forEach(row => {
+                const timeMinutes = parseInt(row.querySelector('.time-minutes').value) || 0;
+                const timeSeconds = parseInt(row.querySelector('.time-seconds').value) || 0;
+                const result = parseFloat(row.querySelector('.result').textContent) || 0;
+
+                totalDistance += result;
+                totalTimeInSeconds += (timeMinutes * 60) + timeSeconds;
+            });
+
+            // Summary: Total Time
+            const totalHours = Math.floor(totalTimeInSeconds / 3600);
+            const totalMinutes = Math.floor((totalTimeInSeconds % 3600) / 60);
+            const totalSeconds = totalTimeInSeconds % 60;
+
+            // Summary: Avg Pace
+            let avgPaceSeconds = totalDistance > 0 ? Math.round(totalTimeInSeconds / totalDistance) : 0;
+            const avgPaceMinutes = Math.floor(avgPaceSeconds / 60);
+            const avgPaceRemainSeconds = avgPaceSeconds % 60;
+
+            document.getElementById('totalDistance').textContent = totalDistance.toFixed(2);
+            document.getElementById('totalTime').textContent = `${totalHours}:${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+            document.getElementById('averagePace').textContent = `${avgPaceMinutes}:${avgPaceRemainSeconds.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
