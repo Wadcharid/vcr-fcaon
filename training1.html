@@ -1,159 +1,301 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Running Training Program</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        input, select, button {
-            padding: 5px;
-            margin: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Pace Calculator from LT Pace</title>
+  <style>
+    /* Reset พื้นฐาน */
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 650px;
+      background: #fff;
+      margin: 30px auto;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1, h2, h3 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 15px;
+    }
+    form { margin-top: 20px; }
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+      font-weight: 500;
+    }
+    .inline-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .inline-inputs input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .inline-inputs span {
+      font-size: 16px;
+      color: #555;
+      white-space: nowrap;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    small {
+      display: block;
+      margin-top: 5px;
+      color: #888;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+    button:hover { background: #0056b3; }
+    #result {
+      margin-top: 25px;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 4px;
+      text-align: center;
+    }
+    #training-paces {
+        margin-top: 20px;
+    }
+    .pace-category {
+        background: #fff;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 5px solid #007bff;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .pace-category h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #0056b3;
+        text-align: left;
+    }
+    .pace-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .pace-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 16px;
+    }
+    .pace-list li:last-child {
+        border-bottom: none;
+    }
+    .pace-value {
+        font-weight: bold;
+        color: #333;
+    }
+    .pace-label {
+        color: #555;
+    }
+    @media (max-width: 600px) {
+      .container { margin: 10px; padding: 15px 20px; }
+      button { padding: 10px; }
+      .pace-list li { flex-direction: column; align-items: flex-start; gap: 5px; }
+    }
+  </style>
 </head>
 <body>
-
-    <label for="menu">Choose a page:</label>
-    <select id="menu" onchange="location = this.value;">
-        <option value="">-- Select --</option>
-        <option value="https://wadcharid.github.io/vcr-fcaon/vcr1.html">1.หาค่า VCR</option>
-        <option value="https://wadcharid.github.io/vcr-fcaon/vcr2.html">2.หาโซนจาก VCR </option>
-        <option value="https://wadcharid.github.io/vcr-fcaon/pace1.html">3.คำนวณ Pace,Distance,Time</option>
-        <option value="https://wadcharid.github.io/vcr-fcaon/pace2.html">4.คำนวณ %Pace</option>
-        <option value="https://wadcharid.github.io/vcr-fcaon/pace3.html">5.VCR Weekly Plan</option>
-        <option value="https://wadcharid.github.io/vcr-fcaon/load1.html">6.COROS Load</option>
-        <option value="https://wadcharid.github.io/vcr-fcaon/training1.html">7.Training Program</option>
-    </select>
+  <div class="container">
+    <h1>Training Pace Calculator</h1>
+    <form id="raceForm" onsubmit="event.preventDefault(); calculateRacePredict();">
+      
+      <div class="form-group">
+        <label for="achievedDistance">ผลการแข่งขันที่ทำได้ (ระยะทาง กม.)</label>
+        <input type="number" id="achievedDistance" name="achievedDistance" step="any" placeholder="เช่น 10 หรือ 21.1" required>
+      </div>
+      <div class="form-group">
+        <label>เวลา (ที่ทำได้) <small>(ชั่วโมง, นาที, วินาที)</small></label>
+        <div class="inline-inputs">
+          <input type="number" id="achievedHours" name="achievedHours" min="0" placeholder="ชั่วโมง" value="0">
+          <span>:</span>
+          <input type="number" id="achievedMinutes" name="achievedMinutes" min="0" max="59" placeholder="นาที" value="0">
+          <span>:</span>
+          <input type="number" id="achievedSeconds" name="achievedSeconds" min="0" max="59" placeholder="วินาที" value="0">
+        </div>
+      </div>
+      
+      <button type="submit">คำนวณ Pace การซ้อม</button>
+    </form>
+  
+    <div id="result"></div>
     
-    <h1>Running Training Program</h1>
-    <label for="vcr">Enter VCR (m/s):</label>
-    <input type="number" id="vcr" step="0.01" placeholder="e.g., 3.5">
+    <div id="training-paces"></div>
+  </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Type</th>
-                <th>Duration (minutes)</th>
-            </tr>
-        </thead>
-        <tbody id="trainingTable">
-            <tr><td>Monday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
-            <tr><td>Tuesday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
-            <tr><td>Wednesday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
-            <tr><td>Thursday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
-            <tr><td>Friday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
-            <tr><td>Saturday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
-            <tr><td>Sunday</td><td><select class="type"><option value="AT">AT</option><option value="MP">MP</option><option value="LT">LT</option><option value="VO2MAX">VO2MAX</option><option value="Recovery">Recovery</option><option value="REST">REST</option></select></td><td><input type="number" class="duration" min="0"></td></tr>
-        </tbody>
-    </table>
-    <button onclick="calculateResults()">Calculate</button>
+  <script>
+    // แปลง pace (นาที/กม.) ให้อยู่ในรูปแบบ "m:ss"
+    function formatPace(pace) {
+      const totalSeconds = Math.round(pace * 60);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const secondsStr = seconds < 10 ? "0" + seconds : String(seconds).padStart(2, '0');
+      return minutes + ":" + secondsStr;
+    }
+    
+    // ฟังก์ชันคำนวณ Pace Range จาก %
+    function getPaceRange(ltTotalSec, lowPercent, highPercent) {
+        // Note: highPercent (เร็ว) จะให้ค่า pace ต่ำ, lowPercent (ช้า) จะให้ค่า pace สูง
+        const paceAtHighPercent = (ltTotalSec * (100 / highPercent)) / 60;
+        const paceAtLowPercent = (ltTotalSec * (100 / lowPercent)) / 60;
+        return `${formatPace(paceAtHighPercent)} - ${formatPace(paceAtLowPercent)}`;
+    }
 
-    <h2>Results</h2>
-    <table id="resultsTable">
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Type</th>
-                <th>Distance (km)</th>
-                <th>Pace (min/km)</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2">Weekly Total</td>
-                <td id="totalDistance">0</td>
-                <td></td>
-            </tr>
-        </tfoot>
-    </table>
 
-    <script>
-        function formatPace(secondsPerKm) {
-            const minutes = Math.floor(secondsPerKm / 60);
-            let seconds = Math.round(secondsPerKm % 60);
+    // ฟังก์ชันคำนวณเวลาที่คาดว่าจะใช้ในการวิ่งสำหรับระยะทางที่กำหนด โดยใช้ LT Pace (ltTotalSec: วินาที/กม.)
+    function computeRaceTime(targetDistance, ltTotalSec) {
+      const segments = [
+        { duration: 2, percent: 120 },
+        { duration: 6 , percent: 110 },
+        { duration: 30, percent: 100 },
+        { duration: 120, percent: 90 },
+        { duration: 120, percent: 80 },
+        { duration: 120, percent: 65 }
+      ];
+      let totalTimeMinutes = 0;
+      let remainingDistance = targetDistance;
 
-            // Adjust seconds to end with 0 or 5
-            seconds = Math.floor(seconds / 5) * 5;
-            if (seconds >= 60) {
-                seconds = 0;
-            }
-
-            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      function adjustedPace(percent) {
+        return (ltTotalSec * (100 / percent)) / 60; // pace in นาที/กม.
+      }
+      
+      for (let i = 0; i < segments.length; i++) {
+        const seg = segments[i];
+        const pace = adjustedPace(seg.percent);
+        const segDistance = seg.duration / pace;
+        if (segDistance < remainingDistance) {
+          totalTimeMinutes += seg.duration;
+          remainingDistance -= segDistance;
+        } else {
+          totalTimeMinutes += remainingDistance * pace;
+          remainingDistance = 0;
+          break;
         }
+      }
+      if (remainingDistance > 0) {
+        const pace50 = adjustedPace(50);
+        totalTimeMinutes += remainingDistance * pace50;
+      }
+      return totalTimeMinutes;
+    }
 
-        function calculateResults() {
-            const vcr = parseFloat(document.getElementById('vcr').value);
-            if (isNaN(vcr) || vcr <= 0) {
-                alert('Please enter a valid VCR value.');
-                return;
-            }
-
-            const paceFactors = {
-                AT: 0.85, MP: 0.9, LT: 0.97, VO2MAX: 1.1, Recovery: 0.7
-            };
-
-            const tableBody = document.querySelector('#trainingTable');
-            const resultsBody = document.querySelector('#resultsTable tbody');
-            resultsBody.innerHTML = '';
-
-            let totalDistance = 0;
-            let additionalDistance = 0;
-
-            Array.from(tableBody.querySelectorAll('tr')).forEach((row, index) => {
-                const day = row.cells[0].textContent;
-                const type = row.querySelector('.type').value;
-                const duration = parseFloat(row.querySelector('.duration').value) || 0;
-
-                let distance = 0;
-                let pace = '';
-                let extraNote = '';
-
-                if (type !== 'REST') {
-                    const adjustedVCR = vcr * paceFactors[type];
-                    const secondsPerKm = 1000 / adjustedVCR;
-                    pace = formatPace(secondsPerKm);
-                    distance = Math.floor((adjustedVCR * (duration * 60)) / 1000);
-                    totalDistance += distance;
-
-                    if (type !== 'Recovery') {
-                        extraNote = ' (WP+CD 2k)';
-                        additionalDistance += 2;
-                    }
-                } else {
-                    pace = '-';
-                }
-
-                resultsBody.innerHTML += `
-                    <tr>
-                        <td>${day}</td>
-                        <td>${type}${extraNote}</td>
-                        <td>${distance}</td>
-                        <td>${pace}</td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('totalDistance').textContent = totalDistance + additionalDistance;
+    // ฟังก์ชันหา LT Pace (ltTotalSec) จากผลการแข่งขันที่ทำได้ (โดยใช้ binary search)
+    function findLTPace(achievedDistance, achievedTimeMinutes) {
+      let low = 120;  
+      let high = 720; // เพิ่ม high range สำหรับ pace ที่ช้าลง
+      let mid;
+      for (let i = 0; i < 30; i++) { // 30 iterations for precision
+        mid = (low + high) / 2;
+        const computedTime = computeRaceTime(achievedDistance, mid);
+        if (computedTime > achievedTimeMinutes) {
+          high = mid;
+        } else {
+          low = mid;
         }
-    </script>
+      }
+      return mid;
+    }
+
+    function calculateRacePredict() {
+      const achievedDistance = parseFloat(document.getElementById("achievedDistance").value);
+      let achievedHours = parseInt(document.getElementById("achievedHours").value, 10) || 0;
+      let achievedMinutes = parseInt(document.getElementById("achievedMinutes").value, 10) || 0;
+      let achievedSeconds = parseInt(document.getElementById("achievedSeconds").value, 10) || 0;
+
+      if (isNaN(achievedDistance) || achievedDistance <= 0) {
+        document.getElementById("result").innerHTML = "<p style='color:red;'>กรุณากรอกระยะทางให้ถูกต้อง</p>";
+        document.getElementById("training-paces").innerHTML = ""; // Clear previous results
+        return;
+      }
+       if (achievedHours === 0 && achievedMinutes === 0 && achievedSeconds === 0) {
+        document.getElementById("result").innerHTML = "<p style='color:red;'>กรุณากรอกเวลาที่ทำได้</p>";
+        document.getElementById("training-paces").innerHTML = ""; // Clear previous results
+        return;
+      }
+      
+      // คำนวณเวลาที่ทำได้ทั้งหมด (นาที) และ Pace
+      const totalAchievedTimeMinutes = achievedHours * 60 + achievedMinutes + achievedSeconds / 60;
+      const inputPace = totalAchievedTimeMinutes / achievedDistance;
+      
+      // คำนวณ LT Pace (วินาที/กม.)
+      const ltTotalSec = findLTPace(achievedDistance, totalAchievedTimeMinutes);
+      const ltPaceInMinutes = ltTotalSec / 60;
+      const ltPaceStr = formatPace(ltPaceInMinutes);
+
+      // --- แสดงผลลัพธ์ Pace พื้นฐาน ---
+      let resultHTML = `
+        <p><strong>Pace จากผลการแข่งขัน:</strong> ${formatPace(inputPace)} นาที/กม.</p>
+        <h2 style="margin-bottom:0;"><strong>LT Pace ที่คำนวณได้: ${ltPaceStr} นาที/กม.</strong></h2>`;
+      document.getElementById("result").innerHTML = resultHTML;
+      
+      // --- แสดงผลลัพธ์ Pace การซ้อม ---
+      let trainingHTML = `
+        <div class="pace-category">
+          <h3>Easy Run Pace</h3>
+          <ul class="pace-list">
+            <li><span class="pace-label">60 นาที (80-85% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 80, 85)}</span></li>
+            <li><span class="pace-label">90 นาที (75-80% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 75, 80)}</span></li>
+            <li><span class="pace-label">120 นาที (70-75% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 70, 75)}</span></li>
+            <li><span class="pace-label">120 นาที B2B (65-70% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 65, 70)}</span></li>
+          </ul>
+        </div>
+        
+        <div class="pace-category">
+          <h3>Threshold Run Pace (Tempo)</h3>
+          <ul class="pace-list">
+             <li><span class="pace-label">20 นาที (100-105% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 100, 105)}</span></li>
+             <li><span class="pace-label">30 นาที (95-100% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 95, 100)}</span></li>
+             <li><span class="pace-label">45 นาที (90-95% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 90, 95)}</span></li>
+             <li><span class="pace-label">60 นาที (85-90% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 85, 90)}</span></li>
+          </ul>
+        </div>
+
+        <div class="pace-category">
+            <h3>Interval Run Pace</h3>
+            <ul class="pace-list">
+                <li><span class="pace-label">2 นาที พัก 1 (110-115% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 110, 115)}</span></li>
+                <li><span class="pace-label">3 นาที พัก 1 (105-110% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 105, 110)}</span></li>
+                <li><span class="pace-label">5 นาที พัก 1 (100-105% LT)</span> <span class="pace-value">${getPaceRange(ltTotalSec, 100, 105)}</span></li>
+            </ul>
+        </div>
+      `;
+      document.getElementById("training-paces").innerHTML = trainingHTML;
+    }
+  </script>
 </body>
 </html>
