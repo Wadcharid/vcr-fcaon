@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interval Running Calculator</title>
+    <style>
+        body {
+            max-width: 800px;
+            margin: 20px auto;
+            font-family: 'Sarabun', Arial, sans-serif; /* แนะนำ font ที่รองรับภาษาไทย */
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        fieldset {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        legend {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px; /* เพิ่มช่องว่างระหว่าง element */
+        }
+        .input-group label {
+            flex-basis: 200px; /* กำหนดความกว้างของ label */
+            font-weight: bold;
+        }
+        .input-group input, .input-group select {
+            flex-grow: 1; /* ทำให้ input ขยายเต็มพื้นที่ */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .pace-group input {
+            width: 60px; /* กำหนดความกว้างสำหรับช่อง pace */
+        }
+        .calculate-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .calculate-button:hover {
+            background-color: #0056b3;
+        }
+        #summary-section {
+            background-color: #e9f7e9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #d9edf7;
+        }
+        #restPaceSection {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>เครื่องคำนวณ Interval Training 🏃‍♂️💨</h1>
+
+    <div id="calculator-form">
+        <fieldset>
+            <legend>ช่วงวิ่ง (Work)</legend>
+            <div class="input-group">
+                <label for="runDistance">ระยะทางต่อเที่ยว (km):</label>
+                <input type="number" id="runDistance" step="0.1" value="1">
+            </div>
+            <div class="input-group pace-group">
+                <label for="runPaceMinutes">Pace:</label>
+                <input type="number" id="runPaceMinutes" placeholder="นาที" value="5"> นาที
+                <input type="number" id="runPaceSeconds" placeholder="วินาที" value="0"> วินาที / km
+            </div>
+            <div class="input-group">
+                <label for="runReps">จำนวนเที่ยว:</label>
+                <input type="number" id="runReps" value="5">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>ช่วงพัก (Rest)</legend>
+            <div class="input-group">
+                <label for="restType">ประเภทการพัก:</label>
+                <select id="restType" onchange="toggleRestPace()">
+                    <option value="static">ยืนพัก (Static)</option>
+                    <option value="jog">จ๊อก (Jog)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="restDurationMinutes">เวลาพักต่อเที่ยว:</label>
+                <input type="number" id="restDurationMinutes" placeholder="นาที" value="3"> นาที
+                <input type="number" id="restDurationSeconds" placeholder="วินาที" value="0"> วินาที
+            </div>
+            <div class="input-group pace-group" id="restPaceSection" style="display: none;">
+                <label for="restPaceMinutes">Pace (เฉพาะจ๊อก):</label>
+                <input type="number" id="restPaceMinutes" placeholder="นาที" value="8"> นาที
+                <input type="number" id="restPaceSeconds" placeholder="วินาที" value="0"> วินาที / km
+            </div>
+        </fieldset>
+
+        <button class="calculate-button" onclick="calculateIntervals()">คำนวณ</button>
+    </div>
+
+    <div id="summary-section" style="display: none;">
+        <h2>สรุปผลการซ้อม</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>รายการ</th>
+                    <th>ระยะทางรวม (km)</th>
+                    <th>เวลารวม (ชั่วโมง:นาที:วินาที)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ช่วงวิ่ง (Work)</td>
+                    <td id="totalRunDistance">0.00</td>
+                    <td id="totalRunTime">00:00:00</td>
+                </tr>
+                <tr>
+                    <td>ช่วงพัก (Rest)</td>
+                    <td id="totalRestDistance">0.00</td>
+                    <td id="totalRestTime">00:00:00</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr style="font-weight: bold; background-color: #d4edda;">
+                    <td>รวมทั้งหมด</td>
+                    <td id="overallDistance">0.00</td>
+                    <td id="overallTime">00:00:00</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <script>
+        function toggleRestPace() {
+            const restType = document.getElementById('restType').value;
+            const restPaceSection = document.getElementById('restPaceSection');
+            if (restType === 'jog') {
+                restPaceSection.style.display = 'flex';
+            } else {
+                restPaceSection.style.display = 'none';
+            }
+        }
+
+        // Helper function สำหรับแปลงวินาทีเป็นรูปแบบ HH:MM:SS
+        function formatTime(totalSeconds) {
+            if (isNaN(totalSeconds) || totalSeconds < 0) return "00:00:00";
+            
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.round(totalSeconds % 60);
+
+            return [
+                hours.toString().padStart(2, '0'),
+                minutes.toString().padStart(2, '0'),
+                seconds.toString().padStart(2, '0')
+            ].join(':');
+        }
+
+        function calculateIntervals() {
+            // ดึงค่าจาก Input ช่วงวิ่ง
+            const runDistance = parseFloat(document.getElementById('runDistance').value) || 0;
+            const runPaceMinutes = parseInt(document.getElementById('runPaceMinutes').value) || 0;
+            const runPaceSeconds = parseInt(document.getElementById('runPaceSeconds').value) || 0;
+            const runReps = parseInt(document.getElementById('runReps').value) || 0;
+
+            // ดึงค่าจาก Input ช่วงพัก
+            const restType = document.getElementById('restType').value;
+            const restDurationMinutes = parseInt(document.getElementById('restDurationMinutes').value) || 0;
+            const restDurationSeconds = parseInt(document.getElementById('restDurationSeconds').value) || 0;
+            const restPaceMinutes = parseInt(document.getElementById('restPaceMinutes').value) || 0;
+            const restPaceSeconds = parseInt(document.getElementById('restPaceSeconds').value) || 0;
+
+            // --- คำนวณช่วงวิ่ง ---
+            const runPaceTotalSeconds = (runPaceMinutes * 60) + runPaceSeconds;
+            const timePerRunInSeconds = runDistance * runPaceTotalSeconds;
+            const totalRunTimeInSeconds = timePerRunInSeconds * runReps;
+            const totalRunDistance = runDistance * runReps;
+
+            // --- คำนวณช่วงพัก ---
+            // จำนวนครั้งของการพักจะเท่ากับจำนวนเที่ยวของการวิ่ง
+            const restReps = runReps;
+            const restDurationTotalSeconds = (restDurationMinutes * 60) + restDurationSeconds;
+            let totalRestTimeInSeconds = restDurationTotalSeconds * restReps;
+            let totalRestDistance = 0;
+
+            if (restType === 'jog') {
+                const restPaceTotalSeconds = (restPaceMinutes * 60) + restPaceSeconds;
+                if (restPaceTotalSeconds > 0) {
+                    // ระยะทาง = เวลา / pace
+                    const distancePerRest = restDurationTotalSeconds / restPaceTotalSeconds;
+                    totalRestDistance = distancePerRest * restReps;
+                }
+            }
+            
+            // --- คำนวณผลรวมทั้งหมด ---
+            const overallTotalDistance = totalRunDistance + totalRestDistance;
+            const overallTotalTimeInSeconds = totalRunTimeInSeconds + totalRestTimeInSeconds;
+
+            // --- แสดงผล ---
+            document.getElementById('summary-section').style.display = 'block';
+
+            // แสดงผลช่วงวิ่ง
+            document.getElementById('totalRunDistance').textContent = totalRunDistance.toFixed(2);
+            document.getElementById('totalRunTime').textContent = formatTime(totalRunTimeInSeconds);
+            
+            // แสดงผลช่วงพัก
+            document.getElementById('totalRestDistance').textContent = totalRestDistance.toFixed(2);
+            document.getElementById('totalRestTime').textContent = formatTime(totalRestTimeInSeconds);
+
+            // แสดงผลรวม
+            document.getElementById('overallDistance').textContent = overallTotalDistance.toFixed(2);
+            document.getElementById('overallTime').textContent = formatTime(overallTotalTimeInSeconds);
+        }
+
+        // เรียกใช้ครั้งแรกเพื่อให้ UI ถูกต้อง
+        toggleRestPace();
+    </script>
+</body>
+</html>
